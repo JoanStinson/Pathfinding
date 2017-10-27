@@ -286,25 +286,51 @@ void ScenePathFinding::initMaze()
 
 			if (terrain[i][j] == 1) {
 
-				if (terrain[i][j + 1] != 0 && isValidCell(terrain[i][j + 1])) {
+				if (j < num_cell_y -1 && terrain[i][j + 1] != 0 && isValidCell(terrain[i][j + 1])) {
 					Connection c(terrain[i][j], terrain[i][j + 1], 1);
 					graph.AddConnection(c);
 				}
 
-				/*if (terrain[i + 1][j] != 0 && isValidCell(terrain[i + 1][j])) {
+				if (i < num_cell_x - 1 && terrain[i + 1][j] != 0 && isValidCell(terrain[i + 1][j])) {
 					Connection c(terrain[i][j], terrain[i + 1][j], 1);
 					graph.AddConnection(c);
-				}*/
+				}
 
-				if (terrain[i][j - 1] != 0 && isValidCell(terrain[i][j - 1])) {
+				if (j > 0 && terrain[i][j - 1] != 0 && isValidCell(terrain[i][j - 1])) {
 					Connection c(terrain[i][j], terrain[i][j - 1], 1);
 					graph.AddConnection(c);
 				}
 
-				/*if (terrain[i - 1][j] != 0 && isValidCell(terrain[i - 1][j])) {
+				if (i > 0 && terrain[i - 1][j] != 0 && isValidCell(terrain[i - 1][j])) {
 					Connection c(terrain[i][j], terrain[i - 1][j], 1);
 					graph.AddConnection(c);
-				}*/
+				}
+
+				if (i == 10 && j == 0) {
+					Connection c(terrain[i][j], terrain[10][39], 1);
+					graph.AddConnection(c);
+				}
+				if (i == 10 && j == 39) {
+					Connection c(terrain[i][j], terrain[10][0], 1);
+					graph.AddConnection(c);
+				}
+				if (i == 11 && j == 0) {
+					Connection c(terrain[i][j], terrain[11][39], 1);
+					graph.AddConnection(c);
+				}
+				if (i == 11 && j == 39) {
+					Connection c(terrain[i][j], terrain[11][0], 1);
+					graph.AddConnection(c);
+				}
+				if (i == 12 && j == 0) {
+					Connection c(terrain[i][j], terrain[12][39], 1);
+					graph.AddConnection(c);
+				}
+				if (i == 12 && j == 39) {
+					Connection c(terrain[i][j], terrain[12][0], 1);
+					graph.AddConnection(c);
+				}
+
 
 			}
 		}
