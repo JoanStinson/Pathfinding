@@ -1,6 +1,8 @@
 #include "ScenePathFinding.h"
-
+#include "Graph.h"
 using namespace std;
+
+Graph graph;
 
 ScenePathFinding::ScenePathFinding()
 {
@@ -276,6 +278,37 @@ void ScenePathFinding::initMaze()
 		}
 	}
 
+	// Add connections to all cells of the game (that are not walls)
+	// TODO Solucionar ifs amb la i que donen exception out of range
+	for (int i = 0; i < num_cell_x; i++) {
+
+		for (int j = 0; j < num_cell_y; j++) {
+
+			if (terrain[i][j] == 1) {
+
+				if (terrain[i][j + 1] != 0 && isValidCell(terrain[i][j + 1])) {
+					Connection c(terrain[i][j], terrain[i][j + 1], 1);
+					graph.AddConnection(c);
+				}
+
+				/*if (terrain[i + 1][j] != 0 && isValidCell(terrain[i + 1][j])) {
+					Connection c(terrain[i][j], terrain[i + 1][j], 1);
+					graph.AddConnection(c);
+				}*/
+
+				if (terrain[i][j - 1] != 0 && isValidCell(terrain[i][j - 1])) {
+					Connection c(terrain[i][j], terrain[i][j - 1], 1);
+					graph.AddConnection(c);
+				}
+
+				/*if (terrain[i - 1][j] != 0 && isValidCell(terrain[i - 1][j])) {
+					Connection c(terrain[i][j], terrain[i - 1][j], 1);
+					graph.AddConnection(c);
+				}*/
+
+			}
+		}
+	}
 }
 
 bool ScenePathFinding::loadTextures(char* filename_bg, char* filename_coin)
