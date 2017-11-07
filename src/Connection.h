@@ -3,6 +3,7 @@
 
 class Connection {
 public:
+	Connection();
 	Connection(Vector2D f, Vector2D t, float c);
 	~Connection();
 	

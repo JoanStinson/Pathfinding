@@ -7,7 +7,7 @@
 #include <map>
 #include "Agent.h"
 
-void BFS(Node start, Node goal, Graph graph, Agent *agent) { // TODO Passarli la posicio inicial del agent = Agent.GetPosition()
+void BFS(Node start, Node goal, Graph graph, Agent *agent) { 
 	// Inicialitzar la frontera amb el node de la posició inicial
 	queue <Node> frontier;
 	frontier.push(start);
@@ -25,8 +25,8 @@ void BFS(Node start, Node goal, Graph graph, Agent *agent) { // TODO Passarli la
 	while (!frontier.empty()) {
 		current = frontier.front();
 		frontier.pop();
-		cout << "xd";
-		neighbors = graph.GetConnections(current);
+		//cout << "xd";
+		neighbors = graph.GetConnections(current); //TODO aixo funciona WIIIIIIIIIIIIIIIIIIIIIIIIIIIII, però només si està plena
 		found = false;
 
 		/*if (current.coord == goal.coord)

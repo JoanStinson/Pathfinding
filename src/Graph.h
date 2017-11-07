@@ -11,12 +11,17 @@ public:
 	Graph();
 	~Graph();
 
+	// Push back to allConnections
 	void AddConnection(Connection c);
 
 	// Returns a list of connections outgoing from the given node
 	vector<Node> GetConnections(Node a);
-	int v; // n connexions
-	vector <Connection> allConnections;
+	
+	// Prints allConnections
+	void PrintConnections();
+
+	int v; // num connexions
 
 private:
+	vector<Connection> allConnections;
 };

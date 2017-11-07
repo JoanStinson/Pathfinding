@@ -4,8 +4,7 @@
 using namespace std;
 
 Graph graph;
-Node start;
-Node end;
+Node start, end;
 
 ScenePathFinding::ScenePathFinding()
 {
@@ -37,10 +36,6 @@ ScenePathFinding::ScenePathFinding()
 	currentTarget = Vector2D(0, 0);
 	currentTargetIndex = -1;
 	
-	BFS(start, Node(coinPosition.x, coinPosition.y), graph, agents[0]);
-	
-
-
 }
 
 ScenePathFinding::~ScenePathFinding()
@@ -124,8 +119,10 @@ void ScenePathFinding::update(float dtime, SDL_Event *event)
 		agents[0]->update(Vector2D(0,0), dtime, event);
 	}
 
-	//BFS(start, Node(coinPosition.x, coinPosition.y), graph, agents[0]);
-
+	//TODO Solucionar BFS perquè a l'hora de recorrer el BFS al update diu que allConnections està buit
+	BFS(start, Node(coinPosition.x, coinPosition.y), graph, agents[0]);
+	//TODO Comentar la següent linia despres de comprobar que podem imprimir allConnections (a PrintConnections faig pushbacks per aixo funciona)
+	graph.PrintConnections();
 }
 
 void ScenePathFinding::draw()
@@ -288,11 +285,9 @@ void ScenePathFinding::initMaze()
 	}
 
 	// Add connections to all cells of the game (that are not walls)
-	// TODO Solucionar ifs amb la i que donen exception out of range
 	for (int i = 0; i < num_cell_x; i++) {
 		for (int j = 0; j < num_cell_y; j++) {
 			
-		
 			if (terrain[i][j] == 1) {
 
 				if (j < num_cell_y -1 && terrain[i][j + 1] != 0 && isValidCell(terrain[i][j + 1])) {
@@ -305,61 +300,55 @@ void ScenePathFinding::initMaze()
 					Connection c(terrain[i][j], terrain[i + 1][j], 1);
 					graph.AddConnection(c);
 					graph.v++;
-
 				}
 
 				if (j > 0 && terrain[i][j - 1] != 0 && isValidCell(terrain[i][j - 1])) {
 					Connection c(terrain[i][j], terrain[i][j - 1], 1);
 					graph.AddConnection(c);
 					graph.v++;
-
 				}
 
 				if (i > 0 && terrain[i - 1][j] != 0 && isValidCell(terrain[i - 1][j])) {
 					Connection c(terrain[i][j], terrain[i - 1][j], 1);
 					graph.AddConnection(c);
 					graph.v++;
-
 				}
 
 				if (i == 10 && j == 0) {
 					Connection c(terrain[i][j], terrain[10][39], 1);
 					graph.AddConnection(c);
 					graph.v++;
-
 				}
+
 				if (i == 10 && j == 39) {
 					Connection c(terrain[i][j], terrain[10][0], 1);
 					graph.AddConnection(c);
 					graph.v++;
-
 				}
+
 				if (i == 11 && j == 0) {
 					Connection c(terrain[i][j], terrain[11][39], 1);
 					graph.AddConnection(c);
 					graph.v++;
-
 				}
+
 				if (i == 11 && j == 39) {
 					Connection c(terrain[i][j], terrain[11][0], 1);
 					graph.AddConnection(c);
 					graph.v++;
-
 				}
+
 				if (i == 12 && j == 0) {
 					Connection c(terrain[i][j], terrain[12][39], 1);
 					graph.AddConnection(c);
 					graph.v++;
-
 				}
+
 				if (i == 12 && j == 39) {
 					Connection c(terrain[i][j], terrain[12][0], 1);
 					graph.AddConnection(c);
 					graph.v++;
-
 				}
-
-
 			}
 		}
 	}

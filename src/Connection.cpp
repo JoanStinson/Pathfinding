@@ -1,5 +1,9 @@
 #include "Connection.h"
 
+Connection::Connection()
+{
+}
+
 Connection::Connection(Vector2D f, Vector2D t, float c) {
 	from.coord = f;
 	to.coord = t;
