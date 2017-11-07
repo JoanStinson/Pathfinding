@@ -1,8 +1,11 @@
 #include "ScenePathFinding.h"
 #include "Graph.h"
+#include "BFS.h"
 using namespace std;
 
 Graph graph;
+Node start;
+Node end;
 
 ScenePathFinding::ScenePathFinding()
 {
@@ -25,15 +28,18 @@ ScenePathFinding::ScenePathFinding()
 	while (!isValidCell(rand_cell)) 
 		rand_cell = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
 	agents[0]->setPosition(cell2pix(rand_cell));
-
+	start = Node(agents[0]->getPosition().x, agents[0]->getPosition().y);
 	// set the coin in a random cell (but at least 3 cells far from the agent)
 	coinPosition = Vector2D(-1,-1);
 	while ((!isValidCell(coinPosition)) || (Vector2D::Distance(coinPosition, rand_cell)<3)) 
 		coinPosition = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
-	
 	// PathFollowing next Target
 	currentTarget = Vector2D(0, 0);
 	currentTargetIndex = -1;
+	
+	BFS(start, Node(coinPosition.x, coinPosition.y), graph, agents[0]);
+	
+
 
 }
 
@@ -117,6 +123,9 @@ void ScenePathFinding::update(float dtime, SDL_Event *event)
 	{
 		agents[0]->update(Vector2D(0,0), dtime, event);
 	}
+
+	//BFS(start, Node(coinPosition.x, coinPosition.y), graph, agents[0]);
+
 }
 
 void ScenePathFinding::draw()
@@ -281,54 +290,73 @@ void ScenePathFinding::initMaze()
 	// Add connections to all cells of the game (that are not walls)
 	// TODO Solucionar ifs amb la i que donen exception out of range
 	for (int i = 0; i < num_cell_x; i++) {
-
 		for (int j = 0; j < num_cell_y; j++) {
-
+			
+		
 			if (terrain[i][j] == 1) {
 
 				if (j < num_cell_y -1 && terrain[i][j + 1] != 0 && isValidCell(terrain[i][j + 1])) {
 					Connection c(terrain[i][j], terrain[i][j + 1], 1);
 					graph.AddConnection(c);
+					graph.v++;
 				}
 
 				if (i < num_cell_x - 1 && terrain[i + 1][j] != 0 && isValidCell(terrain[i + 1][j])) {
 					Connection c(terrain[i][j], terrain[i + 1][j], 1);
 					graph.AddConnection(c);
+					graph.v++;
+
 				}
 
 				if (j > 0 && terrain[i][j - 1] != 0 && isValidCell(terrain[i][j - 1])) {
 					Connection c(terrain[i][j], terrain[i][j - 1], 1);
 					graph.AddConnection(c);
+					graph.v++;
+
 				}
 
 				if (i > 0 && terrain[i - 1][j] != 0 && isValidCell(terrain[i - 1][j])) {
 					Connection c(terrain[i][j], terrain[i - 1][j], 1);
 					graph.AddConnection(c);
+					graph.v++;
+
 				}
 
 				if (i == 10 && j == 0) {
 					Connection c(terrain[i][j], terrain[10][39], 1);
 					graph.AddConnection(c);
+					graph.v++;
+
 				}
 				if (i == 10 && j == 39) {
 					Connection c(terrain[i][j], terrain[10][0], 1);
 					graph.AddConnection(c);
+					graph.v++;
+
 				}
 				if (i == 11 && j == 0) {
 					Connection c(terrain[i][j], terrain[11][39], 1);
 					graph.AddConnection(c);
+					graph.v++;
+
 				}
 				if (i == 11 && j == 39) {
 					Connection c(terrain[i][j], terrain[11][0], 1);
 					graph.AddConnection(c);
+					graph.v++;
+
 				}
 				if (i == 12 && j == 0) {
 					Connection c(terrain[i][j], terrain[12][39], 1);
 					graph.AddConnection(c);
+					graph.v++;
+
 				}
 				if (i == 12 && j == 39) {
 					Connection c(terrain[i][j], terrain[12][0], 1);
 					graph.AddConnection(c);
+					graph.v++;
+
 				}
 
 

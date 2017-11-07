@@ -1,8 +1,8 @@
 #include "Connection.h"
 
 Connection::Connection(Vector2D f, Vector2D t, float c) {
-	from = f;
-	to = t;
+	from.coord = f;
+	to.coord = t;
 	cost = c;
 }
 
@@ -13,10 +13,10 @@ float Connection::GetCost() {
 	return 0.0f;
 }
 
-Vector2D Connection::GetFromNode() {
+Node Connection::GetFromNode() {
 	return from;
 }
 
-Vector2D Connection::GetToNode() {
+Node Connection::GetToNode() {
 	return to;
 }

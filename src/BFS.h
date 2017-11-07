@@ -5,30 +5,53 @@
 #include <queue>
 #include <list>
 #include <map>
+#include "Agent.h"
 
-void BFS(Vector2D start, Graph graph) { // TODO Passarli la posicio inicial del agent = Agent.GetPosition()
+void BFS(Node start, Node goal, Graph graph, Agent *agent) { // TODO Passarli la posicio inicial del agent = Agent.GetPosition()
 	// Inicialitzar la frontera amb el node de la posició inicial
-	std::queue<Vector2D> frontier;
+	queue <Node> frontier;
 	frontier.push(start);
 
-	std::map <Vector2D, bool> visited;
-	visited.insert(std::pair<Vector2D, bool>(start, true));
+	//map <Node, bool> came_from;
+	//came_from.insert(pair<Node, bool>(start, true));
 
-	// Mentre la frontera no estigui buida
-	while (!frontier.empty) {
-		// Agafem el seguent node
-		Vector2D current = frontier.front();
-		// Mirem els seus veins 
-		// TODO fer un loop 
-		graph.GetConnections(current);
+	vector <Node> neighbors, path, reversed;
+	
+	Node current(0, 0);
+	Node next(0, 0);
+	
+	bool found;
 
-		// Si no esta visitat el node current
-		for (std::map<Vector2D, bool>::iterator i = visited.begin(); i != visited.end(); ++i) {
-			if (/*Current no l'hem visitat*/ false) {
-				frontier.push(current);
-				visited.insert(std::pair<Vector2D, bool>(current, true));
+	while (!frontier.empty()) {
+		current = frontier.front();
+		frontier.pop();
+		cout << "xd";
+		neighbors = graph.GetConnections(current);
+		found = false;
+
+		/*if (current.coord == goal.coord)
+			break;
+
+		for (int i = 0; i < neighbors.size() || found; i++) {
+			if (neighbors[i].coord == next.coord) {
+				frontier.push(next);
+				//came_from.insert(pair<Node, bool>(next, true));
+				next.came_from = &current;	
+				current = next;
+				found = true;
+
 			}
 		}
+	}
 
+	while (current.coord != start.coord) {
+		path.push_back(*current.came_from);
+		current = *current.came_from;
+	}
+	for (int i = 0; i < path.size(); i++) {
+		reversed[i] = path[path.size() - 1];
+	}
+	for (int i = 0; i < reversed.size(); i++) {
+		agent->setTarget(reversed[i].coord);*/
 	}
 }
