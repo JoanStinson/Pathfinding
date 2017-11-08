@@ -14,6 +14,11 @@ public:
 		coord.x = x;
 		coord.y = y;
 	}
+
+	Node(Vector2D v) {
+		coord.x = v.x;
+		coord.y = v.y;
+	}
 };
 
 

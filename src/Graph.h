@@ -21,7 +21,7 @@ public:
 	void PrintConnections();
 
 	int v; // num connexions
+	vector<Connection> allConnections;
 
 private:
-	vector<Connection> allConnections;
 };

@@ -23,19 +23,20 @@ ScenePathFinding::ScenePathFinding()
 
 
 	// set agent position coords to the center of a random cell
-	Vector2D rand_cell(-1,-1);
-	while (!isValidCell(rand_cell)) 
+	Vector2D rand_cell(-1, -1);
+	while (!isValidCell(rand_cell))
 		rand_cell = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
 	agents[0]->setPosition(cell2pix(rand_cell));
 	start = Node(agents[0]->getPosition().x, agents[0]->getPosition().y);
 	// set the coin in a random cell (but at least 3 cells far from the agent)
-	coinPosition = Vector2D(-1,-1);
-	while ((!isValidCell(coinPosition)) || (Vector2D::Distance(coinPosition, rand_cell)<3)) 
+	coinPosition = Vector2D(-1, -1);
+	while ((!isValidCell(coinPosition)) || (Vector2D::Distance(coinPosition, rand_cell) < 3))
 		coinPosition = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
 	// PathFollowing next Target
 	currentTarget = Vector2D(0, 0);
 	currentTargetIndex = -1;
-	
+	//cout << graph.allConnections.size() << endl;
+
 }
 
 ScenePathFinding::~ScenePathFinding()
@@ -77,11 +78,11 @@ void ScenePathFinding::update(float dtime, SDL_Event *event)
 	default:
 		break;
 	}
-	if ((currentTargetIndex == -1) && (path.points.size()>0))
+	if ((currentTargetIndex == -1) && (path.points.size() > 0))
 		currentTargetIndex = 0;
 
 	if (currentTargetIndex >= 0)
-	{	
+	{
 		float dist = Vector2D::Distance(agents[0]->getPosition(), path.points[currentTargetIndex]);
 		if (dist < path.ARRIVAL_DISTANCE)
 		{
@@ -91,12 +92,12 @@ void ScenePathFinding::update(float dtime, SDL_Event *event)
 				{
 					path.points.clear();
 					currentTargetIndex = -1;
-					agents[0]->setVelocity(Vector2D(0,0));
+					agents[0]->setVelocity(Vector2D(0, 0));
 					// if we have arrived to the coin, replace it ina random cell!
 					if (pix2cell(agents[0]->getPosition()) == coinPosition)
 					{
 						coinPosition = Vector2D(-1, -1);
-						while ((!isValidCell(coinPosition)) || (Vector2D::Distance(coinPosition, pix2cell(agents[0]->getPosition()))<3))
+						while ((!isValidCell(coinPosition)) || (Vector2D::Distance(coinPosition, pix2cell(agents[0]->getPosition())) < 3))
 							coinPosition = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
 					}
 				}
@@ -113,16 +114,20 @@ void ScenePathFinding::update(float dtime, SDL_Event *event)
 		currentTarget = path.points[currentTargetIndex];
 		Vector2D steering_force = agents[0]->Behavior()->Seek(agents[0], currentTarget, dtime);
 		agents[0]->update(steering_force, dtime, event);
-	} 
+	}
 	else
 	{
-		agents[0]->update(Vector2D(0,0), dtime, event);
+		agents[0]->update(Vector2D(0, 0), dtime, event);
 	}
 
 	//TODO Solucionar BFS perquè a l'hora de recorrer el BFS al update diu que allConnections està buit
-	BFS(start, Node(coinPosition.x, coinPosition.y), graph, agents[0]);
+	vector<Node> bfs = BFS(start, Node(coinPosition.x, coinPosition.y), graph, path);
+	for (int i = 0; i < bfs.size(); i++) {
+		path.points.push_back(bfs[i].coord);
+	}
+
 	//TODO Comentar la següent linia despres de comprobar que podem imprimir allConnections (a PrintConnections faig pushbacks per aixo funciona)
-	graph.PrintConnections();
+	//graph.PrintConnections();
 }
 
 void ScenePathFinding::draw()
@@ -134,7 +139,7 @@ void ScenePathFinding::draw()
 	if (draw_grid)
 	{
 		SDL_SetRenderDrawColor(TheApp::Instance()->getRenderer(), 255, 255, 255, 127);
-		for (int i = 0; i < SRC_WIDTH; i+=CELL_SIZE)
+		for (int i = 0; i < SRC_WIDTH; i += CELL_SIZE)
 		{
 			SDL_RenderDrawLine(TheApp::Instance()->getRenderer(), i, 0, i, SRC_HEIGHT);
 		}
@@ -172,7 +177,7 @@ void ScenePathFinding::drawMaze()
 	}
 	else
 	{
-		SDL_RenderCopy(TheApp::Instance()->getRenderer(), background_texture, NULL, NULL );
+		SDL_RenderCopy(TheApp::Instance()->getRenderer(), background_texture, NULL, NULL);
 	}
 }
 
@@ -180,7 +185,7 @@ void ScenePathFinding::drawCoin()
 {
 	Vector2D coin_coords = cell2pix(coinPosition);
 	int offset = CELL_SIZE / 2;
-	SDL_Rect dstrect = {(int)coin_coords.x-offset, (int)coin_coords.y - offset, CELL_SIZE, CELL_SIZE};
+	SDL_Rect dstrect = { (int)coin_coords.x - offset, (int)coin_coords.y - offset, CELL_SIZE, CELL_SIZE };
 	SDL_RenderCopy(TheApp::Instance()->getRenderer(), coin_texture, NULL, &dstrect);
 }
 
@@ -194,7 +199,7 @@ void ScenePathFinding::initMaze()
 	maze_rects.push_back(rect);
 	rect = { 0, 736, 1280, 32 };
 	maze_rects.push_back(rect);
-	rect = { 608, 512, 64, 224 }; 
+	rect = { 608, 512, 64, 224 };
 	maze_rects.push_back(rect);
 	rect = { 0,32,32,288 };
 	maze_rects.push_back(rect);
@@ -222,7 +227,7 @@ void ScenePathFinding::initMaze()
 	maze_rects.push_back(rect);
 	rect = { 480, 256, 320, 32 };
 	maze_rects.push_back(rect);
-	rect = { 608, 224, 64, 32 }; 
+	rect = { 608, 224, 64, 32 };
 	maze_rects.push_back(rect);
 	rect = { 896,256,96,32 };
 	maze_rects.push_back(rect);
@@ -258,11 +263,11 @@ void ScenePathFinding::initMaze()
 	maze_rects.push_back(rect);
 
 	// Initialize the terrain matrix (for each cell a zero value indicates it's a wall)
-	
+
 	// (1st) initialize all cells to 1 by default
 	for (int i = 0; i < num_cell_x; i++)
 	{
-		vector<int> terrain_col(num_cell_y, 1); 
+		vector<int> terrain_col(num_cell_y, 1);
 		terrain.push_back(terrain_col);
 	}
 	// (2nd) set to zero all cells that belong to a wall
@@ -271,81 +276,86 @@ void ScenePathFinding::initMaze()
 	{
 		for (int j = 0; j < num_cell_y; j++)
 		{
-			Vector2D cell_center ((float)(i*CELL_SIZE + offset), (float)(j*CELL_SIZE + offset));
+			Vector2D cell_center((float)(i*CELL_SIZE + offset), (float)(j*CELL_SIZE + offset));
 			for (unsigned int b = 0; b < maze_rects.size(); b++)
 			{
 				if (Vector2DUtils::IsInsideRect(cell_center, (float)maze_rects[b].x, (float)maze_rects[b].y, (float)maze_rects[b].w, (float)maze_rects[b].h))
 				{
 					terrain[i][j] = 0;
-				    break;
-				}  
+					break;
+				}
 			}
-			
+
 		}
 	}
 
 	// Add connections to all cells of the game (that are not walls)
+
+	//40 X CELLS 24 Y CELLS
 	for (int i = 0; i < num_cell_x; i++) {
 		for (int j = 0; j < num_cell_y; j++) {
-			
+
 			if (terrain[i][j] == 1) {
 
-				if (j < num_cell_y -1 && terrain[i][j + 1] != 0 && isValidCell(terrain[i][j + 1])) {
-					Connection c(terrain[i][j], terrain[i][j + 1], 1);
+				if (j < num_cell_y - 1 && terrain[i][j + 1] != 0) {
+					//cout << i << ' ' << j << endl;
+					
+					Connection c( cell2pix(Vector2D(i, j)), cell2pix(Vector2D(i, j+1)), 1); //estam ficant terrain[i][j] dins les connexions, terrain[i][j] només guarden si una cel·la és transitable o no, és a dir, 1 o 0; wtf
+					//cout << c.GetFromNode().coord.x << ' ' << c.GetToNode().coord.y << endl;
 					graph.AddConnection(c);
 					graph.v++;
 				}
 
-				if (i < num_cell_x - 1 && terrain[i + 1][j] != 0 && isValidCell(terrain[i + 1][j])) {
-					Connection c(terrain[i][j], terrain[i + 1][j], 1);
+				if (i < num_cell_x - 1 && terrain[i + 1][j] != 0 ) {
+					Connection c(cell2pix(Vector2D(i, j)), terrain[i + 1][j], 1);
 					graph.AddConnection(c);
 					graph.v++;
 				}
 
-				if (j > 0 && terrain[i][j - 1] != 0 && isValidCell(terrain[i][j - 1])) {
-					Connection c(terrain[i][j], terrain[i][j - 1], 1);
+				if (j > 0 && terrain[i][j - 1] != 0 ) {
+					Connection c(cell2pix(Vector2D(i, j)), terrain[i][j - 1], 1);
 					graph.AddConnection(c);
 					graph.v++;
 				}
 
-				if (i > 0 && terrain[i - 1][j] != 0 && isValidCell(terrain[i - 1][j])) {
-					Connection c(terrain[i][j], terrain[i - 1][j], 1);
+				if (i > 0 && terrain[i - 1][j] != 0 ) {
+					Connection c(cell2pix(Vector2D(i, j)), terrain[i - 1][j], 1);
 					graph.AddConnection(c);
 					graph.v++;
 				}
 
 				if (i == 10 && j == 0) {
-					Connection c(terrain[i][j], terrain[10][39], 1);
+					Connection c(cell2pix(Vector2D(i, j)), cell2pix(Vector2D(10,39)), 1);
 					graph.AddConnection(c);
 					graph.v++;
 				}
 
 				if (i == 10 && j == 39) {
-					Connection c(terrain[i][j], terrain[10][0], 1);
+					Connection c(cell2pix(Vector2D(i, j)), cell2pix(Vector2D(10, 0)), 1);
 					graph.AddConnection(c);
 					graph.v++;
 				}
 
 				if (i == 11 && j == 0) {
-					Connection c(terrain[i][j], terrain[11][39], 1);
+					Connection c(cell2pix(Vector2D(i, j)), cell2pix(Vector2D(11, 39)), 1);
 					graph.AddConnection(c);
 					graph.v++;
 				}
 
 				if (i == 11 && j == 39) {
-					Connection c(terrain[i][j], terrain[11][0], 1);
+					Connection c(cell2pix(Vector2D(i, j)), cell2pix(Vector2D(11, 0)), 1);
 					graph.AddConnection(c);
 					graph.v++;
 				}
 
 				if (i == 12 && j == 0) {
-					Connection c(terrain[i][j], terrain[12][39], 1);
+					Connection c(cell2pix(Vector2D(i, j)), cell2pix(Vector2D(12, 39)), 1);
 					graph.AddConnection(c);
 					graph.v++;
 				}
 
 				if (i == 12 && j == 39) {
-					Connection c(terrain[i][j], terrain[12][0], 1);
+					Connection c(cell2pix(Vector2D(i, j)), cell2pix(Vector2D(12, 0)), 1);
 					graph.AddConnection(c);
 					graph.v++;
 				}
@@ -387,12 +397,12 @@ Vector2D ScenePathFinding::cell2pix(Vector2D cell)
 
 Vector2D ScenePathFinding::pix2cell(Vector2D pix)
 {
-	return Vector2D((float)((int)pix.x/CELL_SIZE), (float)((int)pix.y / CELL_SIZE));
+	return Vector2D((float)((int)pix.x / CELL_SIZE), (float)((int)pix.y / CELL_SIZE));
 }
 
 bool ScenePathFinding::isValidCell(Vector2D cell)
 {
-	if ((cell.x < 0) || (cell.y < 0) || (cell.x >= terrain.size()) || (cell.y >= terrain[0].size()) )
+	if ((cell.x < 0) || (cell.y < 0) || (cell.x >= terrain.size()) || (cell.y >= terrain[0].size()))
 		return false;
 	return !(terrain[(unsigned int)cell.x][(unsigned int)cell.y] == 0);
 }

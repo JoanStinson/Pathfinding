@@ -7,7 +7,18 @@
 #include <map>
 #include "Agent.h"
 
-void BFS(Node start, Node goal, Graph graph, Agent *agent) { 
+Vector2D cell2pix(Vector2D cell)
+{
+	int offset = CELL_SIZE / 2;
+	return Vector2D(cell.x*CELL_SIZE + offset, cell.y*CELL_SIZE + offset);
+}
+
+Vector2D pix2cell(Vector2D pix)
+{
+	return Vector2D((float)((int)pix.x / CELL_SIZE), (float)((int)pix.y / CELL_SIZE));
+}
+
+vector<Node> BFS(Node start, Node goal, Graph graph, Path p) { 
 	// Inicialitzar la frontera amb el node de la posició inicial
 	queue <Node> frontier;
 	frontier.push(start);
@@ -25,11 +36,12 @@ void BFS(Node start, Node goal, Graph graph, Agent *agent) {
 	while (!frontier.empty()) {
 		current = frontier.front();
 		frontier.pop();
-		//cout << "xd";
-		neighbors = graph.GetConnections(current); //TODO aixo funciona WIIIIIIIIIIIIIIIIIIIIIIIIIIIII, però només si està plena
+		Node temp(current.coord); 
+		
+		neighbors = graph.GetConnections(Node(pix2cell(temp.coord))); //TODO aixo funciona WIIIIIIIIIIIIIIIIIIIIIIIIIIIII, però només si està plena
 		found = false;
 
-		/*if (current.coord == goal.coord)
+		if (current.coord == goal.coord)
 			break;
 
 		for (int i = 0; i < neighbors.size() || found; i++) {
@@ -48,10 +60,13 @@ void BFS(Node start, Node goal, Graph graph, Agent *agent) {
 		path.push_back(*current.came_from);
 		current = *current.came_from;
 	}
+	//cout << neighbors.size() << endl;
 	for (int i = 0; i < path.size(); i++) {
 		reversed[i] = path[path.size() - 1];
 	}
 	for (int i = 0; i < reversed.size(); i++) {
-		agent->setTarget(reversed[i].coord);*/
+		p.points.push_back(path[i].coord);
 	}
+
+	return path;
 }
