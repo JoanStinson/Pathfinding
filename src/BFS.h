@@ -2,6 +2,7 @@
 #include "Graph.h"
 #include <queue>
 #include <list>
+using std::cout;
 
 Vector2D cell2pix(Vector2D cell)
 {
@@ -28,25 +29,33 @@ vector<Node> BFS(Node start, Node goal, Graph graph, Path p) {
 	Node next(0, 0);
 
 	bool found;
+	int auxSize = 0;
 
 	while (!frontier.empty()) {
 		current = frontier.front();
 		frontier.pop();
 		Node temp(current.coord);
-
+		//cout << current.coord.x << " " << current.coord.y << endl;
 		neighbors = graph.GetConnections(temp);
 		//cout << neighbors.size() << endl; // se pasen com a posicions de cel·les. nice
 
 		//if (current.coord == goal.coord)
 			//break;
 
-
+		cout << "Node start (" << current.coord.x << ", " << current.coord.y << ")" << endl;
 		for (int i = 0; i < neighbors.size(); i++) {
+			auxSize = 0;
 			next = neighbors[i];
+			cout << "	Node vei " <<  i << " (" << next.coord.x << ", " << next.coord.y << ")" << endl; //TODO no borrar els couts de moment si acas comentals poden ser utils :)
+			//cout << i << endl;
 			//cout << next.coord.x << ' ' << next.coord.y << endl;
-
 			//cout << current.coord.x << ' ' << current.coord.y << endl;
-			for (int j = 0; j < came_from.size(); j++) { // TODO solucionar aquest bucle
+
+			for (int j = 0; j < came_from.size(); j++) { //TODO solucionar aquest bucle
+				auxSize = j;
+				cout << "		Node " << j << " (" << came_from[j].first.coord.x << ", " << came_from[j].first.coord.y << ") comes from Node (" << came_from[j].second.coord.x << ", " << came_from[j].second.coord.y << ")" << endl;
+				/*cout << "Node first: " << came_from[j].first.coord.x << " " << came_from[j].first.coord.y << 
+					" Node second: " << came_from[j].second.coord.x << " " << came_from[j].second.coord.y << endl;*/
 				found = false;			// Si next, que és veí de current no està dins l'arrai de nodes explorats "came_from"
 										
 				if (came_from[j].first.coord == next.coord)
@@ -56,11 +65,10 @@ vector<Node> BFS(Node start, Node goal, Graph graph, Path p) {
 
 					frontier.push(next);
 					came_from.push_back(pair<Node, Node>(next, current));
-
 				}
 				
 			}
-			
+			cout << "		Came from " << auxSize << " node(s) from start" << endl;
 
 		}
 

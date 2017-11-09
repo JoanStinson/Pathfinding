@@ -41,7 +41,7 @@ ScenePathFinding::ScenePathFinding()
 		cout << "Conn " << i << ": " << "x: " << graph.allConnections[i].GetFromNode().coord.x << "y: " << graph.allConnections[i].GetFromNode().coord.y << " to: " << graph.allConnections[i].GetToNode().coord.x << ' ' << graph.allConnections[i].GetToNode().coord.y << endl;
 	}*/
 
-
+	//vector<Node> bfs = BFS(pix2cell(start.coord), pix2cell(coinPosition), graph, path);
 }
 
 ScenePathFinding::~ScenePathFinding()
@@ -159,7 +159,7 @@ void ScenePathFinding::draw()
 			SDL_RenderDrawLine(TheApp::Instance()->getRenderer(), (int)(path.points[i - 1].x), (int)(path.points[i - 1].y), (int)(path.points[i].x), (int)(path.points[i].y));
 	}
 
-	//draw_circle(TheApp::Instance()->getRenderer(), (int)currentTarget.x, (int)currentTarget.y, 15, 255, 0, 0, 255);
+	draw_circle(TheApp::Instance()->getRenderer(), (int)currentTarget.x, (int)currentTarget.y, 15, 255, 0, 0, 255);
 
 	//PINTAR CONNEXIONS
 
