@@ -1,6 +1,7 @@
 #include "ScenePathFinding.h"
 #include "Graph.h"
 #include "BFS.h"
+#include <iostream>
 using namespace std;
 
 Graph graph;
@@ -35,6 +36,7 @@ ScenePathFinding::ScenePathFinding()
 	// PathFollowing next Target
 	currentTarget = Vector2D(0, 0);
 	currentTargetIndex = -1;
+
 	//cout << graph.allConnections.size() << endl;
 
 	/*for (int i = 0; i < graph.allConnections.size(); i++) {
@@ -125,7 +127,9 @@ void ScenePathFinding::update(float dtime, SDL_Event *event)
 		agents[0]->update(Vector2D(0, 0), dtime, event);
 	}
 
-	vector<Node> bfs = BFS(pix2cell(start.coord), pix2cell(coinPosition), graph, path);
+	vector<Node> bfs = BFS(pix2cell(start.coord), coinPosition, graph, path);
+	/*cout << coinPosition.x << " " << coinPosition.y << endl;
+	cout << start.coord.x << " " << start.coord.y << endl;*/
 	//cout << bfs.size() << endl;
 	/*for (int i = 0; i < bfs.size(); i++) {
 		path.points.push_back(bfs[i].coord);
@@ -162,7 +166,6 @@ void ScenePathFinding::draw()
 	draw_circle(TheApp::Instance()->getRenderer(), (int)currentTarget.x, (int)currentTarget.y, 15, 255, 0, 0, 255);
 
 	//PINTAR CONNEXIONS
-
 	/*for (int i = 0; i < graph.allConnections.size(); i++) {
 		draw_circle(TheApp::Instance()->getRenderer(), 0, 0, 10, 250, 250, 250, 1);
 		SDL_RenderDrawLine(TheApp::Instance()->getRenderer(), graph.allConnections[i].GetFromNode().coord.x, graph.allConnections[i].GetFromNode().coord.y, graph.allConnections[i].GetToNode().coord.x, graph.allConnections[i].GetToNode().coord.y);

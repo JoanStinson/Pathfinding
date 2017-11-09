@@ -3,14 +3,10 @@
 
 class Node {
 public:
-	int info;
-	Vector2D coord;
-	//vector<Node*> neighbors;
-	Node *came_from;
 	Node() {
-
 	}
-	Node(float x, float y){
+
+	Node(float x, float y) {
 		coord.x = x;
 		coord.y = y;
 	}
@@ -19,6 +15,10 @@ public:
 		coord.x = v.x;
 		coord.y = v.y;
 	}
+
+	int info;
+	Vector2D coord;
+	Node *came_from;
 };
 
 
