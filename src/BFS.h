@@ -1,11 +1,7 @@
 #pragma once
-#include "Node.h"
-#include "Connection.h"
 #include "Graph.h"
 #include <queue>
 #include <list>
-#include <map>
-#include "Agent.h"
 
 Vector2D cell2pix(Vector2D cell)
 {
@@ -18,55 +14,67 @@ Vector2D pix2cell(Vector2D pix)
 	return Vector2D((float)((int)pix.x / CELL_SIZE), (float)((int)pix.y / CELL_SIZE));
 }
 
-vector<Node> BFS(Node start, Node goal, Graph graph, Path p) { 
+vector<Node> BFS(Node start, Node goal, Graph graph, Path p) {
 	// Inicialitzar la frontera amb el node de la posició inicial
 	queue <Node> frontier;
 	frontier.push(start);
 
-	//map <Node, bool> came_from;
-	//came_from.insert(pair<Node, bool>(start, true));
+	vector<pair<Node, Node>> came_from;
+	came_from.push_back(pair<Node, Node>(start, NULL));
 
 	vector <Node> neighbors, path, reversed;
-	
+
 	Node current(0, 0);
 	Node next(0, 0);
-	
+
 	bool found;
 
 	while (!frontier.empty()) {
 		current = frontier.front();
 		frontier.pop();
-		Node temp(current.coord); 
-		
-		neighbors = graph.GetConnections(Node(pix2cell(temp.coord))); //TODO aixo funciona WIIIIIIIIIIIIIIIIIIIIIIIIIIIII, però només si està plena
-		found = false;
+		Node temp(current.coord);
 
-		if (current.coord == goal.coord)
-			break;
+		neighbors = graph.GetConnections(temp);
+		//cout << neighbors.size() << endl; // se pasen com a posicions de cel·les. nice
 
-		for (int i = 0; i < neighbors.size() || found; i++) {
-			if (neighbors[i].coord == next.coord) {
-				frontier.push(next);
-				//came_from.insert(pair<Node, bool>(next, true));
-				next.came_from = &current;	
-				current = next;
-				found = true;
+		//if (current.coord == goal.coord)
+			//break;
 
+
+		for (int i = 0; i < neighbors.size(); i++) {
+			next = neighbors[i];
+			//cout << next.coord.x << ' ' << next.coord.y << endl;
+
+			//cout << current.coord.x << ' ' << current.coord.y << endl;
+			for (int j = 0; j < came_from.size(); j++) { // TODO solucionar aquest bucle
+				found = false;			// Si next, que és veí de current no està dins l'arrai de nodes explorats "came_from"
+										
+				if (came_from[j].first.coord == next.coord)
+					found = true;
+				
+				if (!found) { // Afagir next a la frontera i afagir a l arrai came_from juntament amb el node del que procedeix
+
+					frontier.push(next);
+					came_from.push_back(pair<Node, Node>(next, current));
+
+				}
+				
 			}
+			
+
 		}
-	}
 
-	while (current.coord != start.coord) {
-		path.push_back(*current.came_from);
-		current = *current.came_from;
-	}
-	//cout << neighbors.size() << endl;
-	for (int i = 0; i < path.size(); i++) {
-		reversed[i] = path[path.size() - 1];
-	}
-	for (int i = 0; i < reversed.size(); i++) {
-		p.points.push_back(path[i].coord);
-	}
 
-	return path;
+		
+
+		/*for (int i = 0; i < came_from.size(); i++) {
+			path.push_back(came_from[i].first);
+			cout << path[i].coord.x << ' ' << path[i].coord.y << endl;
+		}*/
+		//cout << path.size() << endl;
+		/*for (int i = 0; i < path.size(); i++) {
+			reversed[i] = path[path.size() - 1];
+		}*/
+		return path;
+	}
 }

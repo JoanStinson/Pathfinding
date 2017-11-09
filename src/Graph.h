@@ -22,6 +22,7 @@ public:
 
 	int v; // num connexions
 	vector<Connection> allConnections;
+	
 
 private:
 };

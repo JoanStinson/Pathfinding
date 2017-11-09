@@ -37,6 +37,11 @@ ScenePathFinding::ScenePathFinding()
 	currentTargetIndex = -1;
 	//cout << graph.allConnections.size() << endl;
 
+	/*for (int i = 0; i < graph.allConnections.size(); i++) {
+		cout << "Conn " << i << ": " << "x: " << graph.allConnections[i].GetFromNode().coord.x << "y: " << graph.allConnections[i].GetFromNode().coord.y << " to: " << graph.allConnections[i].GetToNode().coord.x << ' ' << graph.allConnections[i].GetToNode().coord.y << endl;
+	}*/
+
+
 }
 
 ScenePathFinding::~ScenePathFinding()
@@ -120,14 +125,12 @@ void ScenePathFinding::update(float dtime, SDL_Event *event)
 		agents[0]->update(Vector2D(0, 0), dtime, event);
 	}
 
-	//TODO Solucionar BFS perquè a l'hora de recorrer el BFS al update diu que allConnections està buit
-	vector<Node> bfs = BFS(start, Node(coinPosition.x, coinPosition.y), graph, path);
-	for (int i = 0; i < bfs.size(); i++) {
+	vector<Node> bfs = BFS(pix2cell(start.coord), pix2cell(coinPosition), graph, path);
+	//cout << bfs.size() << endl;
+	/*for (int i = 0; i < bfs.size(); i++) {
 		path.points.push_back(bfs[i].coord);
-	}
+	}*/
 
-	//TODO Comentar la següent linia despres de comprobar que podem imprimir allConnections (a PrintConnections faig pushbacks per aixo funciona)
-	//graph.PrintConnections();
 }
 
 void ScenePathFinding::draw()
@@ -156,7 +159,14 @@ void ScenePathFinding::draw()
 			SDL_RenderDrawLine(TheApp::Instance()->getRenderer(), (int)(path.points[i - 1].x), (int)(path.points[i - 1].y), (int)(path.points[i].x), (int)(path.points[i].y));
 	}
 
-	draw_circle(TheApp::Instance()->getRenderer(), (int)currentTarget.x, (int)currentTarget.y, 15, 255, 0, 0, 255);
+	//draw_circle(TheApp::Instance()->getRenderer(), (int)currentTarget.x, (int)currentTarget.y, 15, 255, 0, 0, 255);
+
+	//PINTAR CONNEXIONS
+
+	/*for (int i = 0; i < graph.allConnections.size(); i++) {
+		draw_circle(TheApp::Instance()->getRenderer(), 0, 0, 10, 250, 250, 250, 1);
+		SDL_RenderDrawLine(TheApp::Instance()->getRenderer(), graph.allConnections[i].GetFromNode().coord.x, graph.allConnections[i].GetFromNode().coord.y, graph.allConnections[i].GetToNode().coord.x, graph.allConnections[i].GetToNode().coord.y);
+	}*/
 
 	agents[0]->draw();
 }
@@ -299,63 +309,63 @@ void ScenePathFinding::initMaze()
 
 				if (j < num_cell_y - 1 && terrain[i][j + 1] != 0) {
 					//cout << i << ' ' << j << endl;
-					
-					Connection c( cell2pix(Vector2D(i, j)), cell2pix(Vector2D(i, j+1)), 1); //estam ficant terrain[i][j] dins les connexions, terrain[i][j] només guarden si una cel·la és transitable o no, és a dir, 1 o 0; wtf
+
+					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(i, j + 1))), 1); //estam ficant terrain[i][j] dins les connexions, terrain[i][j] només guarden si una cel·la és transitable o no, és a dir, 1 o 0; wtf
 					//cout << c.GetFromNode().coord.x << ' ' << c.GetToNode().coord.y << endl;
 					graph.AddConnection(c);
 					graph.v++;
 				}
 
-				if (i < num_cell_x - 1 && terrain[i + 1][j] != 0 ) {
-					Connection c(cell2pix(Vector2D(i, j)), terrain[i + 1][j], 1);
+				if (i < num_cell_x - 1 && terrain[i + 1][j] != 0) {
+					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(i + 1, j))), 1);
 					graph.AddConnection(c);
 					graph.v++;
 				}
 
-				if (j > 0 && terrain[i][j - 1] != 0 ) {
-					Connection c(cell2pix(Vector2D(i, j)), terrain[i][j - 1], 1);
+				if (j > 0 && terrain[i][j - 1] != 0) {
+					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(i, j - 1))), 1);
 					graph.AddConnection(c);
 					graph.v++;
 				}
 
-				if (i > 0 && terrain[i - 1][j] != 0 ) {
-					Connection c(cell2pix(Vector2D(i, j)), terrain[i - 1][j], 1);
+				if (i > 0 && terrain[i - 1][j] != 0) {
+					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(i - 1, j))), 1);
 					graph.AddConnection(c);
 					graph.v++;
 				}
 
 				if (i == 10 && j == 0) {
-					Connection c(cell2pix(Vector2D(i, j)), cell2pix(Vector2D(10,39)), 1);
+					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(10, 39))), 1);
 					graph.AddConnection(c);
 					graph.v++;
 				}
 
 				if (i == 10 && j == 39) {
-					Connection c(cell2pix(Vector2D(i, j)), cell2pix(Vector2D(10, 0)), 1);
+					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(10, 0))), 1);
 					graph.AddConnection(c);
 					graph.v++;
 				}
 
 				if (i == 11 && j == 0) {
-					Connection c(cell2pix(Vector2D(i, j)), cell2pix(Vector2D(11, 39)), 1);
+					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(11, 39))), 1);
 					graph.AddConnection(c);
 					graph.v++;
 				}
 
 				if (i == 11 && j == 39) {
-					Connection c(cell2pix(Vector2D(i, j)), cell2pix(Vector2D(11, 0)), 1);
+					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(11, 0))), 1);
 					graph.AddConnection(c);
 					graph.v++;
 				}
 
 				if (i == 12 && j == 0) {
-					Connection c(cell2pix(Vector2D(i, j)), cell2pix(Vector2D(12, 39)), 1);
+					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(12, 39))), 1);
 					graph.AddConnection(c);
 					graph.v++;
 				}
 
 				if (i == 12 && j == 39) {
-					Connection c(cell2pix(Vector2D(i, j)), cell2pix(Vector2D(12, 0)), 1);
+					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(12, 0))), 1);
 					graph.AddConnection(c);
 					graph.v++;
 				}
