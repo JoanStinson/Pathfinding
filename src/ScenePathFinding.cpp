@@ -6,6 +6,7 @@ using namespace std;
 
 Graph graph;
 Node start, end;
+vector<Node> bfs;
 
 ScenePathFinding::ScenePathFinding()
 {
@@ -43,8 +44,10 @@ ScenePathFinding::ScenePathFinding()
 		cout << "Conn " << i << ": " << "x: " << graph.allConnections[i].GetFromNode().coord.x << "y: " << graph.allConnections[i].GetFromNode().coord.y << " to: " << graph.allConnections[i].GetToNode().coord.x << ' ' << graph.allConnections[i].GetToNode().coord.y << endl;
 	}*/
 
-	vector<Node> bfs = BFS(pix2cell(start.coord), coinPosition, graph, path);
-
+	bfs = BFS(pix2cell(start.coord), coinPosition, graph, path);
+	for (int i = 0; i < bfs.size(); i++) {
+		path.points.push_back(cell2pix(bfs[i].coord));
+	}
 	//vector<Node> bfs = BFS(pix2cell(start.coord), pix2cell(coinPosition), graph, path);
 }
 
@@ -128,6 +131,9 @@ void ScenePathFinding::update(float dtime, SDL_Event *event)
 	{
 		agents[0]->update(Vector2D(0, 0), dtime, event);
 	}
+
+
+	
 
 	/*cout << coinPosition.x << " " << coinPosition.y << endl;
 	cout << start.coord.x << " " << start.coord.y << endl;*/
