@@ -43,6 +43,8 @@ ScenePathFinding::ScenePathFinding()
 		cout << "Conn " << i << ": " << "x: " << graph.allConnections[i].GetFromNode().coord.x << "y: " << graph.allConnections[i].GetFromNode().coord.y << " to: " << graph.allConnections[i].GetToNode().coord.x << ' ' << graph.allConnections[i].GetToNode().coord.y << endl;
 	}*/
 
+	vector<Node> bfs = BFS(pix2cell(start.coord), coinPosition, graph, path);
+
 	//vector<Node> bfs = BFS(pix2cell(start.coord), pix2cell(coinPosition), graph, path);
 }
 
@@ -127,7 +129,6 @@ void ScenePathFinding::update(float dtime, SDL_Event *event)
 		agents[0]->update(Vector2D(0, 0), dtime, event);
 	}
 
-	vector<Node> bfs = BFS(pix2cell(start.coord), coinPosition, graph, path);
 	/*cout << coinPosition.x << " " << coinPosition.y << endl;
 	cout << start.coord.x << " " << start.coord.y << endl;*/
 	//cout << bfs.size() << endl;
