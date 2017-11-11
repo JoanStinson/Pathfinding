@@ -39,7 +39,7 @@ ScenePathFinding::ScenePathFinding()
 	currentTargetIndex = -1;
 
 	//BFS
-	bfs = BFS(pix2cell(start.coord), coinPosition, graph, path);
+	bfs = BFS(pix2cell(start.coord), coinPosition, graph);
 	for (int i = 0; i < bfs.size(); i++) {
 		path.points.push_back(cell2pix(bfs[i]));
 	}

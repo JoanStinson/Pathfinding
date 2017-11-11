@@ -27,7 +27,7 @@ bool ContainsValue(Vector2D key, map<Vector2D, Vector2D> internalMap)
 	return found;
 }
 
-vector<Vector2D> BFS(Vector2D start, Vector2D goal, Graph graph, Path p) {
+vector<Vector2D> BFS(Vector2D start, Vector2D goal, Graph graph) {
 	queue<Vector2D> frontier;
 	frontier.push(start);
 
@@ -37,42 +37,42 @@ vector<Vector2D> BFS(Vector2D start, Vector2D goal, Graph graph, Path p) {
 
 	vector<Vector2D> neighbors;
 	Vector2D current(0, 0), next(0, 0);
-
+	bool explored;
 	while (!frontier.empty()) {
 
 		current = frontier.front();
-		frontier.pop();
 
 		if (current == goal) break; // early exit
 
 		neighbors = graph.GetConnections(current);
+		//cout << "Current: "<< current.x << ' ' << current.y << endl;
 
 		for (int i = 0; i < neighbors.size(); i++) {
 			next = neighbors[i];
-			//cout << "Vector next: (" << next.x << ", " << next.y << ")" << endl;
-			
-			// If next not in came_from
-			if (!(ContainsValue(next, came_from))) {
-				cout << "push" << endl;
-				frontier.push(next);
-				came_from[next] = current;
+			explored = false;
+			for (int j = 0; j < came_from.size(); j++) {
+				if (!ContainsValue(next, came_from))
+					explored = true;
 			}
-			else cout << "caca" << endl;
+			if (!explored) {
+				came_from[next] = current;
+				frontier.push(next);
+			}
+
 		}
 
-	}
-
-	vector<Vector2D> path;
-	current = goal;
-	path.push_back(current);
-
-	for (int i = came_from.size()-1; i > 0; --i) {
-		if (current == start) break;
-		current = came_from[current];
+		vector<Vector2D> path;
+		current = goal;
 		path.push_back(current);
-	}
-	path.push_back(start);
+
+		for (int i = came_from.size() - 1; i > 0; --i) {
+			if (current == start) break;
+			current = came_from[current];
+			path.push_back(current);
+		}
+		path.push_back(start);
 	std:reverse(path.begin(), path.end());
 
-	return path;
+		return path;
+	}
 }
