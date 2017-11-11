@@ -6,7 +6,7 @@ using namespace std;
 
 Graph graph;
 Node start, end;
-vector<Node> bfs;
+vector<Vector2D> bfs;
 
 ScenePathFinding::ScenePathFinding()
 {
@@ -38,17 +38,12 @@ ScenePathFinding::ScenePathFinding()
 	currentTarget = Vector2D(0, 0);
 	currentTargetIndex = -1;
 
-	//cout << graph.allConnections.size() << endl;
-
-	/*for (int i = 0; i < graph.allConnections.size(); i++) {
-		cout << "Conn " << i << ": " << "x: " << graph.allConnections[i].GetFromNode().coord.x << "y: " << graph.allConnections[i].GetFromNode().coord.y << " to: " << graph.allConnections[i].GetToNode().coord.x << ' ' << graph.allConnections[i].GetToNode().coord.y << endl;
-	}*/
-
+	//BFS
 	bfs = BFS(pix2cell(start.coord), coinPosition, graph, path);
 	for (int i = 0; i < bfs.size(); i++) {
-		path.points.push_back(cell2pix(bfs[i].coord));
+		path.points.push_back(cell2pix(bfs[i]));
 	}
-	//vector<Node> bfs = BFS(pix2cell(start.coord), pix2cell(coinPosition), graph, path);
+
 }
 
 ScenePathFinding::~ScenePathFinding()
@@ -132,16 +127,6 @@ void ScenePathFinding::update(float dtime, SDL_Event *event)
 		agents[0]->update(Vector2D(0, 0), dtime, event);
 	}
 
-
-	
-
-	/*cout << coinPosition.x << " " << coinPosition.y << endl;
-	cout << start.coord.x << " " << start.coord.y << endl;*/
-	//cout << bfs.size() << endl;
-	/*for (int i = 0; i < bfs.size(); i++) {
-		path.points.push_back(bfs[i].coord);
-	}*/
-
 }
 
 void ScenePathFinding::draw()
@@ -174,8 +159,8 @@ void ScenePathFinding::draw()
 
 	//PINTAR CONNEXIONS
 	/*for (int i = 0; i < graph.allConnections.size(); i++) {
-		draw_circle(TheApp::Instance()->getRenderer(), 0, 0, 10, 250, 250, 250, 1);
-		SDL_RenderDrawLine(TheApp::Instance()->getRenderer(), graph.allConnections[i].GetFromNode().coord.x, graph.allConnections[i].GetFromNode().coord.y, graph.allConnections[i].GetToNode().coord.x, graph.allConnections[i].GetToNode().coord.y);
+	draw_circle(TheApp::Instance()->getRenderer(), 0, 0, 10, 250, 250, 250, 1);
+	SDL_RenderDrawLine(TheApp::Instance()->getRenderer(), graph.allConnections[i].GetFromNode().coord.x, graph.allConnections[i].GetFromNode().coord.y, graph.allConnections[i].GetToNode().coord.x, graph.allConnections[i].GetToNode().coord.y);
 	}*/
 
 	agents[0]->draw();
@@ -321,7 +306,7 @@ void ScenePathFinding::initMaze()
 					//cout << i << ' ' << j << endl;
 
 					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(i, j + 1))), 1); //estam ficant terrain[i][j] dins les connexions, terrain[i][j] només guarden si una cel·la és transitable o no, és a dir, 1 o 0; wtf
-					//cout << c.GetFromNode().coord.x << ' ' << c.GetToNode().coord.y << endl;
+																												 //cout << c.GetFromNode().coord.x << ' ' << c.GetToNode().coord.y << endl;
 					graph.AddConnection(c);
 					graph.v++;
 				}

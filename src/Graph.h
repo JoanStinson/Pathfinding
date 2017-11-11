@@ -15,8 +15,8 @@ public:
 	void AddConnection(Connection c);
 
 	// Returns a list of connections outgoing from the given node
-	vector<Node> GetConnections(Node a);
-	
+	vector<Vector2D> GetConnections(Vector2D a);
+
 	int v; // num connexions
 	vector<Connection> allConnections;
 };

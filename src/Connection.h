@@ -6,7 +6,7 @@ public:
 	Connection();
 	Connection(Vector2D f, Vector2D t, float c);
 	~Connection();
-	
+
 	// Returns the non-negative cost of the connection
 	float GetCost();
 
