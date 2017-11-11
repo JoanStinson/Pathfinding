@@ -8,6 +8,7 @@
 #pragma once
 
 #include <math.h>
+#include <tuple> 
 
 #ifndef M_PI	
 #define M_PI	3.14159265358979323846   // pi
@@ -83,7 +84,20 @@ struct Vector2D
 	{
 		return !operator==(rhs);
 	}
-	
+	inline bool operator<(const Vector2D& rhs) const 
+	{
+		return std::tie(rhs.x, rhs.y) < std::tie(rhs.x, rhs.y);
+	}
+	/*inline bool operator>=(const Vector2D& rhs) { 
+		return !(L < R); 
+	}
+	inline bool operator> (const Vector2D& rhs) { 
+		return   R < L; 
+	}
+	inline bool operator<=(const Vector2D& rhs) { 
+		return !(R < L); 
+	}*/
+
 	inline Vector2D Normalize()
 	{
 		float l = Length();
