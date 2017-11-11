@@ -20,9 +20,3 @@ public:
 	Vector2D coord;
 	Node *came_from;
 };
-
-
-
-
-
-

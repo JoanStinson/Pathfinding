@@ -5,9 +5,14 @@
 #include <SDL_image.h>
 #include "SDL_SimpleApp.h"
 #include "Vector2D.h"
+#include "Path.h"
 #include "utils.h"
 #include "SteeringBehavior.h"
-
+#include "Graph.h"
+#include <algorithm>
+#include <queue>
+#include <map>
+using namespace std;
 
 class Agent
 {
@@ -35,6 +40,10 @@ private:
 public:
 	Agent();
 	~Agent();
+
+	// Pathfinding Algorithms
+	vector<Vector2D> BFS(Vector2D start, Vector2D finish, Graph graph);
+
 	SteeringBehavior *Behavior();
 	Vector2D getPosition();
 	Vector2D getTarget();

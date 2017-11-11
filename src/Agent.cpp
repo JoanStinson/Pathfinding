@@ -1,7 +1,5 @@
 #include "Agent.h"
 
-using namespace std;
-
 Agent::Agent() : sprite_texture(0),
                  position(Vector2D(100, 100)),
 	             target(Vector2D(1000, 100)),
@@ -25,6 +23,76 @@ Agent::~Agent()
 		SDL_DestroyTexture(sprite_texture);
 	if (steering_behavior)
 		delete (steering_behavior);
+}
+
+vector<Vector2D> Agent::BFS(Vector2D start, Vector2D goal, Graph graph) {
+	// Creem la frontera on emmagetzarem tots els nodes que visitem 
+	// i la inicialitzem amb la posició del player = start
+	queue<Vector2D> frontier;
+	frontier.push(start);
+
+	// Creem l'estructura came_from la qual determina el node anterior del que proveniem per traçar el camí 
+	// i com la posició del player = start no provenia de res = NULL ja que aquesta és la posició inicial
+	map<Vector2D, Vector2D> came_from;
+	came_from[start] = NULL;
+
+	vector<Vector2D> path, neighbors;
+	Vector2D current, next;
+	bool visited;
+
+	// Mentre la frontera no estigui buida, és a dir, mentre faltin nodes per explorar
+	while (!frontier.empty()) {
+
+		// El node actual del qual visitarem els veins es el primer node que hem afegit o el node més antic
+		// i fem pop ja que en l'iteració anterior ja hem fet servir aquest node
+		current = frontier.front();
+		frontier.pop();
+
+		// Si el node actual és el node goal, és a dir, el node de la moneda
+		// suem del algoritme i ens decidim a retornar el camí per arribar-hi
+		if (current == goal) {
+			// Fem push_back del current el qual = node final o goal 
+			// (perquè volem traçar el camí desde el final al principi)
+			path.push_back(current);
+			// Mentre no agafem el node incial
+			while (current != start) {
+				// Anem afegint els nodes que hem visitat abans del node final
+				current = came_from[current];
+				path.push_back(current);
+			}
+			// Com que no hem agafat el node incial ja que la condició no ens ho permetia 
+			// (perquè abans del start no hi ha més nodes) li fem un push del start
+			path.push_back(start);
+			// I com hem traçat el camí del final al principi fem un reverse
+			// perquè el personatge comenci del node inicial i vagi fins el node final
+			std::reverse(path.begin(), path.end());
+			// Per tant, retornem el camí
+			return path;
+		}
+
+		// En cas que no haguem trobat el node final, agafem els veins de 0-4 del current
+		neighbors = graph.GetConnections(current);
+
+		// Iterem sobre aquest i anem agafant-los un a un
+		for (int i = 0; i < neighbors.size(); i++) {
+			visited = false;
+			next = neighbors[i];
+
+			// Per cadascun determinem si l'hem visitat o no
+			for (int j = 0; j < came_from.size(); j++) {
+				if (came_from.find(next) != came_from.end()) {
+					visited = true;
+				}
+			}
+			// Si no l'hem visitat l'afegim a la frontier
+			// i agafem el node current per traçar el camí 
+			// (ja que no podem traçar un camí a base de veïns)
+			if (!visited) {
+				came_from[next] = current;
+				frontier.push(next);
+			}
+		}
+	}
 }
 
 SteeringBehavior * Agent::Behavior()
@@ -156,3 +224,4 @@ bool Agent::loadSpriteTexture(char* filename, int _num_frames)
 
 	return true;
 }
+

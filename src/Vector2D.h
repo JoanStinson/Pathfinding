@@ -1,10 +1,3 @@
-/* ========================================================================
-   File: Vector2D.h
-   Revision: 0.1
-   Creator: David Collado Ochoa
-   Notice: (C) Copyright 2016 by David Collado Ochoa. All Rights Reserved.
-   ======================================================================== */
-
 #pragma once
 
 #include <math.h>
@@ -25,78 +18,79 @@ struct Vector2D
 	Vector2D(float valueX = 0.0f, float valueY = 0.0f): x{valueX}, y{valueY}
 	{}
 	
-	inline float Length() const
-	{
+	inline float Length() const {
 		return (float)sqrt(x * x + y * y);
 	}
 
-	inline float LengthSquared() const
-	{
+	inline float LengthSquared() const {
 		return x * x + y * y;
 	}
-	
-	inline Vector2D operator+(const Vector2D& v)
-	{
+
+	// Operators Overloaded
+	inline Vector2D operator()(const Vector2D& v) {
+		return v.x + v.y;
+	}
+
+	inline Vector2D operator+(const Vector2D& v){
 		return Vector2D(x + v.x, y + v.y);
 	}
-	inline void operator+=(const Vector2D& v2)
-	{
+
+	inline void operator+=(const Vector2D& v2) {
 		x += v2.x;
 		y += v2.y;
 	}
 	
-	inline Vector2D operator-(const Vector2D& v)
-	{
+	inline Vector2D operator-(const Vector2D& v) {
 		return Vector2D(x - v.x, y - v.y);
 	}
-	inline void operator-=(const Vector2D& v)
-	{
+
+	inline void operator-=(const Vector2D& v) {
 		x -= v.x;
 		y -= v.y;
 	}
 	
-	inline Vector2D operator*(float scalar)
-	{
+	inline Vector2D operator*(float scalar) {
 		return Vector2D(x * scalar, y * scalar);
 	}
-	inline void operator*=(float scalar)
-	{
+
+	inline void operator*=(float scalar) {
 		x *= scalar;
 		y *= scalar;
 	}
 	
-	inline Vector2D operator/(float scalar)
-	{
+	inline Vector2D operator/(float scalar) {
 		return Vector2D(x / scalar, y / scalar);
 	}
-	inline void operator/=(float scalar)
-	{
+
+	inline void operator/=(float scalar) {
 		x /= scalar;
 		y /= scalar;
 	}
 
-	inline bool operator==(const Vector2D& rhs) const
-	{
+	inline bool operator==(const Vector2D& rhs) const {
 		return (x == rhs.x)
 			&& (y == rhs.y);
 	}
-	inline bool operator!=(const Vector2D& rhs) const
-	{
+
+	inline bool operator!=(const Vector2D& rhs) const {
 		return !operator==(rhs);
 	}
-	inline bool operator<(const Vector2D& rhs) const 
-	{
-		return std::tie(rhs.x, rhs.y) < std::tie(rhs.x, rhs.y);
+	// Needed operators to deal with maps :)
+	inline bool operator<(const Vector2D& rhs) const {
+		return std::tie(x, y) < std::tie(rhs.x, rhs.y);
 	}
-	/*inline bool operator>=(const Vector2D& rhs) { 
-		return !(L < R); 
+
+	inline bool operator<=(const Vector2D& rhs) const {
+		return !(std::tie(x, y) <  std::tie(rhs.x, rhs.y));
 	}
-	inline bool operator> (const Vector2D& rhs) { 
-		return   R < L; 
+
+	inline bool operator>(const Vector2D& rhs) const {
+		return std::tie(x, y) <  std::tie(rhs.x, rhs.y);
 	}
-	inline bool operator<=(const Vector2D& rhs) { 
-		return !(R < L); 
-	}*/
+
+	inline bool operator>=(const Vector2D& rhs) const {
+		return !(std::tie(x, y) <  std::tie(rhs.x, rhs.y));
+	}
 
 	inline Vector2D Normalize()
 	{

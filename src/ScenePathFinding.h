@@ -1,9 +1,12 @@
 #pragma once
-#include <vector>
-#include <time.h>
 #include "Scene.h"
 #include "Agent.h"
 #include "Path.h"
+#include "Graph.h"
+#include <iostream>
+#include <vector>
+#include <time.h>
+using namespace std;
 
 class ScenePathFinding :
 	public Scene
@@ -34,5 +37,7 @@ private:
 	Vector2D cell2pix(Vector2D cell);
 	Vector2D pix2cell(Vector2D pix);
 	bool isValidCell(Vector2D cell);
-
+	Graph graph;
+	Node start, end;
+	vector<Vector2D> bfs;
 };
