@@ -33,7 +33,7 @@ vector<Vector2D> Agent::BFS(Vector2D start, Vector2D goal, Graph graph) {
 
 	// Creem l'estructura came_from la qual determina el node anterior del que proveniem per traçar el camí 
 	// i com la posició del player = start no provenia de res = NULL ja que aquesta és la posició inicial
-	map<Vector2D, Vector2D> came_from;
+	unordered_map<Vector2D, Vector2D> came_from;
 	came_from[start] = NULL;
 
 	vector<Vector2D> path, neighbors;
@@ -49,7 +49,7 @@ vector<Vector2D> Agent::BFS(Vector2D start, Vector2D goal, Graph graph) {
 		frontier.pop();
 
 		// Si el node actual és el node goal, és a dir, el node de la moneda
-		// suem del algoritme i ens decidim a retornar el camí per arribar-hi
+		// suem del algoritme i ens decidim a retornar el camí per arribar-hi (early exit)
 		if (current == goal) {
 			// Fem push_back del current el qual = node final o goal 
 			// (perquè volem traçar el camí desde el final al principi)
@@ -66,7 +66,7 @@ vector<Vector2D> Agent::BFS(Vector2D start, Vector2D goal, Graph graph) {
 			// I com hem traçat el camí del final al principi fem un reverse
 			// perquè el personatge comenci del node inicial i vagi fins el node final
 			std::reverse(path.begin(), path.end());
-			// Per tant, retornem el camí
+			// Per tant, retornem el camí, seria molt semblant a fer break
 			return path;
 		}
 
@@ -80,7 +80,7 @@ vector<Vector2D> Agent::BFS(Vector2D start, Vector2D goal, Graph graph) {
 
 			// Per cadascun determinem si l'hem visitat o no
 			for (int j = 0; j < came_from.size(); j++) {
-				if (came_from.find(next) != came_from.end()) {
+				if (came_from.find(next) != came_from.end()) { // 'if (came_from.count(next))' és el mateix per mirar si existeix la key next, però al ser unordered es + lent
 					visited = true;
 				}
 			}

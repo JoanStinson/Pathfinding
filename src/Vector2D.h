@@ -2,6 +2,7 @@
 
 #include <math.h>
 #include <tuple> 
+#include <functional>
 
 #ifndef M_PI	
 #define M_PI	3.14159265358979323846   // pi
@@ -10,11 +11,12 @@
 #define RAD2DEG (180.0f / (float)M_PI)
 #define DEG2RAD ((float)M_PI / 180.0f)
 
-struct Vector2D
+class Vector2D
 {
+public:
 	float x = 0.0f;
 	float y = 0.0f;
-	
+
 	Vector2D(float valueX = 0.0f, float valueY = 0.0f): x{valueX}, y{valueY}
 	{}
 	
@@ -30,7 +32,6 @@ struct Vector2D
 	inline Vector2D operator()(const Vector2D& v) {
 		return v.x + v.y;
 	}
-
 	inline Vector2D operator+(const Vector2D& v){
 		return Vector2D(x + v.x, y + v.y);
 	}
@@ -149,6 +150,7 @@ struct Vector2D
 		Vector2D v = start - end;
 		return v.LengthSquared();
 	}
+
 };
 
 namespace Vector2DUtils
@@ -298,4 +300,14 @@ namespace Vector2DUtils
 			return true;
 		return false;
 	}
+}
+
+// Necessary to use unordered_maps
+namespace std {
+	template<>
+	struct hash<Vector2D> {
+		size_t operator()(const Vector2D& v) const {
+			return std::hash<float>()(v.Length());
+		}
+	};
 }
