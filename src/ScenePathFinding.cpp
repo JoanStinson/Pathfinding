@@ -31,7 +31,13 @@ ScenePathFinding::ScenePathFinding() {
 	currentTargetIndex = -1;
 
 	/**********************Breadth First Search*********************/
-	bfs = agents[0]->BFS(pix2cell(start.coord), coinPosition, graph);
+	/*bfs = agents[0]->BFS(pix2cell(start.coord), coinPosition, graph);
+	for (int i = 0; i < bfs.size(); i++) {
+		path.points.push_back(cell2pix(bfs[i]));
+	}*/
+
+	/**********************Dijkstra*********************/
+	bfs = agents[0]->Dijkstra(pix2cell(start.coord), coinPosition, graph);
 	for (int i = 0; i < bfs.size(); i++) {
 		path.points.push_back(cell2pix(bfs[i]));
 	}
@@ -92,7 +98,14 @@ void ScenePathFinding::update(float dtime, SDL_Event *event) {
 						start = Node(agents[0]->getPosition());
 						path.points.clear();
 
-						bfs = agents[0]->BFS(pix2cell(start.coord), coinPosition, graph);
+						/**********************Breadth First Search*********************/
+						/*bfs = agents[0]->BFS(pix2cell(start.coord), coinPosition, graph);
+						for (int i = 0; i < bfs.size(); i++) {
+							path.points.push_back(cell2pix(bfs[i]));
+						}*/
+
+						/**********************Dijkstra*********************/
+						bfs = agents[0]->Dijkstra(pix2cell(start.coord), coinPosition, graph);
 						for (int i = 0; i < bfs.size(); i++) {
 							path.points.push_back(cell2pix(bfs[i]));
 						}

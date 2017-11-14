@@ -12,6 +12,8 @@
 #include <algorithm>
 #include <queue>
 #include <unordered_map>
+#include <stdlib.h>     /* srand, rand */
+#include <time.h>       /* time */
 using namespace std;
 
 class Agent
@@ -42,7 +44,8 @@ public:
 	~Agent();
 
 	// Pathfinding Algorithms
-	vector<Vector2D> BFS(Vector2D start, Vector2D finish, Graph graph);
+	vector<Vector2D> BFS(Vector2D start, Vector2D goal, Graph graph);
+	vector<Vector2D> Dijkstra(Vector2D start, Vector2D goal, Graph graph);
 
 	SteeringBehavior *Behavior();
 	Vector2D getPosition();
