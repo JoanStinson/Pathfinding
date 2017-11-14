@@ -79,14 +79,23 @@ void ScenePathFinding::update(float dtime, SDL_Event *event) {
 		if (dist < path.ARRIVAL_DISTANCE) {
 			if (currentTargetIndex == path.points.size() - 1) {
 				if (dist < 3) {
-					path.points.clear();
 					currentTargetIndex = -1;
 					agents[0]->setVelocity(Vector2D(0, 0));
 					// if we have arrived to the coin, replace it ina random cell!
 					if (pix2cell(agents[0]->getPosition()) == coinPosition) {
+
 						coinPosition = Vector2D(-1, -1);
+
 						while ((!isValidCell(coinPosition)) || (Vector2D::Distance(coinPosition, pix2cell(agents[0]->getPosition())) < 3))
 							coinPosition = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
+						agents[0]->setPosition(path.points.back());
+						start = Node(agents[0]->getPosition());
+						path.points.clear();
+
+						bfs = agents[0]->BFS(pix2cell(start.coord), coinPosition, graph);
+						for (int i = 0; i < bfs.size(); i++) {
+							path.points.push_back(cell2pix(bfs[i]));
+						}
 					}
 				}
 				else {
