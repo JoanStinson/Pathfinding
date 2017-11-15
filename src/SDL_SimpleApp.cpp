@@ -4,17 +4,14 @@ using namespace std;
 
 SDL_SimpleApp * SDL_SimpleApp::s_pInstance = 0;
 
-SDL_SimpleApp * SDL_SimpleApp::Instance()
-{
-	if (s_pInstance == 0)
-	{
+SDL_SimpleApp * SDL_SimpleApp::Instance() {
+	if (s_pInstance == 0) {
 		s_pInstance = new SDL_SimpleApp();
 	}
 	return s_pInstance;
 }
 
-SDL_SimpleApp::SDL_SimpleApp()
-{
+SDL_SimpleApp::SDL_SimpleApp() {
 	win_fullscreen = false;
 	win_width = SRC_WIDTH;
 	win_height = SRC_HEIGHT;
@@ -43,24 +40,21 @@ SDL_SimpleApp::SDL_SimpleApp()
 
 }
 
-SDL_SimpleApp::~SDL_SimpleApp()
-{
+SDL_SimpleApp::~SDL_SimpleApp() {
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	IMG_Quit();
 	SDL_Quit();
 }
 
-SDL_Event SDL_SimpleApp::run(Scene *scene)
-{
+SDL_Event SDL_SimpleApp::run(Scene *scene) {
 
 	SDL_Event event;
 	SDL_PollEvent(&event);
 
-	switch (event.type)
-	{
-	case SDL_QUIT:
-		return event;
+	switch (event.type) {
+		case SDL_QUIT:
+			return event;
 	}
 
 
@@ -74,28 +68,23 @@ SDL_Event SDL_SimpleApp::run(Scene *scene)
 	return event;
 }
 
-Vector2D SDL_SimpleApp::getWinSize()
-{
+Vector2D SDL_SimpleApp::getWinSize() {
 	return Vector2D((float)win_width, (float)win_height);
 }
 
-Vector2D SDL_SimpleApp::getGridCellSize()
-{
+Vector2D SDL_SimpleApp::getGridCellSize() {
 	return Vector2D((float)grid_cell_size, (float)grid_cell_size);
 }
 
-void SDL_SimpleApp::setWindowTitle(const char *title)
-{
+void SDL_SimpleApp::setWindowTitle(const char *title) {
 	SDL_SetWindowTitle(window, title);
 }
 
-void SDL_SimpleApp::setFullScreen()
-{
+void SDL_SimpleApp::setFullScreen() {
 	win_fullscreen = !win_fullscreen;
 	if (win_fullscreen)
 		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
-	else
-	{
+	else {
 		SDL_SetWindowFullscreen(window, 0);
 		SDL_SetWindowDisplayMode(window, NULL);
 	}

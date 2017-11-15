@@ -8,10 +8,10 @@
 #include <time.h>
 using namespace std;
 
-class ScenePathFinding : public Scene {
+class SceneAStar : public Scene {
 public:
-	ScenePathFinding();
-	~ScenePathFinding();
+	SceneAStar();
+	~SceneAStar();
 	void update(float dtime, SDL_Event *event);
 	void draw();
 	const char* getTitle();
@@ -36,4 +36,7 @@ private:
 	Vector2D cell2pix(Vector2D cell);
 	Vector2D pix2cell(Vector2D pix);
 	bool isValidCell(Vector2D cell);
+	Graph graph;
+	Node start, end;
+	vector<Vector2D> astar;
 };

@@ -3,7 +3,6 @@
 #include "Connection.h"
 #include "Vector2D.h"
 #include <vector>
-#include <list>
 using namespace std;
 
 class Graph {
@@ -17,6 +16,10 @@ public:
 	// Returns a list of connections outgoing from the given node
 	vector<Vector2D> GetConnections(Vector2D a);
 
-	int v; // num connexions
+	// Number of connexions
+	int v; 
+
+private:
+	// Data structure that contains all connections of the graph
 	vector<Connection> allConnections;
 };

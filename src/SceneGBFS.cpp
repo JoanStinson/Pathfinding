@@ -1,6 +1,6 @@
-#include "ScenePathFinding.h"
+#include "SceneGBFS.h"
 
-ScenePathFinding::ScenePathFinding() {
+SceneGBFS::SceneGBFS() {
 	draw_grid = false;
 
 	num_cell_x = SRC_WIDTH / CELL_SIZE;
@@ -19,6 +19,7 @@ ScenePathFinding::ScenePathFinding() {
 	while (!isValidCell(rand_cell))
 		rand_cell = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
 	agents[0]->setPosition(cell2pix(rand_cell));
+	start = Node(agents[0]->getPosition().x, agents[0]->getPosition().y);
 
 	// Set the coin in a random cell (but at least 3 cells far from the agent)
 	coinPosition = Vector2D(-1, -1);
@@ -28,9 +29,15 @@ ScenePathFinding::ScenePathFinding() {
 	// PathFollowing next Target
 	currentTarget = Vector2D(0, 0);
 	currentTargetIndex = -1;
+
+	// Greedy Breadth First Search
+	gbfs = agents[0]->GBFS(pix2cell(start.coord), coinPosition, graph);
+	for (int i = 0; i < gbfs.size(); i++) {
+		path.points.push_back(cell2pix(gbfs[i]));
+	}
 }
 
-ScenePathFinding::~ScenePathFinding() {
+SceneGBFS::~SceneGBFS() {
 	if (background_texture)
 		SDL_DestroyTexture(background_texture);
 	if (coin_texture)
@@ -41,25 +48,12 @@ ScenePathFinding::~ScenePathFinding() {
 	}
 }
 
-void ScenePathFinding::update(float dtime, SDL_Event *event) {
+void SceneGBFS::update(float dtime, SDL_Event *event) {
 	/* Keyboard & Mouse events */
 	switch (event->type) {
 	case SDL_KEYDOWN:
 		if (event->key.keysym.scancode == SDL_SCANCODE_SPACE)
 			draw_grid = !draw_grid;
-		break;
-	case SDL_MOUSEMOTION:
-	case SDL_MOUSEBUTTONDOWN:
-		if (event->button.button == SDL_BUTTON_LEFT) {
-			Vector2D cell = pix2cell(Vector2D((float)(event->button.x), (float)(event->button.y)));
-			if (isValidCell(cell)) {
-				if (path.points.size() > 0)
-					if (path.points[path.points.size() - 1] == cell2pix(cell))
-						break;
-
-				path.points.push_back(cell2pix(cell));
-			}
-		}
 		break;
 	default:
 		break;
@@ -82,7 +76,14 @@ void ScenePathFinding::update(float dtime, SDL_Event *event) {
 						while ((!isValidCell(coinPosition)) || (Vector2D::Distance(coinPosition, pix2cell(agents[0]->getPosition())) < 3))
 							coinPosition = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
 						agents[0]->setPosition(path.points.back());
+						start = Node(agents[0]->getPosition());
 						path.points.clear();
+
+						// Greedy Breadth First Search
+						gbfs = agents[0]->GBFS(pix2cell(start.coord), coinPosition, graph);
+						for (int i = 0; i < gbfs.size(); i++) {
+							path.points.push_back(cell2pix(gbfs[i]));
+						}
 					}
 				}
 				else {
@@ -104,7 +105,7 @@ void ScenePathFinding::update(float dtime, SDL_Event *event) {
 
 }
 
-void ScenePathFinding::draw() {
+void SceneGBFS::draw() {
 	drawMaze();
 	drawCoin();
 
@@ -128,28 +129,28 @@ void ScenePathFinding::draw() {
 	agents[0]->draw();
 }
 
-const char* ScenePathFinding::getTitle() {
-	return "SDL Pathfinding Algorithms :: Default Scene";
+const char* SceneGBFS::getTitle() {
+	return "SDL Pathfinding Algorithms :: Greedy Breadth First Search";
 }
 
-void ScenePathFinding::drawMaze() {
+void SceneGBFS::drawMaze() {
 	if (draw_grid) {
 		SDL_SetRenderDrawColor(TheApp::Instance()->getRenderer(), 0, 0, 255, 255);
 		for (unsigned int i = 0; i < maze_rects.size(); i++)
 			SDL_RenderFillRect(TheApp::Instance()->getRenderer(), &maze_rects[i]);
 	}
 	else SDL_RenderCopy(TheApp::Instance()->getRenderer(), background_texture, NULL, NULL);
-	
+
 }
 
-void ScenePathFinding::drawCoin() {
+void SceneGBFS::drawCoin() {
 	Vector2D coin_coords = cell2pix(coinPosition);
 	int offset = CELL_SIZE / 2;
 	SDL_Rect dstrect = { (int)coin_coords.x - offset, (int)coin_coords.y - offset, CELL_SIZE, CELL_SIZE };
 	SDL_RenderCopy(TheApp::Instance()->getRenderer(), coin_texture, NULL, &dstrect);
 }
 
-void ScenePathFinding::initMaze() {
+void SceneGBFS::initMaze() {
 
 	// Initialize a list of Rectagles describing the maze geometry (useful for collision avoidance)
 	SDL_Rect rect = { 0, 0, 1280, 32 };
@@ -242,9 +243,79 @@ void ScenePathFinding::initMaze() {
 			}
 		}
 	}
+
+	// Add connections to all cells of the game (that are not walls)
+	//40 X CELLS 24 Y CELLS
+	for (int i = 0; i < num_cell_x; i++) {
+		for (int j = 0; j < num_cell_y; j++) {
+
+			if (terrain[i][j] == 1) {
+
+				if (j < num_cell_y - 1 && terrain[i][j + 1] != 0) {
+					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(i, j + 1))), 1);
+					graph.AddConnection(c);
+					graph.v++;
+				}
+
+				if (i < num_cell_x - 1 && terrain[i + 1][j] != 0) {
+					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(i + 1, j))), 1);
+					graph.AddConnection(c);
+					graph.v++;
+				}
+
+				if (j > 0 && terrain[i][j - 1] != 0) {
+					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(i, j - 1))), 1);
+					graph.AddConnection(c);
+					graph.v++;
+				}
+
+				if (i > 0 && terrain[i - 1][j] != 0) {
+					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(i - 1, j))), 1);
+					graph.AddConnection(c);
+					graph.v++;
+				}
+
+				if (i == 10 && j == 0) {
+					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(10, 39))), 1);
+					graph.AddConnection(c);
+					graph.v++;
+				}
+
+				if (i == 10 && j == 39) {
+					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(10, 0))), 1);
+					graph.AddConnection(c);
+					graph.v++;
+				}
+
+				if (i == 11 && j == 0) {
+					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(11, 39))), 1);
+					graph.AddConnection(c);
+					graph.v++;
+				}
+
+				if (i == 11 && j == 39) {
+					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(11, 0))), 1);
+					graph.AddConnection(c);
+					graph.v++;
+				}
+
+				if (i == 12 && j == 0) {
+					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(12, 39))), 1);
+					graph.AddConnection(c);
+					graph.v++;
+				}
+
+				if (i == 12 && j == 39) {
+					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(12, 0))), 1);
+					graph.AddConnection(c);
+					graph.v++;
+				}
+			}
+		}
+	}
 }
 
-bool ScenePathFinding::loadTextures(char* filename_bg, char* filename_coin) {
+bool SceneGBFS::loadTextures(char* filename_bg, char* filename_coin) {
 	SDL_Surface *image = IMG_Load(filename_bg);
 	if (!image) {
 		cout << "IMG_Load: " << IMG_GetError() << endl;
@@ -268,16 +339,16 @@ bool ScenePathFinding::loadTextures(char* filename_bg, char* filename_coin) {
 	return true;
 }
 
-Vector2D ScenePathFinding::cell2pix(Vector2D cell) {
+Vector2D SceneGBFS::cell2pix(Vector2D cell) {
 	int offset = CELL_SIZE / 2;
 	return Vector2D(cell.x*CELL_SIZE + offset, cell.y*CELL_SIZE + offset);
 }
 
-Vector2D ScenePathFinding::pix2cell(Vector2D pix) {
+Vector2D SceneGBFS::pix2cell(Vector2D pix) {
 	return Vector2D((float)((int)pix.x / CELL_SIZE), (float)((int)pix.y / CELL_SIZE));
 }
 
-bool ScenePathFinding::isValidCell(Vector2D cell) {
+bool SceneGBFS::isValidCell(Vector2D cell) {
 	if ((cell.x < 0) || (cell.y < 0) || (cell.x >= terrain.size()) || (cell.y >= terrain[0].size()))
 		return false;
 	return !(terrain[(unsigned int)cell.x][(unsigned int)cell.y] == 0);

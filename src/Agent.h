@@ -12,12 +12,11 @@
 #include <algorithm>
 #include <queue>
 #include <unordered_map>
-#include <stdlib.h>     /* srand, rand */
-#include <time.h>       /* time */
+#include <stdlib.h>     
+#include <time.h>       
 using namespace std;
 
-class Agent
-{
+class Agent {
 	friend class SteeringBehavior;
 
 private:
@@ -43,9 +42,15 @@ public:
 	Agent();
 	~Agent();
 
+	// Utils
+	float RandomFloat(float a, float b);
+	float Heuristic(Vector2D a, Vector2D b);
+
 	// Pathfinding Algorithms
 	vector<Vector2D> BFS(Vector2D start, Vector2D goal, Graph graph);
 	vector<Vector2D> Dijkstra(Vector2D start, Vector2D goal, Graph graph);
+	vector<Vector2D> GBFS(Vector2D start, Vector2D goal, Graph graph);
+	vector<Vector2D> AStar(Vector2D start, Vector2D goal, Graph graph);
 
 	SteeringBehavior *Behavior();
 	Vector2D getPosition();
@@ -60,5 +65,28 @@ public:
 	void update(Vector2D steering_force, float dtime, SDL_Event *event);
 	void draw();
 	bool Agent::loadSpriteTexture(char* filename, int num_frames=1);
-	
+};
+
+
+//Implementation of different a priority queue than the STL one because it has problems with std::pair
+//And we wanted to have a structure like this:
+//	'PriorityQueue<Vector2D, float> frontier;'
+//	'frontier.put(start, 0.f);'
+template<typename T, typename priority_t>
+struct PriorityQueue {
+	typedef pair<priority_t, T> PQElement;
+	priority_queue<PQElement, vector<PQElement>,
+		std::greater<PQElement>> elements;
+
+	inline bool empty() const { return elements.empty(); }
+
+	inline void put(T item, priority_t priority) {
+		elements.emplace(priority, item);
+	}
+
+	inline T get() {
+		T best_item = elements.top().second;
+		elements.pop(); // pop everytime we acces next element
+		return best_item;
+	}
 };

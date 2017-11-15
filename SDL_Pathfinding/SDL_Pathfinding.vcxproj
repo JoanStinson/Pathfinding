@@ -135,6 +135,10 @@
     <ClCompile Include="..\src\Connection.cpp" />
     <ClCompile Include="..\src\Graph.cpp" />
     <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\SceneAStar.cpp" />
+    <ClCompile Include="..\src\SceneBFS.cpp" />
+    <ClCompile Include="..\src\SceneDijkstra.cpp" />
+    <ClCompile Include="..\src\SceneGBFS.cpp" />
     <ClCompile Include="..\src\ScenePathFinding.cpp" />
     <ClCompile Include="..\src\SDL_SimpleApp.cpp" />
     <ClCompile Include="..\src\SteeringBehavior.cpp" />
@@ -146,6 +150,10 @@
     <ClInclude Include="..\src\Graph.h" />
     <ClInclude Include="..\src\Node.h" />
     <ClInclude Include="..\src\Path.h" />
+    <ClInclude Include="..\src\SceneAStar.h" />
+    <ClInclude Include="..\src\SceneBFS.h" />
+    <ClInclude Include="..\src\SceneDijkstra.h" />
+    <ClInclude Include="..\src\SceneGBFS.h" />
     <ClInclude Include="..\src\ScenePathFinding.h" />
     <ClInclude Include="..\src\SteeringBehavior.h" />
     <ClInclude Include="..\src\utils.h" />

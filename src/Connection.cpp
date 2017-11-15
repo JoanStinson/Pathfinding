@@ -1,7 +1,6 @@
 #include "Connection.h"
 
-Connection::Connection()
-{
+Connection::Connection() {
 }
 
 Connection::Connection(Vector2D f, Vector2D t, float c) {
@@ -14,7 +13,7 @@ Connection::~Connection() {
 }
 
 float Connection::GetCost() {
-	return 0.0f;
+	return cost;
 }
 
 Node Connection::GetFromNode() {

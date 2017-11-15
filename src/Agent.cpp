@@ -1,31 +1,5 @@
 #include "Agent.h"
 
-template<typename T, typename priority_t>
-struct PriorityQueue {
-	typedef pair<priority_t, T> PQElement;
-	priority_queue<PQElement, vector<PQElement>,
-		std::greater<PQElement>> elements;
-
-	inline bool empty() const { return elements.empty(); }
-
-	inline void put(T item, priority_t priority) {
-		elements.emplace(priority, item);
-	}
-
-	inline T get() {
-		T best_item = elements.top().second;
-		elements.pop();
-		return best_item;
-	}
-};
-
-float RandomFloat(float a, float b) {
-	float random = ((float)rand()) / (float)RAND_MAX;
-	float diff = b - a;
-	float r = random * diff;
-	return a + r;
-}
-
 Agent::Agent() : sprite_texture(0),
                  position(Vector2D(100, 100)),
 	             target(Vector2D(1000, 100)),
@@ -43,12 +17,22 @@ Agent::Agent() : sprite_texture(0),
 	steering_behavior = new SteeringBehavior;
 }
 
-Agent::~Agent()
-{
+Agent::~Agent() {
 	if (sprite_texture)
 		SDL_DestroyTexture(sprite_texture);
 	if (steering_behavior)
 		delete (steering_behavior);
+}
+
+float Agent::RandomFloat(float a, float b) {
+	float random = ((float)rand()) / (float)RAND_MAX;
+	float diff = b - a;
+	float r = random * diff;
+	return a + r;
+}
+
+float Agent::Heuristic(Vector2D a, Vector2D b) {
+	return abs(a.x - b.x) + abs(a.y - b.y);
 }
 
 vector<Vector2D> Agent::BFS(Vector2D start, Vector2D goal, Graph graph) {
@@ -96,7 +80,7 @@ vector<Vector2D> Agent::BFS(Vector2D start, Vector2D goal, Graph graph) {
 			return path;
 		}
 
-		// En cas que no haguem trobat el node final, agafem els veins de 0-4 del current
+		// En cas que no haguem trobat el node final, agafem els veins de 1-4 del current
 		neighbors = graph.GetConnections(current);
 
 		// Iterem sobre aquest i anem agafant-los un a un
@@ -114,8 +98,8 @@ vector<Vector2D> Agent::BFS(Vector2D start, Vector2D goal, Graph graph) {
 			// i agafem el node current per traçar el camí 
 			// (ja que no podem traçar un camí a base de veïns)
 			if (!visited) {
-				came_from[next] = current;
 				frontier.push(next);
+				came_from[next] = current;
 			}
 		}
 	}
@@ -134,6 +118,7 @@ vector<Vector2D> Agent::Dijkstra(Vector2D start, Vector2D goal, Graph graph) {
 	vector<Vector2D> path, neighbors;
 	Vector2D current, next;
 	bool visited;
+	float new_cost, priority;
 	srand(time(NULL));
 
 	while (!frontier.empty()) {
@@ -156,7 +141,7 @@ vector<Vector2D> Agent::Dijkstra(Vector2D start, Vector2D goal, Graph graph) {
 		for (int i = 0; i < neighbors.size(); i++) {
 			visited = false;
 			next = neighbors[i];
-			float new_cost = cost_so_far[current] + RandomFloat(1.0f, 3.0f); //TODO implement GetCost method to do + 'graph.GetCost(current, next)' instead of rand
+			new_cost = cost_so_far[current] + RandomFloat(1.0f, 3.0f); //TODO implement GetCost method to do + 'graph.GetCost(current, next)' instead of rand
 
 			for (int j = 0; j < cost_so_far.size(); j++) {
 				// If next in cost_so_far 
@@ -174,7 +159,7 @@ vector<Vector2D> Agent::Dijkstra(Vector2D start, Vector2D goal, Graph graph) {
 
 			if (!visited) {
 				cost_so_far[next] = new_cost;
-				float priority = new_cost;
+				priority = new_cost;
 				frontier.put(next, priority);
 				came_from[next] = current;
 			}
@@ -182,60 +167,156 @@ vector<Vector2D> Agent::Dijkstra(Vector2D start, Vector2D goal, Graph graph) {
 	}
 }
 
-SteeringBehavior * Agent::Behavior()
-{
+vector<Vector2D> Agent::GBFS(Vector2D start, Vector2D goal, Graph graph) {
+	PriorityQueue<Vector2D, float> frontier;
+	frontier.put(start, 0.f);
+
+	unordered_map<Vector2D, Vector2D> came_from;
+	came_from[start] = NULL;
+
+	vector<Vector2D> path, neighbors;
+	Vector2D current, next;
+	bool visited;
+	float priority;
+	while (!frontier.empty()) {
+
+		current = frontier.get();
+
+		if (current == goal) {
+			path.push_back(current);
+			while (current != start) {
+				current = came_from[current];
+				path.push_back(current);
+			}
+			path.push_back(start);
+			std::reverse(path.begin(), path.end());
+			return path;
+		}
+
+		neighbors = graph.GetConnections(current);
+
+		for (int i = 0; i < neighbors.size(); i++) {
+			visited = false;
+			next = neighbors[i];
+
+			for (int j = 0; j < came_from.size(); j++) {
+				if (came_from.find(next) != came_from.end()) { 
+					visited = true;
+				}
+			}
+
+			if (!visited) {
+				priority = Heuristic(goal, next);
+				frontier.put(next, priority);
+				came_from[next] = current;
+			}
+		}
+	}
+}
+
+vector<Vector2D> Agent::AStar(Vector2D start, Vector2D goal, Graph graph) {
+	PriorityQueue<Vector2D, float> frontier;
+	frontier.put(start, 0.f);
+
+	unordered_map<Vector2D, Vector2D> came_from;
+	came_from[start] = NULL;
+
+	unordered_map<Vector2D, float> cost_so_far;
+	cost_so_far[start] = 0.f;
+
+	vector<Vector2D> path, neighbors;
+	Vector2D current, next;
+	bool visited;
+	float new_cost, priority;
+	srand(time(NULL));
+
+	while (!frontier.empty()) {
+
+		current = frontier.get();
+
+		if (current == goal) {
+			path.push_back(current);
+			while (current != start) {
+				current = came_from[current];
+				path.push_back(current);
+			}
+			path.push_back(start);
+			std::reverse(path.begin(), path.end());
+			return path;
+		}
+
+		neighbors = graph.GetConnections(current);
+
+		for (int i = 0; i < neighbors.size(); i++) {
+			visited = false;
+			next = neighbors[i];
+			new_cost = cost_so_far[current] + RandomFloat(1.0f, 3.0f); //TODO implement GetCost method to do + 'graph.GetCost(current, next)' instead of rand
+
+			for (int j = 0; j < cost_so_far.size(); j++) {
+				// If next in cost_so_far 
+				if (cost_so_far.find(next) != cost_so_far.end()) {
+					if (new_cost > cost_so_far[next]) { // if 'new_cost < cost_so_far[next]' visited = false perque el volem afegir, if 'new_cost > cost_so_far[next]' nol volem per tant visited = false
+						visited = true;
+					}
+				}
+				// If next not in cost_so_far
+				else {
+					visited = false;
+				}
+
+			}
+
+			if (!visited) {
+				cost_so_far[next] = new_cost;
+				priority = new_cost + Heuristic(goal, next);
+				frontier.put(next, priority);
+				came_from[next] = current;
+			}
+		}
+	}
+}
+
+SteeringBehavior * Agent::Behavior() {
 	return steering_behavior;
 }
 
-Vector2D Agent::getPosition()
-{
+Vector2D Agent::getPosition() {
 	return position;
 }
 
-Vector2D Agent::getTarget()
-{
+Vector2D Agent::getTarget() {
 	return target;
 }
 
-Vector2D Agent::getVelocity()
-{
+Vector2D Agent::getVelocity() {
 	return velocity;
 }
 
-float Agent::getMaxVelocity()
-{
+float Agent::getMaxVelocity() {
 	return max_velocity;
 }
 
-void Agent::setPosition(Vector2D _position)
-{
+void Agent::setPosition(Vector2D _position) {
 	position = _position;
 }
 
-void Agent::setTarget(Vector2D _target)
-{
+void Agent::setTarget(Vector2D _target) {
 	target = _target;
 }
 
-void Agent::setVelocity(Vector2D _velocity)
-{
+void Agent::setVelocity(Vector2D _velocity) {
 	velocity = _velocity;
 }
 
-void Agent::setMass(float _mass)
-{
+void Agent::setMass(float _mass) {
 	mass = _mass;
 }
 
-void Agent::setColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a)
-{
+void Agent::setColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
 	color = { r, g, b, a };
 }
 
-void Agent::update(Vector2D steering_force, float dtime, SDL_Event *event)
-{
-
-	//cout << "agent update:" << endl;
+void Agent::update(Vector2D steering_force, float dtime, SDL_Event *event) {
 
 	switch (event->type) {
 		/* Keyboard & Mouse events */
@@ -267,10 +348,8 @@ void Agent::update(Vector2D steering_force, float dtime, SDL_Event *event)
 	if (position.y > TheApp::Instance()->getWinSize().y) position.y = 0;
 }
 
-void Agent::draw()
-{
-	if (draw_sprite)
-	{
+void Agent::draw() {
+	if (draw_sprite) {
 		Uint32 sprite;
 		
 		if (velocity.Length() < 5.0)
@@ -283,15 +362,13 @@ void Agent::draw()
 		SDL_Point center = { sprite_w / 2, sprite_h / 2 };
 		SDL_RenderCopyEx(TheApp::Instance()->getRenderer(), sprite_texture, &srcrect, &dstrect, orientation+90, &center, SDL_FLIP_NONE);
 	}
-	else 
-	{
+	else {
 		draw_circle(TheApp::Instance()->getRenderer(), (int)position.x, (int)position.y, 15, color.r, color.g, color.b, color.a);
 		SDL_RenderDrawLine(TheApp::Instance()->getRenderer(), (int)position.x, (int)position.y, (int)(position.x+15*cos(orientation*DEG2RAD)), (int)(position.y+15*sin(orientation*DEG2RAD)));
 	}
 }
 
-bool Agent::loadSpriteTexture(char* filename, int _num_frames)
-{
+bool Agent::loadSpriteTexture(char* filename, int _num_frames) {
 	if (_num_frames < 1) return false;
 
 	SDL_Surface *image = IMG_Load(filename);
@@ -311,4 +388,3 @@ bool Agent::loadSpriteTexture(char* filename, int _num_frames)
 
 	return true;
 }
-
