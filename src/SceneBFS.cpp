@@ -102,7 +102,6 @@ void SceneBFS::update(float dtime, SDL_Event *event) {
 	else {
 		agents[0]->update(Vector2D(0, 0), dtime, event);
 	}
-
 }
 
 void SceneBFS::draw() {
@@ -140,7 +139,6 @@ void SceneBFS::drawMaze() {
 			SDL_RenderFillRect(TheApp::Instance()->getRenderer(), &maze_rects[i]);
 	}
 	else SDL_RenderCopy(TheApp::Instance()->getRenderer(), background_texture, NULL, NULL);
-
 }
 
 void SceneBFS::drawCoin() {

@@ -76,6 +76,7 @@ public:
 	inline bool operator!=(const Vector2D& rhs) const {
 		return !operator==(rhs);
 	}
+
 	// Needed operators to deal with maps :)
 	inline bool operator<(const Vector2D& rhs) const {
 		return std::tie(x, y) < std::tie(rhs.x, rhs.y);
@@ -102,6 +103,7 @@ public:
 		}
 		return (*this);
 	}
+
 	static inline Vector2D Normalize(const Vector2D& v)
 	{
 		float l = v.Length();

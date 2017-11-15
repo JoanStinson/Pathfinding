@@ -6,7 +6,7 @@ SceneAStarRL::SceneAStarRL() {
 	num_cell_x = SRC_WIDTH / CELL_SIZE;
 	num_cell_y = SRC_HEIGHT / CELL_SIZE;
 	initMaze();
-	loadTextures("../res/maze.png", "../res/coin.png");
+	loadTextures("../res/maze.png", "../res/coin.png", "../res/coin2.png");
 
 	srand((unsigned int)time(NULL));
 
@@ -118,7 +118,6 @@ void SceneAStarRL::update(float dtime, SDL_Event *event) {
 	else {
 		agents[0]->update(Vector2D(0, 0), dtime, event);
 	}
-
 }
 
 void SceneAStarRL::draw() {
@@ -170,7 +169,7 @@ void SceneAStarRL::drawNPosition() {
 	Vector2D coin_coords = cell2pix(nPosition);
 	int offset = CELL_SIZE / 2;
 	SDL_Rect dstrect = { (int)coin_coords.x - offset, (int)coin_coords.y - offset, CELL_SIZE, CELL_SIZE };
-	SDL_RenderCopy(TheApp::Instance()->getRenderer(), coin_texture, NULL, &dstrect);
+	SDL_RenderCopy(TheApp::Instance()->getRenderer(), coin_texture2, NULL, &dstrect);
 }
 
 void SceneAStarRL::initMaze() {
@@ -338,7 +337,8 @@ void SceneAStarRL::initMaze() {
 	}
 }
 
-bool SceneAStarRL::loadTextures(char* filename_bg, char* filename_coin) {
+bool SceneAStarRL::loadTextures(char* filename_bg, char* filename_coin, char* filename_coin2) {
+	// Bg
 	SDL_Surface *image = IMG_Load(filename_bg);
 	if (!image) {
 		cout << "IMG_Load: " << IMG_GetError() << endl;
@@ -348,13 +348,25 @@ bool SceneAStarRL::loadTextures(char* filename_bg, char* filename_coin) {
 
 	if (image)
 		SDL_FreeSurface(image);
-
+	
+	// Coin
 	image = IMG_Load(filename_coin);
 	if (!image) {
 		cout << "IMG_Load: " << IMG_GetError() << endl;
 		return false;
 	}
 	coin_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+
+	if (image)
+		SDL_FreeSurface(image);
+
+	// Coin2
+	image = IMG_Load(filename_coin2);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	coin_texture2 = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
 
 	if (image)
 		SDL_FreeSurface(image);

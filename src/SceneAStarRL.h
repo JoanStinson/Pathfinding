@@ -30,9 +30,9 @@ private:
 	void drawCoin();
 	void drawNPosition();
 	SDL_Texture *background_texture;
-	SDL_Texture *coin_texture;
+	SDL_Texture *coin_texture, *coin_texture2;
 	void initMaze();
-	bool loadTextures(char* filename_bg, char* filename_coin);
+	bool loadTextures(char* filename_bg, char* filename_coin, char* filename_coin2);
 	std::vector< std::vector<int> > terrain;
 	Vector2D cell2pix(Vector2D cell);
 	Vector2D pix2cell(Vector2D pix);
