@@ -1,6 +1,6 @@
-#include "SceneAStar.h"
+#include "SceneAStarRL.h"
 
-SceneAStar::SceneAStar() {
+SceneAStarRL::SceneAStarRL() {
 	draw_grid = false;
 
 	num_cell_x = SRC_WIDTH / CELL_SIZE;
@@ -26,18 +26,26 @@ SceneAStar::SceneAStar() {
 	while ((!isValidCell(coinPosition)) || (Vector2D::Distance(coinPosition, rand_cell) < 3))
 		coinPosition = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
 
+	nPosition = Vector2D(-1, -1);
+	while ((!isValidCell(nPosition)) || (Vector2D::Distance(nPosition, rand_cell) < 3) && nPosition != coinPosition)
+		nPosition = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
+
 	// PathFollowing next Target
 	currentTarget = Vector2D(0, 0);
 	currentTargetIndex = -1;
 
 	// A* Algorithm
-	astar = agents[0]->AStar(pix2cell(start.coord), coinPosition, graph);
+	astar = agents[0]->AStar(pix2cell(start.coord), nPosition, graph);
+	for (int i = 0; i < astar.size(); i++) {
+		path.points.push_back(cell2pix(astar[i]));
+	}
+	astar = agents[0]->AStar(nPosition, coinPosition, graph);
 	for (int i = 0; i < astar.size(); i++) {
 		path.points.push_back(cell2pix(astar[i]));
 	}
 }
 
-SceneAStar::~SceneAStar() {
+SceneAStarRL::~SceneAStarRL() {
 	if (background_texture)
 		SDL_DestroyTexture(background_texture);
 	if (coin_texture)
@@ -48,7 +56,7 @@ SceneAStar::~SceneAStar() {
 	}
 }
 
-void SceneAStar::update(float dtime, SDL_Event *event) {
+void SceneAStarRL::update(float dtime, SDL_Event *event) {
 	/* Keyboard & Mouse events */
 	switch (event->type) {
 	case SDL_KEYDOWN:
@@ -72,15 +80,23 @@ void SceneAStar::update(float dtime, SDL_Event *event) {
 					if (pix2cell(agents[0]->getPosition()) == coinPosition) {
 
 						coinPosition = Vector2D(-1, -1);
-
 						while ((!isValidCell(coinPosition)) || (Vector2D::Distance(coinPosition, pix2cell(agents[0]->getPosition())) < 3))
 							coinPosition = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
+
+						nPosition = Vector2D(-1, -1);
+						while ((!isValidCell(nPosition)) || (Vector2D::Distance(nPosition, pix2cell(agents[0]->getPosition())) < 3) && nPosition != coinPosition)
+							nPosition = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
+
 						agents[0]->setPosition(path.points.back());
 						start = Node(agents[0]->getPosition());
 						path.points.clear();
 
 						// A* Algorithm
-						astar = agents[0]->AStar(pix2cell(start.coord), coinPosition, graph);
+						astar = agents[0]->AStar(pix2cell(start.coord), nPosition, graph);
+						for (int i = 0; i < astar.size(); i++) {
+							path.points.push_back(cell2pix(astar[i]));
+						}
+						astar = agents[0]->AStar(nPosition, coinPosition, graph);
 						for (int i = 0; i < astar.size(); i++) {
 							path.points.push_back(cell2pix(astar[i]));
 						}
@@ -105,9 +121,10 @@ void SceneAStar::update(float dtime, SDL_Event *event) {
 
 }
 
-void SceneAStar::draw() {
+void SceneAStarRL::draw() {
 	drawMaze();
 	drawCoin();
+	drawNPosition();
 
 	if (draw_grid) {
 		SDL_SetRenderDrawColor(TheApp::Instance()->getRenderer(), 255, 255, 255, 127);
@@ -129,28 +146,34 @@ void SceneAStar::draw() {
 	agents[0]->draw();
 }
 
-const char* SceneAStar::getTitle() {
-	return "SDL Pathfinding Algorithms :: A* Algorithm";
+const char* SceneAStarRL::getTitle() {
+	return "SDL Pathfinding Algorithms :: A* Algorithm with Random Locations";
 }
 
-void SceneAStar::drawMaze() {
+void SceneAStarRL::drawMaze() {
 	if (draw_grid) {
 		SDL_SetRenderDrawColor(TheApp::Instance()->getRenderer(), 0, 0, 255, 255);
 		for (unsigned int i = 0; i < maze_rects.size(); i++)
 			SDL_RenderFillRect(TheApp::Instance()->getRenderer(), &maze_rects[i]);
 	}
 	else SDL_RenderCopy(TheApp::Instance()->getRenderer(), background_texture, NULL, NULL);
-
 }
 
-void SceneAStar::drawCoin() {
+void SceneAStarRL::drawCoin() {
 	Vector2D coin_coords = cell2pix(coinPosition);
 	int offset = CELL_SIZE / 2;
 	SDL_Rect dstrect = { (int)coin_coords.x - offset, (int)coin_coords.y - offset, CELL_SIZE, CELL_SIZE };
 	SDL_RenderCopy(TheApp::Instance()->getRenderer(), coin_texture, NULL, &dstrect);
 }
 
-void SceneAStar::initMaze() {
+void SceneAStarRL::drawNPosition() {
+	Vector2D coin_coords = cell2pix(nPosition);
+	int offset = CELL_SIZE / 2;
+	SDL_Rect dstrect = { (int)coin_coords.x - offset, (int)coin_coords.y - offset, CELL_SIZE, CELL_SIZE };
+	SDL_RenderCopy(TheApp::Instance()->getRenderer(), coin_texture, NULL, &dstrect);
+}
+
+void SceneAStarRL::initMaze() {
 
 	// Initialize a list of Rectagles describing the maze geometry (useful for collision avoidance)
 	SDL_Rect rect = { 0, 0, 1280, 32 };
@@ -315,7 +338,7 @@ void SceneAStar::initMaze() {
 	}
 }
 
-bool SceneAStar::loadTextures(char* filename_bg, char* filename_coin) {
+bool SceneAStarRL::loadTextures(char* filename_bg, char* filename_coin) {
 	SDL_Surface *image = IMG_Load(filename_bg);
 	if (!image) {
 		cout << "IMG_Load: " << IMG_GetError() << endl;
@@ -339,16 +362,16 @@ bool SceneAStar::loadTextures(char* filename_bg, char* filename_coin) {
 	return true;
 }
 
-Vector2D SceneAStar::cell2pix(Vector2D cell) {
+Vector2D SceneAStarRL::cell2pix(Vector2D cell) {
 	int offset = CELL_SIZE / 2;
 	return Vector2D(cell.x*CELL_SIZE + offset, cell.y*CELL_SIZE + offset);
 }
 
-Vector2D SceneAStar::pix2cell(Vector2D pix) {
+Vector2D SceneAStarRL::pix2cell(Vector2D pix) {
 	return Vector2D((float)((int)pix.x / CELL_SIZE), (float)((int)pix.y / CELL_SIZE));
 }
 
-bool SceneAStar::isValidCell(Vector2D cell) {
+bool SceneAStarRL::isValidCell(Vector2D cell) {
 	if ((cell.x < 0) || (cell.y < 0) || (cell.x >= terrain.size()) || (cell.y >= terrain[0].size()))
 		return false;
 	return !(terrain[(unsigned int)cell.x][(unsigned int)cell.y] == 0);
