@@ -18,7 +18,7 @@ public:
 
 private:
 	std::vector<Agent*> agents;
-	Vector2D coinPosition, nPosition;
+	Vector2D coinPosition, nPosition, nPosition2;
 	Vector2D currentTarget;
 	int currentTargetIndex;
 	Path path;
@@ -29,6 +29,7 @@ private:
 	void drawMaze();
 	void drawCoin();
 	void drawNPosition();
+	void drawNPosition2();
 	SDL_Texture *background_texture;
 	SDL_Texture *coin_texture, *coin_texture2;
 	void initMaze();
