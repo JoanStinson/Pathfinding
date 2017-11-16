@@ -48,7 +48,6 @@ int Agent::Max(int a) {
 }
 
 int Agent::Average(int a) {
-	sizes.clear();
 	sizes.push_back(a);
 
 	for (unsigned int i = 0; i < sizes.size(); i++) {
