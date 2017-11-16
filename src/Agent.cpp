@@ -35,10 +35,34 @@ float Agent::Heuristic(Vector2D a, Vector2D b) {
 	return abs(a.x - b.x) + abs(a.y - b.y);
 }
 
+int Agent::Min(int a) {
+	if (min == 0) min = a;
+	if (a < min) min = a;
+	return min;
+}
+
+int Agent::Max(int a) {
+	if (max == 0) max = a;
+	if (a > max) max = a;
+	return max;
+}
+
+int Agent::Average(int a) {
+	sizes.clear();
+	sizes.push_back(a);
+
+	for (unsigned int i = 0; i < sizes.size(); i++) {
+		average += sizes[i];
+	}
+	average /= sizes.size();
+	return average;
+}
+
 vector<Vector2D> Agent::BFS(Vector2D start, Vector2D goal, Graph graph) {
 	// Creem la frontera on emmagetzarem tots els nodes que visitem 
 	// i la inicialitzem amb la posició del player = start
 	queue<Vector2D> frontier;
+	vector<Vector2D> frontierCount;
 	frontier.push(start);
 
 	// Creem l'estructura came_from la qual determina el node anterior del que proveniem per traçar el camí 
@@ -59,8 +83,10 @@ vector<Vector2D> Agent::BFS(Vector2D start, Vector2D goal, Graph graph) {
 		frontier.pop();
 
 		// Si el node actual és el node goal, és a dir, el node de la moneda
-		// suem del algoritme i ens decidim a retornar el camí per arribar-hi (early exit)
+		// ja hem acabat de visitar tots els nodes necessaris i ens decidim a retornar el camí per arribar-hi (early exit)
 		if (current == goal) {
+			cout << "Min: " << Min(frontierCount.size()) << " Max: " << Max(frontierCount.size()) << " Average: " << Average(frontierCount.size()) << " \r"; //TODO Print explored nodes
+			
 			// Fem push_back del current el qual = node final o goal 
 			// (perquè volem traçar el camí desde el final al principi)
 			path.push_back(current);
@@ -100,6 +126,8 @@ vector<Vector2D> Agent::BFS(Vector2D start, Vector2D goal, Graph graph) {
 			if (!visited) {
 				frontier.push(next);
 				came_from[next] = current;
+				//Count :)
+				frontierCount.push_back(next);
 			}
 		}
 	}

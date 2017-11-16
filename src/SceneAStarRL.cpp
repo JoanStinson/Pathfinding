@@ -71,6 +71,20 @@ SceneAStarRL::SceneAStarRL() {
 			path.points.push_back(cell2pix(astar[i]));
 		}
 	}
+
+	/*
+	generateXRandomGreenPoints->store them to a list
+	while(!allGreenPointsVisited())
+	{
+		int i = WhichIsTheClosestGreenPoint();
+		actualGoal=GreenPoint[i];
+	}
+	GoToGoal()
+	*/
+
+	/*
+	Exercici num.3 N ubicacions aleatories i las has d'esquivar, com l'anterior pero son ubicacions per les quals no pots passar
+	*/
 }
 
 SceneAStarRL::~SceneAStarRL() {

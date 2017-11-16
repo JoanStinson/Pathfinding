@@ -43,8 +43,13 @@ public:
 	~Agent();
 
 	// Utils
+	int min = 0, max = 0, average = 0;
+	vector<int> sizes;
 	float RandomFloat(float a, float b);
 	float Heuristic(Vector2D a, Vector2D b);
+	int Min(int a);
+	int Max(int a);
+	int Average(int a);
 
 	// Pathfinding Algorithms
 	vector<Vector2D> BFS(Vector2D start, Vector2D goal, Graph graph);
