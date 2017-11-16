@@ -1,6 +1,6 @@
 #include "SceneAStarRL.h"
 
-float Heuristic(Vector2D a, Vector2D b) {
+float SceneAStarRL::Heuristic(Vector2D a, Vector2D b) {
 	return abs(a.x - b.x) + abs(a.y - b.y);
 }
 

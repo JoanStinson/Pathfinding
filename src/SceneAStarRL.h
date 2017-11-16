@@ -12,6 +12,8 @@ class SceneAStarRL : public Scene {
 public:
 	SceneAStarRL();
 	~SceneAStarRL();
+	// Heuristic to decide which random position to go first
+	float Heuristic(Vector2D a, Vector2D b);
 	void update(float dtime, SDL_Event *event);
 	void draw();
 	const char* getTitle();
