@@ -36,11 +36,11 @@ SceneAStarRL::SceneAStarRL() {
 
 	// A* Algorithm
 	astar = agents[0]->AStar(pix2cell(start.coord), nPosition, graph);
-	for (int i = 0; i < astar.size(); i++) {
+	for (unsigned int i = 0; i < astar.size(); i++) {
 		path.points.push_back(cell2pix(astar[i]));
 	}
 	astar = agents[0]->AStar(nPosition, coinPosition, graph);
-	for (int i = 0; i < astar.size(); i++) {
+	for (unsigned int i = 0; i < astar.size(); i++) {
 		path.points.push_back(cell2pix(astar[i]));
 	}
 }
@@ -93,11 +93,11 @@ void SceneAStarRL::update(float dtime, SDL_Event *event) {
 
 						// A* Algorithm
 						astar = agents[0]->AStar(pix2cell(start.coord), nPosition, graph);
-						for (int i = 0; i < astar.size(); i++) {
+						for (unsigned int i = 0; i < astar.size(); i++) {
 							path.points.push_back(cell2pix(astar[i]));
 						}
 						astar = agents[0]->AStar(nPosition, coinPosition, graph);
-						for (int i = 0; i < astar.size(); i++) {
+						for (unsigned int i = 0; i < astar.size(); i++) {
 							path.points.push_back(cell2pix(astar[i]));
 						}
 					}
@@ -274,63 +274,53 @@ void SceneAStarRL::initMaze() {
 			if (terrain[i][j] == 1) {
 
 				if (j < num_cell_y - 1 && terrain[i][j + 1] != 0) {
-					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(i, j + 1))), 1);
+					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(i, j + 1))), 1.0f);
 					graph.AddConnection(c);
-					graph.v++;
 				}
 
 				if (i < num_cell_x - 1 && terrain[i + 1][j] != 0) {
-					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(i + 1, j))), 1);
+					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(i + 1, j))), 1.0f);
 					graph.AddConnection(c);
-					graph.v++;
 				}
 
 				if (j > 0 && terrain[i][j - 1] != 0) {
-					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(i, j - 1))), 1);
+					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(i, j - 1))), 1.0f);
 					graph.AddConnection(c);
-					graph.v++;
 				}
 
 				if (i > 0 && terrain[i - 1][j] != 0) {
-					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(i - 1, j))), 1);
+					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(i - 1, j))), 1.0f);
 					graph.AddConnection(c);
-					graph.v++;
 				}
 
 				if (i == 10 && j == 0) {
-					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(10, 39))), 1);
+					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(10, 39))), 1.0f);
 					graph.AddConnection(c);
-					graph.v++;
 				}
 
 				if (i == 10 && j == 39) {
-					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(10, 0))), 1);
+					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(10, 0))), 1.0f);
 					graph.AddConnection(c);
-					graph.v++;
 				}
 
 				if (i == 11 && j == 0) {
-					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(11, 39))), 1);
+					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(11, 39))), 1.0f);
 					graph.AddConnection(c);
-					graph.v++;
 				}
 
 				if (i == 11 && j == 39) {
-					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(11, 0))), 1);
+					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(11, 0))), 1.0f);
 					graph.AddConnection(c);
-					graph.v++;
 				}
 
 				if (i == 12 && j == 0) {
-					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(12, 39))), 1);
+					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(12, 39))), 1.0f);
 					graph.AddConnection(c);
-					graph.v++;
 				}
 
 				if (i == 12 && j == 39) {
-					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(12, 0))), 1);
+					Connection c(pix2cell(cell2pix(Vector2D(i, j))), pix2cell(cell2pix(Vector2D(12, 0))), 1.0f);
 					graph.AddConnection(c);
-					graph.v++;
 				}
 			}
 		}
