@@ -61,8 +61,8 @@ vector<Vector2D> Agent::BFS(Vector2D start, Vector2D goal, Graph graph) {
 	// Creem la frontera on emmagetzarem tots els nodes que visitem 
 	// i la inicialitzem amb la posició del player = start
 	queue<Vector2D> frontier;
-	vector<Vector2D> frontierCount;
 	frontier.push(start);
+	vector<Vector2D> frontierCount;
 
 	// Creem l'estructura came_from la qual determina el node anterior del que proveniem per traçar el camí 
 	// i com la posició del player = start no provenia de res = NULL ja que aquesta és la posició inicial
@@ -84,8 +84,7 @@ vector<Vector2D> Agent::BFS(Vector2D start, Vector2D goal, Graph graph) {
 		// Si el node actual és el node goal, és a dir, el node de la moneda
 		// ja hem acabat de visitar tots els nodes necessaris i ens decidim a retornar el camí per arribar-hi (early exit)
 		if (current == goal) {
-			cout << "Min: " << Min(frontierCount.size()) << " Max: " << Max(frontierCount.size()) << " Average: " << Average(frontierCount.size()) << " \r"; //TODO Print explored nodes
-			
+			cout << "\r" << "  Current: " << frontierCount.size() << " Min: " << Min(frontierCount.size()) << " Max: " << Max(frontierCount.size()) << " Average: " << Average(frontierCount.size()) << "        ";
 			// Fem push_back del current el qual = node final o goal 
 			// (perquè volem traçar el camí desde el final al principi)
 			path.push_back(current);
@@ -135,6 +134,7 @@ vector<Vector2D> Agent::BFS(Vector2D start, Vector2D goal, Graph graph) {
 vector<Vector2D> Agent::Dijkstra(Vector2D start, Vector2D goal, Graph graph) {
 	PriorityQueue<Vector2D, float> frontier;
 	frontier.put(start, 0.f);
+	vector<Vector2D> frontierCount;
 
 	unordered_map<Vector2D, Vector2D> came_from;
 	came_from[start] = NULL;
@@ -153,6 +153,7 @@ vector<Vector2D> Agent::Dijkstra(Vector2D start, Vector2D goal, Graph graph) {
 		current = frontier.get();
 
 		if (current == goal) {
+			cout << "\r" << "  Current: " << frontierCount.size() << " Min: " << Min(frontierCount.size()) << " Max: " << Max(frontierCount.size()) << " Average: " << Average(frontierCount.size()) << "        ";
 			path.push_back(current);
 			while (current != start) {
 				current = came_from[current];
@@ -189,6 +190,8 @@ vector<Vector2D> Agent::Dijkstra(Vector2D start, Vector2D goal, Graph graph) {
 				priority = new_cost;
 				frontier.put(next, priority);
 				came_from[next] = current;
+				//Count :)
+				frontierCount.push_back(next);
 			}
 		}
 	}
@@ -197,6 +200,7 @@ vector<Vector2D> Agent::Dijkstra(Vector2D start, Vector2D goal, Graph graph) {
 vector<Vector2D> Agent::GBFS(Vector2D start, Vector2D goal, Graph graph) {
 	PriorityQueue<Vector2D, float> frontier;
 	frontier.put(start, 0.f);
+	vector<Vector2D> frontierCount;
 
 	unordered_map<Vector2D, Vector2D> came_from;
 	came_from[start] = NULL;
@@ -210,6 +214,7 @@ vector<Vector2D> Agent::GBFS(Vector2D start, Vector2D goal, Graph graph) {
 		current = frontier.get();
 
 		if (current == goal) {
+			cout << "\r" << "  Current: " << frontierCount.size() << " Min: " << Min(frontierCount.size()) << " Max: " << Max(frontierCount.size()) << " Average: " << Average(frontierCount.size()) << "        ";
 			path.push_back(current);
 			while (current != start) {
 				current = came_from[current];
@@ -236,6 +241,8 @@ vector<Vector2D> Agent::GBFS(Vector2D start, Vector2D goal, Graph graph) {
 				priority = Heuristic(goal, next);
 				frontier.put(next, priority);
 				came_from[next] = current;
+				//Count :)
+				frontierCount.push_back(next);
 			}
 		}
 	}
@@ -244,6 +251,7 @@ vector<Vector2D> Agent::GBFS(Vector2D start, Vector2D goal, Graph graph) {
 vector<Vector2D> Agent::AStar(Vector2D start, Vector2D goal, Graph graph) {
 	PriorityQueue<Vector2D, float> frontier;
 	frontier.put(start, 0.f);
+	vector<Vector2D> frontierCount;
 
 	unordered_map<Vector2D, Vector2D> came_from;
 	came_from[start] = NULL;
@@ -262,6 +270,7 @@ vector<Vector2D> Agent::AStar(Vector2D start, Vector2D goal, Graph graph) {
 		current = frontier.get();
 
 		if (current == goal) {
+			cout << "\r" << "  Current: " << frontierCount.size() << " Min: " << Min(frontierCount.size()) << " Max: " << Max(frontierCount.size()) << " Average: " << Average(frontierCount.size()) << "        ";
 			path.push_back(current);
 			while (current != start) {
 				current = came_from[current];
@@ -298,6 +307,8 @@ vector<Vector2D> Agent::AStar(Vector2D start, Vector2D goal, Graph graph) {
 				priority = new_cost + Heuristic(goal, next);
 				frontier.put(next, priority);
 				came_from[next] = current;
+				//Count :)
+				frontierCount.push_back(next);
 			}
 		}
 	}

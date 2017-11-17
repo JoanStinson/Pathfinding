@@ -213,7 +213,7 @@ void SceneAStarRL::draw() {
 }
 
 const char* SceneAStarRL::getTitle() {
-	return "SDL Pathfinding Algorithms :: A* Algorithm with Random Locations";
+	return "SDL Pathfinding Algorithms :: A* Algorithm with N Random Locations";
 }
 
 void SceneAStarRL::drawMaze() {

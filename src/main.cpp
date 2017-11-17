@@ -14,6 +14,21 @@ using namespace std;
 #define FRAMES_PER_SEC 30
 
 int main(int argc, char ** argv) {
+	// Print Welcome Message
+	cout << endl << "  Welcome to our SDL Pathfinding Algorithms Implementation!" << endl;
+	cout << endl;
+	cout << "  -Controls- " << endl;
+	cout << "  Key 0 - Default Scene" << endl;
+	cout << "  Key 1 - Breadth First Search" << endl;
+	cout << "  Key 2 - Dijkstra's Algorithm" << endl;
+	cout << "  Key 3 - Greedy Breadth First Search" << endl;
+	cout << "  Key 4 - A* Algorithm" << endl;
+	cout << "  Key 5 - A* Algorithm with N Random Locations" << endl;
+	cout << "  Key F - Fullscreen" << endl;
+	cout << "  Key Q or ESC - Exit" << endl;
+	cout << endl;
+	cout << "  -Explored Nodes- " << endl;
+
 	bool quit = false;
 	SDL_Event event;
 	int this_tick = 0;
@@ -41,6 +56,7 @@ int main(int argc, char ** argv) {
 					delete(curr_scene);
 					curr_scene = new ScenePathFinding;
 					app->setWindowTitle(curr_scene->getTitle());
+					cout << "\r" << "          " << "   " << "      " << "   " << "      " << "   " << "          " << "   " << "        ";
 				}
 
 				if (event.key.keysym.scancode == SDL_SCANCODE_1) {

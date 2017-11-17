@@ -38,13 +38,14 @@ private:
 	int sprite_w;
 	int sprite_h;
 
+	int min = 0, max = 0, average = 0;
+	vector<int> sizes;
+
 public:
 	Agent();
 	~Agent();
 
 	// Utils
-	int min = 0, max = 0, average = 0;
-	vector<int> sizes;
 	float RandomFloat(float a, float b);
 	float Heuristic(Vector2D a, Vector2D b);
 	int Min(int a);
