@@ -42,4 +42,5 @@ private:
 	vector<Vector2D> dijkstra;
 	SDL_Texture *start_texture;
 	int coin_w;
+	bool draw_lines;
 };

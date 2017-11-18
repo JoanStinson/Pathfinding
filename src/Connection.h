@@ -4,7 +4,7 @@
 class Connection {
 public:
 	Connection();
-	Connection(Vector2D f, Vector2D t, int c);
+	Connection(Vector2D f, Vector2D t);
 	~Connection();
 
 	// Returns the non-negative cost of the connection

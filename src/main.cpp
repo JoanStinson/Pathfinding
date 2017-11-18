@@ -26,7 +26,9 @@ int main(int argc, char ** argv) {
 	cout << "  Key 4 - A* Algorithm" << endl;
 	cout << "  Key 5 - A* Algorithm with N Locations" << endl;
 	cout << "  Key 6 - A* Algorithm with N Enemies" << endl;
+	cout << "  Key L - Draw Lines" << endl;
 	cout << "  Key F - Fullscreen" << endl;
+	cout << "  Key Space - Draw Grid" << endl;
 	cout << "  Key Q or ESC - Exit" << endl;
 	cout << endl;
 	cout << "  -Explored Nodes- " << endl;

@@ -3,10 +3,9 @@
 Connection::Connection() {
 }
 
-Connection::Connection(Vector2D f, Vector2D t, int c) {
+Connection::Connection(Vector2D f, Vector2D t) {
 	from.coord = f;
 	to.coord = t;
-	cost = c;
 }
 
 Connection::~Connection() {
