@@ -1,17 +1,17 @@
-#include "SceneAStarRL.h"
+#include "SceneAStarEnemies.h"
 
-float SceneAStarRL::Heuristic(Vector2D a, Vector2D b) {
+float SceneAStarEnemies::Heuristic(Vector2D a, Vector2D b) {
 	return abs(a.x - b.x) + abs(a.y - b.y);
 }
 
-bool SceneAStarRL::allPointsVisited() {
+bool SceneAStarEnemies::allPointsVisited() {
 	for (int i = 0; i <= 3; i++) {
 		if (pointsList[i] != 0) return false;
 	}
 	return true;
 }
 
-SceneAStarRL::SceneAStarRL() {
+SceneAStarEnemies::SceneAStarEnemies() {
 	draw_grid = false;
 
 	num_cell_x = SRC_WIDTH / CELL_SIZE;
@@ -50,7 +50,7 @@ SceneAStarRL::SceneAStarRL() {
 	currentTargetIndex = -1;
 
 	// A* Algorithm with random positions
-	pList[0] = pix2cell(start.coord);
+	/*pList[0] = pix2cell(start.coord);
 
 	if (randNum == 1) pList[1] = rList[1];
 
@@ -81,21 +81,21 @@ SceneAStarRL::SceneAStarRL() {
 		}
 	}
 
-	pList[randNum+1] = coinPosition;
+	pList[randNum + 1] = coinPosition;*/
 
-	for (unsigned int i = 0; i <= randNum; i++) {
-		astar = agents[0]->AStar(pList[i], pList[i + 1], graph, false);
+	//for (unsigned int i = 0; i <= randNum; i++) {
+		astar = agents[0]->AStar(pix2cell(start.coord), coinPosition, graph, false);
 		for (unsigned int i = 0; i < astar.size(); i++) {
 			path.points.push_back(cell2pix(astar[i]));
 		}
-	}
+	//}
 
 	/*
 	generateXRandomGreenPoints->store them to a list
 	while(!allGreenPointsVisited())
 	{
-		int i = WhichIsTheClosestGreenPoint();
-		actualGoal=GreenPoint[i];
+	int i = WhichIsTheClosestGreenPoint();
+	actualGoal=GreenPoint[i];
 	}
 	GoToGoal()
 	*/
@@ -105,7 +105,7 @@ SceneAStarRL::SceneAStarRL() {
 	*/
 }
 
-SceneAStarRL::~SceneAStarRL() {
+SceneAStarEnemies::~SceneAStarEnemies() {
 	if (background_texture)
 		SDL_DestroyTexture(background_texture);
 	if (coin_texture)
@@ -120,7 +120,7 @@ SceneAStarRL::~SceneAStarRL() {
 	}
 }
 
-void SceneAStarRL::update(float dtime, SDL_Event *event) {
+void SceneAStarEnemies::update(float dtime, SDL_Event *event) {
 	/* Keyboard & Mouse events */
 	switch (event->type) {
 	case SDL_KEYDOWN:
@@ -160,7 +160,7 @@ void SceneAStarRL::update(float dtime, SDL_Event *event) {
 						path.points.clear();
 
 						// A* Algorithm with random positions
-						pList[0] = pix2cell(start.coord);
+						/*pList[0] = pix2cell(start.coord);
 
 						if (randNum == 1) pList[1] = rList[1];
 
@@ -191,14 +191,14 @@ void SceneAStarRL::update(float dtime, SDL_Event *event) {
 							}
 						}
 
-						pList[randNum + 1] = coinPosition;
+						pList[randNum + 1] = coinPosition;*/
 
-						for (unsigned int i = 0; i <= randNum; i++) {
-							astar = agents[0]->AStar(pList[i], pList[i + 1], graph, false);
+						//for (unsigned int i = 0; i <= randNum; i++) {
+							astar = agents[0]->AStar(pix2cell(start.coord), coinPosition, graph, false);
 							for (unsigned int i = 0; i < astar.size(); i++) {
 								path.points.push_back(cell2pix(astar[i]));
 							}
-						}
+						//}
 					}
 				}
 				else {
@@ -219,7 +219,7 @@ void SceneAStarRL::update(float dtime, SDL_Event *event) {
 	}
 }
 
-void SceneAStarRL::draw() {
+void SceneAStarEnemies::draw() {
 
 	drawMaze();
 	drawCoinAndStart();
@@ -235,7 +235,7 @@ void SceneAStarRL::draw() {
 		}
 	}
 
-	for (int i = 2; i < (int)path.points.size()-1; i++) {
+	for (int i = 2; i < (int)path.points.size() - 1; i++) {
 		draw_circle(TheApp::Instance()->getRenderer(), (int)(path.points[i].x), (int)(path.points[i].y), 15, 255, 255, 0, 255);
 		if (i > 2)
 			SDL_RenderDrawLine(TheApp::Instance()->getRenderer(), (int)(path.points[i - 1].x), (int)(path.points[i - 1].y), (int)(path.points[i].x), (int)(path.points[i].y));
@@ -245,11 +245,11 @@ void SceneAStarRL::draw() {
 	agents[0]->draw();
 }
 
-const char* SceneAStarRL::getTitle() {
-	return "SDL Pathfinding Algorithms :: A* Algorithm with N Locations";
+const char* SceneAStarEnemies::getTitle() {
+	return "SDL Pathfinding Algorithms :: A* Algorithm with N Enemies";
 }
 
-void SceneAStarRL::drawMaze() {
+void SceneAStarEnemies::drawMaze() {
 	if (draw_grid) {
 		SDL_SetRenderDrawColor(TheApp::Instance()->getRenderer(), 0, 0, 255, 255);
 		for (unsigned int i = 0; i < maze_rects.size(); i++)
@@ -258,7 +258,7 @@ void SceneAStarRL::drawMaze() {
 	else SDL_RenderCopy(TheApp::Instance()->getRenderer(), background_texture, NULL, NULL);
 }
 
-void SceneAStarRL::drawCoinAndStart() {
+void SceneAStarEnemies::drawCoinAndStart() {
 	Vector2D coin_coords = cell2pix(coinPosition);
 	int offset = CELL_SIZE / 2;
 	Uint32 sprite = (int)(SDL_GetTicks() / (150)) % 10;
@@ -273,7 +273,7 @@ void SceneAStarRL::drawCoinAndStart() {
 	SDL_RenderCopy(TheApp::Instance()->getRenderer(), start_texture, NULL, &dstrect2);
 }
 
-void SceneAStarRL::drawNPositions() {
+void SceneAStarEnemies::drawNPositions() {
 	for (unsigned int i = 1; i <= randNum; i++) {
 		/*Vector2D coin_coords = cell2pix(rList[i]);
 		int offset = CELL_SIZE / 2;
@@ -292,7 +292,7 @@ void SceneAStarRL::drawNPositions() {
 	}
 }
 
-void SceneAStarRL::initMaze() {
+void SceneAStarEnemies::initMaze() {
 
 	// Initialize a list of Rectagles describing the maze geometry (useful for collision avoidance)
 	SDL_Rect rect = { 0, 0, 1280, 32 };
@@ -447,7 +447,7 @@ void SceneAStarRL::initMaze() {
 	}
 }
 
-bool SceneAStarRL::loadTextures(char* filename_bg, char* filename_coin, char* filename_coin2, char* start) {
+bool SceneAStarEnemies::loadTextures(char* filename_bg, char* filename_coin, char* filename_coin2, char* start) {
 	// Bg
 	SDL_Surface *image = IMG_Load(filename_bg);
 	if (!image) {
@@ -458,7 +458,7 @@ bool SceneAStarRL::loadTextures(char* filename_bg, char* filename_coin, char* fi
 
 	if (image)
 		SDL_FreeSurface(image);
-	
+
 	// Coin
 	image = IMG_Load(filename_coin);
 	if (!image) {
@@ -495,16 +495,16 @@ bool SceneAStarRL::loadTextures(char* filename_bg, char* filename_coin, char* fi
 	return true;
 }
 
-Vector2D SceneAStarRL::cell2pix(Vector2D cell) {
+Vector2D SceneAStarEnemies::cell2pix(Vector2D cell) {
 	int offset = CELL_SIZE / 2;
 	return Vector2D(cell.x*CELL_SIZE + offset, cell.y*CELL_SIZE + offset);
 }
 
-Vector2D SceneAStarRL::pix2cell(Vector2D pix) {
+Vector2D SceneAStarEnemies::pix2cell(Vector2D pix) {
 	return Vector2D((float)((int)pix.x / CELL_SIZE), (float)((int)pix.y / CELL_SIZE));
 }
 
-bool SceneAStarRL::isValidCell(Vector2D cell) {
+bool SceneAStarEnemies::isValidCell(Vector2D cell) {
 	if ((cell.x < 0) || (cell.y < 0) || (cell.x >= terrain.size()) || (cell.y >= terrain[0].size()))
 		return false;
 	return !(terrain[(unsigned int)cell.x][(unsigned int)cell.y] == 0);

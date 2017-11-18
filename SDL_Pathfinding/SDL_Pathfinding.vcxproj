@@ -136,6 +136,7 @@
     <ClCompile Include="..\src\Graph.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\SceneAStar.cpp" />
+    <ClCompile Include="..\src\SceneAStarEnemies.cpp" />
     <ClCompile Include="..\src\SceneAStarRL.cpp" />
     <ClCompile Include="..\src\SceneBFS.cpp" />
     <ClCompile Include="..\src\SceneDijkstra.cpp" />
@@ -152,6 +153,7 @@
     <ClInclude Include="..\src\Node.h" />
     <ClInclude Include="..\src\Path.h" />
     <ClInclude Include="..\src\SceneAStar.h" />
+    <ClInclude Include="..\src\SceneAStarEnemies.h" />
     <ClInclude Include="..\src\SceneAStarRL.h" />
     <ClInclude Include="..\src\SceneBFS.h" />
     <ClInclude Include="..\src\SceneDijkstra.h" />

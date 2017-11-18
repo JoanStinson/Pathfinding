@@ -9,6 +9,7 @@
 #include "SceneGBFS.h"
 #include "SceneAStar.h"
 #include "SceneAStarRL.h"
+#include "SceneAStarEnemies.h"
 
 using namespace std;
 #define FRAMES_PER_SEC 30
@@ -23,7 +24,8 @@ int main(int argc, char ** argv) {
 	cout << "  Key 2 - Dijkstra's Algorithm" << endl;
 	cout << "  Key 3 - Greedy Breadth First Search" << endl;
 	cout << "  Key 4 - A* Algorithm" << endl;
-	cout << "  Key 5 - A* Algorithm with N Random Locations" << endl;
+	cout << "  Key 5 - A* Algorithm with N Locations" << endl;
+	cout << "  Key 6 - A* Algorithm with N Enemies" << endl;
 	cout << "  Key F - Fullscreen" << endl;
 	cout << "  Key Q or ESC - Exit" << endl;
 	cout << endl;
@@ -86,6 +88,12 @@ int main(int argc, char ** argv) {
 				if (event.key.keysym.scancode == SDL_SCANCODE_5) {
 					delete(curr_scene);
 					curr_scene = new SceneAStarRL;
+					app->setWindowTitle(curr_scene->getTitle());
+				}
+
+				if (event.key.keysym.scancode == SDL_SCANCODE_6) {
+					delete(curr_scene);
+					curr_scene = new SceneAStarEnemies;
 					app->setWindowTitle(curr_scene->getTitle());
 				}
 
