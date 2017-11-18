@@ -106,8 +106,8 @@ void ScenePathFinding::update(float dtime, SDL_Event *event) {
 
 void ScenePathFinding::draw() {
 	drawMaze();
-	drawCoinAndStart();
-
+	
+	// Draw grid
 	if (draw_grid) {
 		SDL_SetRenderDrawColor(TheApp::Instance()->getRenderer(), 255, 255, 255, 127);
 		for (int i = 0; i < SRC_WIDTH; i += CELL_SIZE) {
@@ -118,12 +118,14 @@ void ScenePathFinding::draw() {
 		}
 	}
 
+	// Draw path
 	for (int i = 0; i < (int)path.points.size(); i++) {
 		draw_circle(TheApp::Instance()->getRenderer(), (int)(path.points[i].x), (int)(path.points[i].y), 15, 255, 255, 0, 255);
 		if (i > 0)
 			SDL_RenderDrawLine(TheApp::Instance()->getRenderer(), (int)(path.points[i - 1].x), (int)(path.points[i - 1].y), (int)(path.points[i].x), (int)(path.points[i].y));
 	}
 
+	drawCoinAndStart();
 	draw_circle(TheApp::Instance()->getRenderer(), (int)currentTarget.x, (int)currentTarget.y, 15, 255, 0, 0, 255);
 	agents[0]->draw();
 }

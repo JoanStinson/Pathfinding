@@ -54,10 +54,12 @@ void SceneDijkstra::update(float dtime, SDL_Event *event) {
 	/* Keyboard & Mouse events */
 	switch (event->type) {
 	case SDL_KEYDOWN:
-		if (event->key.keysym.scancode == SDL_SCANCODE_SPACE)
-			draw_grid = !draw_grid;
+		if (event->key.keysym.scancode == SDL_SCANCODE_F)
+			draw_frontier = !draw_frontier;
 		else if (event->key.keysym.scancode == SDL_SCANCODE_L)
 			draw_lines = !draw_lines;
+		else if (event->key.keysym.scancode == SDL_SCANCODE_SPACE)
+			draw_grid = !draw_grid;
 		break;
 	default:
 		break;
@@ -111,6 +113,7 @@ void SceneDijkstra::update(float dtime, SDL_Event *event) {
 void SceneDijkstra::draw() {
 	drawMaze();
 	
+	// Draw grid
 	if (draw_grid) {
 		SDL_SetRenderDrawColor(TheApp::Instance()->getRenderer(), 255, 255, 255, 127);
 		for (int i = 0; i < SRC_WIDTH; i += CELL_SIZE) {
@@ -121,6 +124,14 @@ void SceneDijkstra::draw() {
 		}
 	}
 
+	// Draw frontier
+	if (draw_frontier) {
+		for (unsigned int i = 0; i < agents[0]->frontierCount.size(); i++) {
+			draw_circle(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->frontierCount[i]).x, cell2pix(agents[0]->frontierCount[i]).y, 15, 0, 191, 255, 255);
+		}
+	}
+
+	// Draw path
 	for (int i = 2; i < (int)path.points.size() - 1; i++) {
 		draw_circle(TheApp::Instance()->getRenderer(), (int)(path.points[i].x), (int)(path.points[i].y), 15, 255, 255, 0, 255);
 		if (draw_lines) {
@@ -129,14 +140,14 @@ void SceneDijkstra::draw() {
 		}
 	}
 	
-	// Paint costs
-	for (unsigned int i = 0; i < agents[0]->vector_costs.size(); i++) {
+	// Draw costs
+	for (int i = 0; i < agents[0]->vector_costs.size(); i++) {
 		if (agents[0]->vector_costs[i].second == 1)
-			draw_circle(TheApp::Instance()->getRenderer(), (int)cell2pix(agents[0]->vector_costs[i].first).x, (int)cell2pix(agents[0]->vector_costs[i].first).y, 6, 255, 0, 0, 255);
+			draw_circle(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, 6, 255, 0, 0, 255);
 		else if (agents[0]->vector_costs[i].second == 2)
-			draw_circle(TheApp::Instance()->getRenderer(), (int)cell2pix(agents[0]->vector_costs[i].first).x, (int)cell2pix(agents[0]->vector_costs[i].first).y, 6, 0, 255, 0, 255);
-		else if (agents[0]->vector_costs[i].second == 3)
-			draw_circle(TheApp::Instance()->getRenderer(), (int)cell2pix(agents[0]->vector_costs[i].first).x, (int)cell2pix(agents[0]->vector_costs[i].first).y, 6, 0, 0, 255, 255);
+			draw_circle(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, 6, 0, 255, 0, 255);
+		else 
+			draw_circle(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, 6, 0, 0, 255, 255);
 	}
 
 	drawCoinAndStart();
@@ -246,7 +257,6 @@ void SceneDijkstra::initMaze() {
 	maze_rects.push_back(rect);
 
 	// Initialize the terrain matrix (for each cell a zero value indicates it's a wall)
-
 	// (1st) initialize all cells to 1 by default
 	for (int i = 0; i < num_cell_x; i++)
 	{
@@ -264,9 +274,14 @@ void SceneDijkstra::initMaze() {
 					break;
 				}
 			}
+		}
+	}
 
-			// Add connections to all cells of the game (that are not walls)
-			//40 X CELLS 24 Y CELLS
+	// Add connections to all cells of the game (that are not walls)
+	//40 X CELLS 24 Y CELLS
+	for (int i = 0; i < num_cell_x; i++) {
+		for (int j = 0; j < num_cell_y; j++) {
+
 			if (terrain[i][j] == 1) {
 
 				if (j < num_cell_y - 1 && terrain[i][j + 1] != 0) {

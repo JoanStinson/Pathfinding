@@ -26,9 +26,10 @@ int main(int argc, char ** argv) {
 	cout << "  Key 4 - A* Algorithm" << endl;
 	cout << "  Key 5 - A* Algorithm with N Locations" << endl;
 	cout << "  Key 6 - A* Algorithm with N Enemies" << endl;
+	cout << "  Key F - Draw Frontier" << endl;
 	cout << "  Key L - Draw Lines" << endl;
-	cout << "  Key F - Fullscreen" << endl;
 	cout << "  Key Space - Draw Grid" << endl;
+	cout << "  Key Enter - Fullscreen" << endl;
 	cout << "  Key Q or ESC - Exit" << endl;
 	cout << endl;
 	cout << "  -Explored Nodes- " << endl;
@@ -103,7 +104,7 @@ int main(int argc, char ** argv) {
 					quit = true;
 				}
 
-				if (event.key.keysym.scancode == SDL_SCANCODE_F) {
+				if (event.key.keysym.scancode == SDL_SCANCODE_RETURN) {
 					app->setFullScreen();
 				}
 			break;

@@ -62,7 +62,7 @@ vector<Vector2D> Agent::BFS(Vector2D start, Vector2D goal, Graph graph) {
 	// i la inicialitzem amb la posició del player = start
 	queue<Vector2D> frontier;
 	frontier.push(start);
-	vector<Vector2D> frontierCount;
+	frontierCount.clear();
 
 	// Creem l'estructura came_from la qual determina el node anterior del que proveniem per traçar el camí 
 	// i com la posició del player = start no provenia de res = NULL ja que aquesta és la posició inicial
@@ -134,7 +134,7 @@ vector<Vector2D> Agent::BFS(Vector2D start, Vector2D goal, Graph graph) {
 vector<Vector2D> Agent::Dijkstra(Vector2D start, Vector2D goal, Graph graph) {
 	PriorityQueue<Vector2D, float> frontier;
 	frontier.put(start, 0.f);
-	vector<Vector2D> frontierCount;
+	frontierCount.clear();
 
 	unordered_map<Vector2D, Vector2D> came_from;
 	came_from[start] = NULL;
@@ -147,7 +147,6 @@ vector<Vector2D> Agent::Dijkstra(Vector2D start, Vector2D goal, Graph graph) {
 	bool visited;
 	float new_cost, priority;
 	int randCost;
-	srand(time(NULL));
 
 	while (!frontier.empty()) {
 
@@ -204,7 +203,7 @@ vector<Vector2D> Agent::Dijkstra(Vector2D start, Vector2D goal, Graph graph) {
 vector<Vector2D> Agent::GBFS(Vector2D start, Vector2D goal, Graph graph) {
 	PriorityQueue<Vector2D, float> frontier;
 	frontier.put(start, 0.f);
-	vector<Vector2D> frontierCount;
+	frontierCount.clear();
 
 	unordered_map<Vector2D, Vector2D> came_from;
 	came_from[start] = NULL;
@@ -255,7 +254,7 @@ vector<Vector2D> Agent::GBFS(Vector2D start, Vector2D goal, Graph graph) {
 vector<Vector2D> Agent::AStar(Vector2D start, Vector2D goal, Graph graph, bool show_nodes) {
 	PriorityQueue<Vector2D, float> frontier;
 	frontier.put(start, 0.f);
-	vector<Vector2D> frontierCount;
+	frontierCount.clear();
 
 	unordered_map<Vector2D, Vector2D> came_from;
 	came_from[start] = NULL;
@@ -267,7 +266,6 @@ vector<Vector2D> Agent::AStar(Vector2D start, Vector2D goal, Graph graph, bool s
 	Vector2D current, next;
 	bool visited;
 	float new_cost, priority;
-	srand(time(NULL));
 
 	while (!frontier.empty()) {
 
@@ -291,7 +289,7 @@ vector<Vector2D> Agent::AStar(Vector2D start, Vector2D goal, Graph graph, bool s
 		for (unsigned int i = 0; i < neighbors.size(); i++) {
 			visited = false;
 			next = neighbors[i];
-			new_cost = cost_so_far[current] + RandomFloat(1.0f, 3.0f); //TODO implement GetCost method to do + 'graph.GetCost(current, next)' instead of rand
+			new_cost = cost_so_far[current] + (rand() % 3) + 1;//RandomFloat(1.0f, 3.0f); //TODO implement GetCost method to do + 'graph.GetCost(current, next)' instead of rand
 
 			for (unsigned int j = 0; j < cost_so_far.size(); j++) {
 				// If next in cost_so_far 

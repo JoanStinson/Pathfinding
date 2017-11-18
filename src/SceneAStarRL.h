@@ -52,5 +52,5 @@ private:
 	Vector2D pList[12];
 	Vector2D rList[12];
 	Vector2D pointsList[3];
-	bool draw_lines;
+	bool draw_lines, draw_frontier;
 };
