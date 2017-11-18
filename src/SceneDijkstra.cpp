@@ -141,20 +141,18 @@ void SceneDijkstra::draw() {
 	}
 	
 	// Draw costs
-	for (int i = 0; i < agents[0]->vector_costs.size(); i++) {
+	/*for (int i = 0; i < agents[0]->vector_costs.size(); i++) {
 		if (agents[0]->vector_costs[i].second == 1)
 			draw_circle(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, 6, 255, 0, 0, 255);
 		else if (agents[0]->vector_costs[i].second == 2)
 			draw_circle(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, 6, 0, 255, 0, 255);
 		else 
 			draw_circle(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, 6, 0, 0, 255, 255);
-	}
+	}*/
 
 	drawCoinAndStart();
 	draw_circle(TheApp::Instance()->getRenderer(), (int)currentTarget.x, (int)currentTarget.y, 15, 255, 0, 0, 255);
 	agents[0]->draw();
-
-
 }
 
 const char* SceneDijkstra::getTitle() {
