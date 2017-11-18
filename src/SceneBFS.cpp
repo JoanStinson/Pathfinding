@@ -6,7 +6,7 @@ SceneBFS::SceneBFS() {
 	num_cell_x = SRC_WIDTH / CELL_SIZE;
 	num_cell_y = SRC_HEIGHT / CELL_SIZE;
 	initMaze();
-	loadTextures("../res/maze.png", "../res/coin.png");
+	loadTextures("../res/maze.png", "../res/coins.png", "../res/start.png");
 
 	srand((unsigned int)time(NULL));
 
@@ -42,6 +42,8 @@ SceneBFS::~SceneBFS() {
 		SDL_DestroyTexture(background_texture);
 	if (coin_texture)
 		SDL_DestroyTexture(coin_texture);
+	if (start_texture)
+		SDL_DestroyTexture(start_texture);
 
 	for (int i = 0; i < (int)agents.size(); i++) {
 		delete agents[i];
@@ -106,7 +108,7 @@ void SceneBFS::update(float dtime, SDL_Event *event) {
 
 void SceneBFS::draw() {
 	drawMaze();
-	drawCoin();
+	drawCoinAndStart();
 
 	if (draw_grid) {
 		SDL_SetRenderDrawColor(TheApp::Instance()->getRenderer(), 255, 255, 255, 127);
@@ -118,10 +120,8 @@ void SceneBFS::draw() {
 		}
 	}
 
-	for (int i = 0; i < (int)path.points.size(); i++) {
+	for (int i = 2; i < (int)path.points.size()-1; i++) {
 		draw_circle(TheApp::Instance()->getRenderer(), (int)(path.points[i].x), (int)(path.points[i].y), 15, 255, 255, 0, 255);
-		if (i > 0)
-			SDL_RenderDrawLine(TheApp::Instance()->getRenderer(), (int)(path.points[i - 1].x), (int)(path.points[i - 1].y), (int)(path.points[i].x), (int)(path.points[i].y));
 	}
 
 	draw_circle(TheApp::Instance()->getRenderer(), (int)currentTarget.x, (int)currentTarget.y, 15, 255, 0, 0, 255);
@@ -141,11 +141,18 @@ void SceneBFS::drawMaze() {
 	else SDL_RenderCopy(TheApp::Instance()->getRenderer(), background_texture, NULL, NULL);
 }
 
-void SceneBFS::drawCoin() {
+void SceneBFS::drawCoinAndStart() {
 	Vector2D coin_coords = cell2pix(coinPosition);
 	int offset = CELL_SIZE / 2;
-	SDL_Rect dstrect = { (int)coin_coords.x - offset, (int)coin_coords.y - offset, CELL_SIZE, CELL_SIZE };
-	SDL_RenderCopy(TheApp::Instance()->getRenderer(), coin_texture, NULL, &dstrect);
+	Uint32 sprite = (int)(SDL_GetTicks() / (150)) % 10;
+	int sprite_height = 30;
+	SDL_Rect srcrect = { (int)sprite * coin_w, 0, coin_w, sprite_height };
+	SDL_Rect dstrect = { (int)coin_coords.x - (coin_w / 2), (int)coin_coords.y - (sprite_height / 2), coin_w, sprite_height };
+	SDL_Point center = { coin_w / 2, sprite_height / 2 };
+	SDL_RenderCopyEx(TheApp::Instance()->getRenderer(), coin_texture, &srcrect, &dstrect, 0, &center, SDL_FLIP_NONE);
+
+	SDL_Rect dstrect2 = { (int)start.coord.x - offset, (int)start.coord.y - offset, CELL_SIZE, CELL_SIZE };
+	SDL_RenderCopy(TheApp::Instance()->getRenderer(), start_texture, NULL, &dstrect2);
 }
 
 void SceneBFS::initMaze() {
@@ -303,7 +310,8 @@ void SceneBFS::initMaze() {
 	}
 }
 
-bool SceneBFS::loadTextures(char* filename_bg, char* filename_coin) {
+bool SceneBFS::loadTextures(char* filename_bg, char* filename_coin, char* start) {
+	// Bg
 	SDL_Surface *image = IMG_Load(filename_bg);
 	if (!image) {
 		cout << "IMG_Load: " << IMG_GetError() << endl;
@@ -311,6 +319,7 @@ bool SceneBFS::loadTextures(char* filename_bg, char* filename_coin) {
 	}
 	background_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
 
+	// Coin
 	if (image)
 		SDL_FreeSurface(image);
 
@@ -320,6 +329,18 @@ bool SceneBFS::loadTextures(char* filename_bg, char* filename_coin) {
 		return false;
 	}
 	coin_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+	coin_w = image->w / 10;
+
+	if (image)
+		SDL_FreeSurface(image);
+
+	// Start
+	image = IMG_Load(start);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	start_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
 
 	if (image)
 		SDL_FreeSurface(image);

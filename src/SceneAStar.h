@@ -27,16 +27,19 @@ private:
 	bool draw_grid;
 	std::vector<SDL_Rect> maze_rects;
 	void drawMaze();
-	void drawCoin();
+	void drawCoinAndStart();
 	SDL_Texture *background_texture;
 	SDL_Texture *coin_texture;
 	void initMaze();
-	bool loadTextures(char* filename_bg, char* filename_coin);
+	bool loadTextures(char* filename_bg, char* filename_coin, char* start);
 	std::vector< std::vector<int> > terrain;
 	Vector2D cell2pix(Vector2D cell);
 	Vector2D pix2cell(Vector2D pix);
 	bool isValidCell(Vector2D cell);
+
 	Graph graph;
 	Node start, end;
 	vector<Vector2D> astar;
+	SDL_Texture *start_texture;
+	int coin_w;
 };

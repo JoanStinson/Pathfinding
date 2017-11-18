@@ -4,13 +4,20 @@ float SceneAStarRL::Heuristic(Vector2D a, Vector2D b) {
 	return abs(a.x - b.x) + abs(a.y - b.y);
 }
 
+bool SceneAStarRL::allPointsVisited() {
+	for (int i = 0; i <= 3; i++) {
+		if (pointsList[i] != 0) return false;
+	}
+	return true;
+}
+
 SceneAStarRL::SceneAStarRL() {
 	draw_grid = false;
 
 	num_cell_x = SRC_WIDTH / CELL_SIZE;
 	num_cell_y = SRC_HEIGHT / CELL_SIZE;
 	initMaze();
-	loadTextures("../res/maze.png", "../res/coin.png", "../res/coin2.png");
+	loadTextures("../res/maze.png", "../res/coins.png", "../res/coins2.png", "../res/start.png");
 
 	srand((unsigned int)time(NULL));
 
@@ -30,43 +37,54 @@ SceneAStarRL::SceneAStarRL() {
 	while ((!isValidCell(coinPosition)) || (Vector2D::Distance(coinPosition, rand_cell) < 3))
 		coinPosition = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
 
-	nPosition = Vector2D(-1, -1);
-	while ((!isValidCell(nPosition)) || (Vector2D::Distance(nPosition, rand_cell) < 3) && nPosition != coinPosition)
-		nPosition = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
-
-	nPosition2 = Vector2D(-1, -1);
-	while ((!isValidCell(nPosition2)) || (Vector2D::Distance(nPosition2, rand_cell) < 3) && nPosition2 != coinPosition && nPosition2 != nPosition)
-		nPosition2 = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
+	// Set random N locations
+	randNum = (rand() % 3) + 1;
+	for (unsigned int i = 1; i <= randNum; i++) {
+		rList[i] = Vector2D(-1, -1);
+		while ((!isValidCell(rList[i])) || (Vector2D::Distance(rList[i], rand_cell) < 3))
+			rList[i] = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
+	}
 
 	// PathFollowing next Target
 	currentTarget = Vector2D(0, 0);
 	currentTargetIndex = -1;
 
 	// A* Algorithm with random positions
-	if (Heuristic(start.coord, nPosition) > Heuristic(start.coord, nPosition2)) {
-		astar = agents[0]->AStar(pix2cell(start.coord), nPosition2, graph);
-		for (unsigned int i = 0; i < astar.size(); i++) {
-			path.points.push_back(cell2pix(astar[i]));
+	pList[0] = pix2cell(start.coord);
+
+	if (randNum == 1) pList[1] = rList[1];
+
+	else if (randNum == 2) {
+		if (Heuristic(pList[0], rList[1]) > Heuristic(pList[0], rList[2])) {
+			pList[1] = rList[2];
+			pList[2] = rList[1];
 		}
-		astar = agents[0]->AStar(nPosition2, nPosition, graph);
-		for (unsigned int i = 0; i < astar.size(); i++) {
-			path.points.push_back(cell2pix(astar[i]));
-		}
-		astar = agents[0]->AStar(nPosition, coinPosition, graph);
-		for (unsigned int i = 0; i < astar.size(); i++) {
-			path.points.push_back(cell2pix(astar[i]));
+		else {
+			pList[1] = rList[1];
+			pList[2] = rList[2];
 		}
 	}
-	else {
-		astar = agents[0]->AStar(pix2cell(start.coord), nPosition, graph);
-		for (unsigned int i = 0; i < astar.size(); i++) {
-			path.points.push_back(cell2pix(astar[i]));
+
+	else if (randNum >= 3) {
+		int i = 1;
+		for (unsigned int j = 1; j <= randNum; j++) {
+
+			if (Heuristic(pList[i], rList[j]) > Heuristic(pList[i], rList[j + 1])) {
+				pList[i] = rList[j + 1];
+				pList[i + 1] = rList[j];
+			}
+			else {
+				pList[i] = rList[j];
+				pList[i + 1] = rList[j + 1];
+			}
+			i++;
 		}
-		astar = agents[0]->AStar(nPosition, nPosition2, graph);
-		for (unsigned int i = 0; i < astar.size(); i++) {
-			path.points.push_back(cell2pix(astar[i]));
-		}
-		astar = agents[0]->AStar(nPosition2, coinPosition, graph);
+	}
+
+	pList[randNum+1] = coinPosition;
+
+	for (unsigned int i = 0; i <= randNum; i++) {
+		astar = agents[0]->AStar(pList[i], pList[i + 1], graph, false);
 		for (unsigned int i = 0; i < astar.size(); i++) {
 			path.points.push_back(cell2pix(astar[i]));
 		}
@@ -92,6 +110,10 @@ SceneAStarRL::~SceneAStarRL() {
 		SDL_DestroyTexture(background_texture);
 	if (coin_texture)
 		SDL_DestroyTexture(coin_texture);
+	if (coin_texture2)
+		SDL_DestroyTexture(coin_texture2);
+	if (start_texture)
+		SDL_DestroyTexture(start_texture);
 
 	for (int i = 0; i < (int)agents.size(); i++) {
 		delete agents[i];
@@ -125,43 +147,54 @@ void SceneAStarRL::update(float dtime, SDL_Event *event) {
 						while ((!isValidCell(coinPosition)) || (Vector2D::Distance(coinPosition, pix2cell(agents[0]->getPosition())) < 3))
 							coinPosition = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
 
-						nPosition = Vector2D(-1, -1);
-						while ((!isValidCell(nPosition)) || (Vector2D::Distance(nPosition, pix2cell(agents[0]->getPosition())) < 3) && nPosition != coinPosition)
-							nPosition = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
-
-						nPosition2 = Vector2D(-1, -1);
-						while ((!isValidCell(nPosition2)) || (Vector2D::Distance(nPosition2, pix2cell(agents[0]->getPosition())) < 3) && nPosition2 != coinPosition && nPosition2 != nPosition)
-							nPosition2 = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
+						// Set random N locations
+						randNum = (rand() % 3) + 1;
+						for (unsigned int i = 1; i <= randNum; i++) {
+							rList[i] = Vector2D(-1, -1);
+							while ((!isValidCell(rList[i])) || (Vector2D::Distance(rList[i], pix2cell(agents[0]->getPosition())) < 3))
+								rList[i] = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
+						}
 
 						agents[0]->setPosition(path.points.back());
 						start = Node(agents[0]->getPosition());
 						path.points.clear();
 
 						// A* Algorithm with random positions
-						if (Heuristic(start.coord, nPosition) > Heuristic(start.coord, nPosition2)) {
-							astar = agents[0]->AStar(pix2cell(start.coord), nPosition2, graph);
-							for (unsigned int i = 0; i < astar.size(); i++) {
-								path.points.push_back(cell2pix(astar[i]));
+						pList[0] = pix2cell(start.coord);
+
+						if (randNum == 1) pList[1] = rList[1];
+
+						else if (randNum == 2) {
+							if (Heuristic(pList[0], rList[1]) > Heuristic(pList[0], rList[2])) {
+								pList[1] = rList[2];
+								pList[2] = rList[1];
 							}
-							astar = agents[0]->AStar(nPosition2, nPosition, graph);
-							for (unsigned int i = 0; i < astar.size(); i++) {
-								path.points.push_back(cell2pix(astar[i]));
-							}
-							astar = agents[0]->AStar(nPosition, coinPosition, graph);
-							for (unsigned int i = 0; i < astar.size(); i++) {
-								path.points.push_back(cell2pix(astar[i]));
+							else {
+								pList[1] = rList[1];
+								pList[2] = rList[2];
 							}
 						}
-						else {
-							astar = agents[0]->AStar(pix2cell(start.coord), nPosition, graph);
-							for (unsigned int i = 0; i < astar.size(); i++) {
-								path.points.push_back(cell2pix(astar[i]));
+
+						else if (randNum >= 3) {
+							int i = 1;
+							for (unsigned int j = 1; j <= randNum; j++) {
+
+								if (Heuristic(pList[i], rList[j]) > Heuristic(pList[i], rList[j + 1])) {
+									pList[i] = rList[j + 1];
+									pList[i + 1] = rList[j];
+								}
+								else {
+									pList[i] = rList[j];
+									pList[i + 1] = rList[j + 1];
+								}
+								i++;
 							}
-							astar = agents[0]->AStar(nPosition, nPosition2, graph);
-							for (unsigned int i = 0; i < astar.size(); i++) {
-								path.points.push_back(cell2pix(astar[i]));
-							}
-							astar = agents[0]->AStar(nPosition2, coinPosition, graph);
+						}
+
+						pList[randNum + 1] = coinPosition;
+
+						for (unsigned int i = 0; i <= randNum; i++) {
+							astar = agents[0]->AStar(pList[i], pList[i + 1], graph, false);
 							for (unsigned int i = 0; i < astar.size(); i++) {
 								path.points.push_back(cell2pix(astar[i]));
 							}
@@ -187,10 +220,10 @@ void SceneAStarRL::update(float dtime, SDL_Event *event) {
 }
 
 void SceneAStarRL::draw() {
+
 	drawMaze();
-	drawCoin();
-	drawNPosition();
-	drawNPosition2();
+	drawCoinAndStart();
+	drawNPositions();
 
 	if (draw_grid) {
 		SDL_SetRenderDrawColor(TheApp::Instance()->getRenderer(), 255, 255, 255, 127);
@@ -202,9 +235,9 @@ void SceneAStarRL::draw() {
 		}
 	}
 
-	for (int i = 0; i < (int)path.points.size(); i++) {
+	for (int i = 2; i < (int)path.points.size()-1; i++) {
 		draw_circle(TheApp::Instance()->getRenderer(), (int)(path.points[i].x), (int)(path.points[i].y), 15, 255, 255, 0, 255);
-		if (i > 0)
+		if (i > 2)
 			SDL_RenderDrawLine(TheApp::Instance()->getRenderer(), (int)(path.points[i - 1].x), (int)(path.points[i - 1].y), (int)(path.points[i].x), (int)(path.points[i].y));
 	}
 
@@ -225,27 +258,39 @@ void SceneAStarRL::drawMaze() {
 	else SDL_RenderCopy(TheApp::Instance()->getRenderer(), background_texture, NULL, NULL);
 }
 
-void SceneAStarRL::drawCoin() {
+void SceneAStarRL::drawCoinAndStart() {
 	Vector2D coin_coords = cell2pix(coinPosition);
 	int offset = CELL_SIZE / 2;
-	SDL_Rect dstrect = { (int)coin_coords.x - offset, (int)coin_coords.y - offset, CELL_SIZE, CELL_SIZE };
-	SDL_RenderCopy(TheApp::Instance()->getRenderer(), coin_texture, NULL, &dstrect);
+	Uint32 sprite = (int)(SDL_GetTicks() / (150)) % 10;
+	int coin_w = 290 / 10;
+	int sprite_height = 30;
+	SDL_Rect srcrect = { (int)sprite * coin_w, 0, coin_w, sprite_height };
+	SDL_Rect dstrect = { (int)coin_coords.x - (coin_w / 2), (int)coin_coords.y - (sprite_height / 2), coin_w, sprite_height };
+	SDL_Point center = { coin_w / 2, sprite_height / 2 };
+	SDL_RenderCopyEx(TheApp::Instance()->getRenderer(), coin_texture, &srcrect, &dstrect, 0, &center, SDL_FLIP_NONE);
+
+	SDL_Rect dstrect2 = { (int)start.coord.x - offset, (int)start.coord.y - offset, CELL_SIZE, CELL_SIZE };
+	SDL_RenderCopy(TheApp::Instance()->getRenderer(), start_texture, NULL, &dstrect2);
 }
 
-void SceneAStarRL::drawNPosition() {
-	Vector2D coin_coords = cell2pix(nPosition);
-	int offset = CELL_SIZE / 2;
-	SDL_Rect dstrect = { (int)coin_coords.x - offset, (int)coin_coords.y - offset, CELL_SIZE, CELL_SIZE };
-	SDL_RenderCopy(TheApp::Instance()->getRenderer(), coin_texture2, NULL, &dstrect);
-}
+void SceneAStarRL::drawNPositions() {
+	for (unsigned int i = 1; i <= randNum; i++) {
+		/*Vector2D coin_coords = cell2pix(rList[i]);
+		int offset = CELL_SIZE / 2;
+		SDL_Rect dstrect = { (int)coin_coords.x - offset, (int)coin_coords.y - offset, CELL_SIZE, CELL_SIZE };
+		SDL_RenderCopy(TheApp::Instance()->getRenderer(), coin_texture2, NULL, &dstrect);*/
 
-void SceneAStarRL::drawNPosition2() {
-	Vector2D coin_coords = cell2pix(nPosition2);
-	int offset = CELL_SIZE / 2;
-	SDL_Rect dstrect = { (int)coin_coords.x - offset, (int)coin_coords.y - offset, CELL_SIZE, CELL_SIZE };
-	SDL_RenderCopy(TheApp::Instance()->getRenderer(), coin_texture2, NULL, &dstrect);
+		Vector2D coin_coords = cell2pix(rList[i]);
+		int offset = CELL_SIZE / 2;
+		Uint32 sprite = (int)(SDL_GetTicks() / (150)) % 10;
+		int coin_w = 290 / 10;
+		int sprite_height = 30;
+		SDL_Rect srcrect = { (int)sprite * coin_w, 0, coin_w, sprite_height };
+		SDL_Rect dstrect = { (int)coin_coords.x - (coin_w / 2), (int)coin_coords.y - (sprite_height / 2), coin_w, sprite_height };
+		SDL_Point center = { coin_w / 2, sprite_height / 2 };
+		SDL_RenderCopyEx(TheApp::Instance()->getRenderer(), coin_texture2, &srcrect, &dstrect, 0, &center, SDL_FLIP_NONE);
+	}
 }
-
 
 void SceneAStarRL::initMaze() {
 
@@ -402,7 +447,7 @@ void SceneAStarRL::initMaze() {
 	}
 }
 
-bool SceneAStarRL::loadTextures(char* filename_bg, char* filename_coin, char* filename_coin2) {
+bool SceneAStarRL::loadTextures(char* filename_bg, char* filename_coin, char* filename_coin2, char* start) {
 	// Bg
 	SDL_Surface *image = IMG_Load(filename_bg);
 	if (!image) {
@@ -432,6 +477,17 @@ bool SceneAStarRL::loadTextures(char* filename_bg, char* filename_coin, char* fi
 		return false;
 	}
 	coin_texture2 = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+
+	if (image)
+		SDL_FreeSurface(image);
+
+	// Start
+	image = IMG_Load(start);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	start_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
 
 	if (image)
 		SDL_FreeSurface(image);

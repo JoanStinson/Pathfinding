@@ -56,7 +56,7 @@ public:
 	vector<Vector2D> BFS(Vector2D start, Vector2D goal, Graph graph);
 	vector<Vector2D> Dijkstra(Vector2D start, Vector2D goal, Graph graph);
 	vector<Vector2D> GBFS(Vector2D start, Vector2D goal, Graph graph);
-	vector<Vector2D> AStar(Vector2D start, Vector2D goal, Graph graph);
+	vector<Vector2D> AStar(Vector2D start, Vector2D goal, Graph graph, bool show_nodes);
 
 	SteeringBehavior *Behavior();
 	Vector2D getPosition();

@@ -248,7 +248,7 @@ vector<Vector2D> Agent::GBFS(Vector2D start, Vector2D goal, Graph graph) {
 	}
 }
 
-vector<Vector2D> Agent::AStar(Vector2D start, Vector2D goal, Graph graph) {
+vector<Vector2D> Agent::AStar(Vector2D start, Vector2D goal, Graph graph, bool show_nodes) {
 	PriorityQueue<Vector2D, float> frontier;
 	frontier.put(start, 0.f);
 	vector<Vector2D> frontierCount;
@@ -270,7 +270,8 @@ vector<Vector2D> Agent::AStar(Vector2D start, Vector2D goal, Graph graph) {
 		current = frontier.get();
 
 		if (current == goal) {
-			cout << "\r" << "  Current: " << frontierCount.size() << " Min: " << Min(frontierCount.size()) << " Max: " << Max(frontierCount.size()) << " Average: " << Average(frontierCount.size()) << "        ";
+			if (show_nodes) cout << "\r" << "  Current: " << frontierCount.size() << " Min: " << Min(frontierCount.size()) << " Max: " << Max(frontierCount.size()) << " Average: " << Average(frontierCount.size()) << "        ";
+			else cout << "\r" << "          " << "   " << "      " << "   " << "      " << "   " << "          " << "   " << "        ";
 			path.push_back(current);
 			while (current != start) {
 				current = came_from[current];

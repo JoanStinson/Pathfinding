@@ -6,7 +6,7 @@ ScenePathFinding::ScenePathFinding() {
 	num_cell_x = SRC_WIDTH / CELL_SIZE;
 	num_cell_y = SRC_HEIGHT / CELL_SIZE;
 	initMaze();
-	loadTextures("../res/maze.png", "../res/coin.png");
+	loadTextures("../res/maze.png", "../res/coins.png", "../res/start.png");
 
 	srand((unsigned int)time(NULL));
 
@@ -18,7 +18,7 @@ ScenePathFinding::ScenePathFinding() {
 	Vector2D rand_cell(-1, -1);
 	while (!isValidCell(rand_cell))
 		rand_cell = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
-	agents[0]->setPosition(cell2pix(rand_cell));
+	start = Node(agents[0]->getPosition().x, agents[0]->getPosition().y);
 
 	// Set the coin in a random cell (but at least 3 cells far from the agent)
 	coinPosition = Vector2D(-1, -1);
@@ -33,8 +33,8 @@ ScenePathFinding::ScenePathFinding() {
 ScenePathFinding::~ScenePathFinding() {
 	if (background_texture)
 		SDL_DestroyTexture(background_texture);
-	if (coin_texture)
-		SDL_DestroyTexture(coin_texture);
+	if (start_texture)
+		SDL_DestroyTexture(start_texture);
 
 	for (int i = 0; i < (int)agents.size(); i++) {
 		delete agents[i];
@@ -82,6 +82,7 @@ void ScenePathFinding::update(float dtime, SDL_Event *event) {
 						while ((!isValidCell(coinPosition)) || (Vector2D::Distance(coinPosition, pix2cell(agents[0]->getPosition())) < 3))
 							coinPosition = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
 						agents[0]->setPosition(path.points.back());
+						start = Node(agents[0]->getPosition());
 						path.points.clear();
 					}
 				}
@@ -105,7 +106,7 @@ void ScenePathFinding::update(float dtime, SDL_Event *event) {
 
 void ScenePathFinding::draw() {
 	drawMaze();
-	drawCoin();
+	drawCoinAndStart();
 
 	if (draw_grid) {
 		SDL_SetRenderDrawColor(TheApp::Instance()->getRenderer(), 255, 255, 255, 127);
@@ -140,11 +141,21 @@ void ScenePathFinding::drawMaze() {
 	else SDL_RenderCopy(TheApp::Instance()->getRenderer(), background_texture, NULL, NULL);
 }
 
-void ScenePathFinding::drawCoin() {
+void ScenePathFinding::drawCoinAndStart() {
 	Vector2D coin_coords = cell2pix(coinPosition);
 	int offset = CELL_SIZE / 2;
-	SDL_Rect dstrect = { (int)coin_coords.x - offset, (int)coin_coords.y - offset, CELL_SIZE, CELL_SIZE };
-	SDL_RenderCopy(TheApp::Instance()->getRenderer(), coin_texture, NULL, &dstrect);
+	Uint32 sprite = (int)(SDL_GetTicks() / (150)) % 10;
+	int sprite_height = 30;
+	SDL_Rect srcrect = { (int)sprite * coin_w, 0, coin_w, sprite_height };
+	SDL_Rect dstrect = { (int)coin_coords.x - (coin_w / 2), (int)coin_coords.y - (sprite_height / 2), coin_w, sprite_height };
+	SDL_Point center = { coin_w / 2, sprite_height / 2 };
+	SDL_RenderCopyEx(TheApp::Instance()->getRenderer(), coin_texture, &srcrect, &dstrect, 0, &center, SDL_FLIP_NONE);
+
+	// Draw start
+	if (agents[0]->getPosition() != start.coord) {
+		SDL_Rect dstrect2 = { (int)start.coord.x - offset, (int)start.coord.y - offset, CELL_SIZE, CELL_SIZE };
+		SDL_RenderCopy(TheApp::Instance()->getRenderer(), start_texture, NULL, &dstrect2);
+	}
 }
 
 void ScenePathFinding::initMaze() {
@@ -242,7 +253,8 @@ void ScenePathFinding::initMaze() {
 	}
 }
 
-bool ScenePathFinding::loadTextures(char* filename_bg, char* filename_coin) {
+bool ScenePathFinding::loadTextures(char* filename_bg, char* filename_coin, char* start) {
+	// Bg
 	SDL_Surface *image = IMG_Load(filename_bg);
 	if (!image) {
 		cout << "IMG_Load: " << IMG_GetError() << endl;
@@ -253,12 +265,25 @@ bool ScenePathFinding::loadTextures(char* filename_bg, char* filename_coin) {
 	if (image)
 		SDL_FreeSurface(image);
 
+	// Coin
 	image = IMG_Load(filename_coin);
 	if (!image) {
 		cout << "IMG_Load: " << IMG_GetError() << endl;
 		return false;
 	}
 	coin_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+	coin_w = image->w / 10;
+
+	if (image)
+		SDL_FreeSurface(image);
+
+	// Start
+	image = IMG_Load(start);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	start_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
 
 	if (image)
 		SDL_FreeSurface(image);
