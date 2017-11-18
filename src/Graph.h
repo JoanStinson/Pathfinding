@@ -16,10 +16,12 @@ public:
 	// Returns a list of connections outgoing from the given node
 	vector<Vector2D> GetConnections(Vector2D a);
 
-private:
+	int GetCost(Vector2D a);
+
 	// Data structure that contains all connections of the graph
 	vector<Connection> allConnections;
 
+private:
 	// Number of connexions
 	int v;
 };

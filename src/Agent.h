@@ -46,6 +46,7 @@ public:
 	~Agent();
 
 	// Utils
+	vector<std::pair<Vector2D, int>> vector_costs;
 	float RandomFloat(float a, float b);
 	float Heuristic(Vector2D a, Vector2D b);
 	int Min(int a);

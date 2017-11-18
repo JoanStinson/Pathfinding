@@ -3,7 +3,7 @@
 Connection::Connection() {
 }
 
-Connection::Connection(Vector2D f, Vector2D t, float c) {
+Connection::Connection(Vector2D f, Vector2D t, int c) {
 	from.coord = f;
 	to.coord = t;
 	cost = c;
@@ -12,7 +12,7 @@ Connection::Connection(Vector2D f, Vector2D t, float c) {
 Connection::~Connection() {
 }
 
-float Connection::GetCost() {
+int Connection::GetCost() {
 	return cost;
 }
 

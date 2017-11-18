@@ -4,11 +4,11 @@
 class Connection {
 public:
 	Connection();
-	Connection(Vector2D f, Vector2D t, float c);
+	Connection(Vector2D f, Vector2D t, int c);
 	~Connection();
 
 	// Returns the non-negative cost of the connection
-	float GetCost();
+	int GetCost();
 
 	// Returns the node that this connection came from
 	Node GetFromNode();
@@ -18,5 +18,5 @@ public:
 
 private:
 	Node from, to;
-	float cost;
+	int cost;
 };
