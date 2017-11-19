@@ -35,47 +35,28 @@ float Agent::Heuristic(Vector2D a, Vector2D b) {
 	return abs(a.x - b.x) + abs(a.y - b.y);
 }
 
-std::string Agent::Current(int a) {
-	std::string currentValue = "";
+void Agent::PrintStatistics(int a) {
+	// Current
 	current = a;
-	if (current < 10) currentValue = "000" + std::to_string(current);
-	else if (current < 100) currentValue = "00" + std::to_string(current);
-	else if (current < 1000) currentValue = "0" + std::to_string(current);
-	return currentValue;
-}
 
-std::string Agent::Min(int a) {
-	std::string minValue = "";
+	// Min
 	if (min == 0) min = a;
-	if (a < min) min = a;
-	if (min < 10) minValue = "000" + std::to_string(min);
-	else if (min < 100) minValue = "00" + std::to_string(min);
-	else if (min < 1000) minValue = "0" + std::to_string(min);
-	return minValue;
-}
+	else if (a < min) min = a;
 
-std::string Agent::Max(int a) {
-	std::string maxValue = "";
+	// Max
 	if (max == 0) max = a;
-	if (a > max) max = a;
-	if (max < 10) maxValue = "000" + std::to_string(max);
-	else if (max < 100) maxValue = "00" + std::to_string(max);
-	else if (max < 1000) maxValue = "0" + std::to_string(max);
-	return maxValue;
-}
+	else if (a > max) max = a;
 
-std::string Agent::Average(int a) {
-	std::string averageValue = "";
+	// Average
 	sizes.push_back(a);
-	int c = 0;
+	int temp = 0;
 	for (int i = 0; i < sizes.size(); i++) {
-		c += sizes[i];
+		temp += sizes[i];
 	}
-	average = c / sizes.size();
-	if (average < 10) averageValue = "000" + std::to_string(average);
-	else if (average < 100) averageValue = "00" + std::to_string(average);
-	else if (average < 1000) averageValue = "0" + std::to_string(average);
-	return averageValue;
+	average = temp / sizes.size();
+
+	// Print
+	cout << "\r" << "  Current: " << current << " Min: " << min << " Max: " << max << " Average: " << average << "            ";
 }
 
 vector<Vector2D> Agent::BFS(Vector2D start, Vector2D goal, Graph graph) {
@@ -105,7 +86,8 @@ vector<Vector2D> Agent::BFS(Vector2D start, Vector2D goal, Graph graph) {
 		// Si el node actual és el node goal, és a dir, el node de la moneda
 		// ja hem acabat de visitar tots els nodes necessaris i ens decidim a retornar el camí per arribar-hi (early exit)
 		if (current == goal) {
-			cout << "\r" << "  Current: " << Current(frontierCount.size()) << " Min: " << Min(frontierCount.size()) << " Max: " << Max(frontierCount.size()) << " Average: " << Average(frontierCount.size());
+			int size = frontierCount.size();
+			PrintStatistics(size);
 			// Fem push_back del current el qual = node final o goal 
 			// (perquè volem traçar el camí desde el final al principi)
 			path.push_back(current);
@@ -174,7 +156,8 @@ vector<Vector2D> Agent::Dijkstra(Vector2D start, Vector2D goal, Graph graph) {
 		current = frontier.get();
 
 		if (current == goal) {
-			cout << "\r" << "  Current: " << Current(frontierCount.size()) << " Min: " << Min(frontierCount.size()) << " Max: " << Max(frontierCount.size()) << " Average: " << Average(frontierCount.size());
+			int size = frontierCount.size();
+			PrintStatistics(size);
 			path.push_back(current);
 			while (current != start) {
 				current = came_from[current];
@@ -238,7 +221,8 @@ vector<Vector2D> Agent::GBFS(Vector2D start, Vector2D goal, Graph graph) {
 		current = frontier.get();
 
 		if (current == goal) {
-			cout << "\r" << "  Current: " << Current(frontierCount.size()) << " Min: " << Min(frontierCount.size()) << " Max: " << Max(frontierCount.size()) << " Average: " << Average(frontierCount.size());
+			int size = frontierCount.size();
+			PrintStatistics(size);
 			path.push_back(current);
 			while (current != start) {
 				current = came_from[current];
@@ -293,8 +277,11 @@ vector<Vector2D> Agent::AStar(Vector2D start, Vector2D goal, Graph graph, bool s
 		current = frontier.get();
 
 		if (current == goal) {
-			if (show_nodes) cout << "\r" << "  Current: " << Current(frontierCount.size()) << " Min: " << Min(frontierCount.size()) << " Max: " << Max(frontierCount.size()) << " Average: " << Average(frontierCount.size());
-			else cout << "\r" << "           " << "    " << "      " << "    " << "      " << "    " << "          " << "    ";
+			if (show_nodes) {
+				int size = frontierCount.size();
+				PrintStatistics(size);
+			}
+			else cout << "\r" << "           " << "    " << "      " << "    " << "      " << "    " << "          " << "    " << "            ";
 			path.push_back(current);
 			while (current != start) {
 				current = came_from[current];

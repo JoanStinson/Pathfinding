@@ -50,10 +50,7 @@ public:
 	vector<std::pair<Vector2D, int>> vector_costs;
 	float RandomFloat(float a, float b);
 	float Heuristic(Vector2D a, Vector2D b);
-	std::string Current(int a);
-	std::string Min(int a);
-	std::string Max(int a);
-	std::string Average(int a);
+	void PrintStatistics(int a);
 
 	// Pathfinding Algorithms
 	vector<Vector2D> BFS(Vector2D start, Vector2D goal, Graph graph);

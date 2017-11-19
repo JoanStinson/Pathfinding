@@ -61,7 +61,7 @@ int main(int argc, char ** argv) {
 					delete(curr_scene);
 					curr_scene = new ScenePathFinding;
 					app->setWindowTitle(curr_scene->getTitle());
-					cout << "\r" << "           " << "    " << "      " << "    " << "      " << "    " << "          " << "    ";
+					cout << "\r" << "           " << "    " << "      " << "    " << "      " << "    " << "          " << "    " << "            ";
 				}
 
 				if (event.key.keysym.scancode == SDL_SCANCODE_1) {
