@@ -176,13 +176,14 @@ vector<Vector2D> Agent::Dijkstra(Vector2D start, Vector2D goal, Graph graph) {
 		}
 
 		neighbors = graph.GetConnections(current);
+		
 
-		randCost = RandomFloat(0, 7);
+		
 		//cout << randCost << endl;
 		for (unsigned int i = 0; i < neighbors.size(); i++) {
 			visited = false;
 			next = neighbors[i];
-			
+			randCost = (rand() % 6) + 1; //RandomFloat(0, 7);
 			new_cost = cost_so_far[current] + randCost;//(rand() % 3) + 1;//graph.GetCost(next);
 			vector_costs.push_back(std::make_pair(next, randCost));
 

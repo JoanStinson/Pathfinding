@@ -138,15 +138,11 @@ void SceneDijkstra::draw() {
 		}
 	}
 
-
-	
 	// Draw costs
-	int radius = 3;
+	int offset = CELL_SIZE / 2;
+	SDL_Texture *terrain = NULL;
 	if (draw_costs) {
 		for (unsigned int i = 0; i < agents[0]->vector_costs.size(); i++) {
-			int offset = CELL_SIZE / 2;
-			SDL_Texture *terrain = NULL;
-
 			if (agents[0]->vector_costs[i].second > 5) terrain = cost6_texture;
 			else if (agents[0]->vector_costs[i].second > 4) terrain = cost5_texture;
 			else if (agents[0]->vector_costs[i].second > 3) terrain = cost4_texture;
@@ -154,28 +150,8 @@ void SceneDijkstra::draw() {
 			else if (agents[0]->vector_costs[i].second > 1) terrain = cost2_texture;
 			else if (agents[0]->vector_costs[i].second > 0) terrain = cost1_texture;
 				
-				
-			SDL_Rect dstrect2 = { (int)cell2pix(agents[0]->vector_costs[i].first).x - offset, (int)cell2pix(agents[0]->vector_costs[i].first).y - offset, CELL_SIZE, CELL_SIZE };
-			SDL_RenderCopy(TheApp::Instance()->getRenderer(), terrain, NULL, &dstrect2);
-
-			/*if (agents[0]->vector_costs[i].second > 5) set_pixel(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, 255, 0, 0, 255);
-			else if (agents[0]->vector_costs[i].second > 4) set_pixel(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, 255, 102, 102, 255);
-			else if (agents[0]->vector_costs[i].second > 3) set_pixel(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, 255, 165, 0, 255);
-			else if (agents[0]->vector_costs[i].second > 2) set_pixel(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, 255, 201, 102, 255);
-			else if (agents[0]->vector_costs[i].second > 1) set_pixel(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, 50, 205, 50, 255);
-			else if (agents[0]->vector_costs[i].second > 0) set_pixel(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, 152, 251, 152, 255);*/
-
-			
-			
-
-
-			/*if (agents[0]->vector_costs[i].second > 5) draw_circle(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, radius, 255, 0, 0, 255);
-			else if (agents[0]->vector_costs[i].second > 4) draw_circle(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, radius, 255, 102, 102, 255);
-			else if (agents[0]->vector_costs[i].second > 3) draw_circle(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, radius, 255, 165, 0, 255);
-			else if (agents[0]->vector_costs[i].second > 2) draw_circle(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, radius, 255, 201, 102, 255);
-			else if (agents[0]->vector_costs[i].second > 1) draw_circle(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, radius, 50, 205, 50, 255);
-			else if (agents[0]->vector_costs[i].second > 0) draw_circle(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, radius, 152, 251, 152, 255);
-		*/
+			SDL_Rect dstrect = { (int)cell2pix(agents[0]->vector_costs[i].first).x - offset, (int)cell2pix(agents[0]->vector_costs[i].first).y - offset, CELL_SIZE, CELL_SIZE };
+			SDL_RenderCopy(TheApp::Instance()->getRenderer(), terrain, NULL, &dstrect);
 		}
 	}
 
@@ -188,7 +164,7 @@ void SceneDijkstra::draw() {
 
 	// Draw path
 	for (int i = 2; i < (int)path.points.size() - 1; i++) {
-		draw_circle(TheApp::Instance()->getRenderer(), (int)(path.points[i].x), (int)(path.points[i].y), 15, 255, 20, 147, 255);
+		draw_circle(TheApp::Instance()->getRenderer(), (int)(path.points[i].x), (int)(path.points[i].y), 15, 255, 105, 180, 255);
 		if (draw_lines) {
 			if (i > 2)
 				SDL_RenderDrawLine(TheApp::Instance()->getRenderer(), (int)(path.points[i - 1].x), (int)(path.points[i - 1].y), (int)(path.points[i].x), (int)(path.points[i].y));
