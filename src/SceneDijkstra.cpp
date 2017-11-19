@@ -164,7 +164,7 @@ void SceneDijkstra::draw() {
 
 	// Draw path
 	for (int i = 2; i < (int)path.points.size() - 1; i++) {
-		draw_circle(TheApp::Instance()->getRenderer(), (int)(path.points[i].x), (int)(path.points[i].y), 15, 255, 105, 180, 255);
+		draw_circle(TheApp::Instance()->getRenderer(), (int)(path.points[i].x), (int)(path.points[i].y), 15, 255, 255, 0, 255);
 		if (draw_lines) {
 			if (i > 2)
 				SDL_RenderDrawLine(TheApp::Instance()->getRenderer(), (int)(path.points[i - 1].x), (int)(path.points[i - 1].y), (int)(path.points[i].x), (int)(path.points[i].y));

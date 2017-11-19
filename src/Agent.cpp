@@ -143,14 +143,14 @@ vector<Vector2D> Agent::BFS(Vector2D start, Vector2D goal, Graph graph) {
 
 vector<Vector2D> Agent::Dijkstra(Vector2D start, Vector2D goal, Graph graph) {
 	PriorityQueue<Vector2D, float> frontier;
-	frontier.put(start, 0);
+	frontier.put(start, 0.f);
 	frontierCount.clear();
 
 	unordered_map<Vector2D, Vector2D> came_from;
 	came_from[start] = NULL;
 
 	unordered_map<Vector2D, float> cost_so_far;
-	cost_so_far[start] = 0;
+	cost_so_far[start] = 0.f;
 
 	vector<Vector2D> path, neighbors;
 	Vector2D current, next;
@@ -177,13 +177,13 @@ vector<Vector2D> Agent::Dijkstra(Vector2D start, Vector2D goal, Graph graph) {
 
 		neighbors = graph.GetConnections(current);
 		
-
+		randCost = (rand() % 4) + 1; //RandomFloat(0, 7);
 		
 		//cout << randCost << endl;
 		for (unsigned int i = 0; i < neighbors.size(); i++) {
 			visited = false;
 			next = neighbors[i];
-			randCost = (rand() % 6) + 1; //RandomFloat(0, 7);
+
 			new_cost = cost_so_far[current] + randCost;//(rand() % 3) + 1;//graph.GetCost(next);
 			vector_costs.push_back(std::make_pair(next, randCost));
 
@@ -210,6 +210,8 @@ vector<Vector2D> Agent::Dijkstra(Vector2D start, Vector2D goal, Graph graph) {
 				frontierCount.push_back(next);
 			}
 		}
+
+		
 	}
 }
 
