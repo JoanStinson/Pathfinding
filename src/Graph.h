@@ -4,6 +4,7 @@
 #include "Vector2D.h"
 #include <vector>
 #include <iostream>
+#include <map>
 using namespace std;
 
 class Graph {
@@ -12,18 +13,11 @@ public:
 	~Graph();
 
 	// Push back to allConnections
-	void AddConnection(Connection c);
+	void AddConnection(Vector2D from, Vector2D to);
 
 	// Returns a list of connections outgoing from the given node
 	vector<Vector2D> GetConnections(Vector2D a);
 
-	int GetCost(Vector2D a);
-
-	// Data structure that contains all connections of the graph
-	vector<Connection> allConnections;
-
 private:
-	// Number of connexions
-	int v;
-	int cost = 0;
+	multimap<Vector2D, Vector2D> mymultimap;
 };

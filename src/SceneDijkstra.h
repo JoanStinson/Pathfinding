@@ -31,7 +31,7 @@ private:
 	SDL_Texture *background_texture;
 	SDL_Texture *coin_texture;
 	void initMaze();
-	bool loadTextures(char* filename_bg, char* filename_coin, char* start);
+	bool loadTextures(char* filename_bg, char* filename_coin, char* start, char* cost1, char* cost2, char* cost3, char* cost4, char* cost5, char* cost6);
 	std::vector< std::vector<int> > terrain;
 	Vector2D cell2pix(Vector2D cell);
 	Vector2D pix2cell(Vector2D pix);
@@ -42,5 +42,11 @@ private:
 	vector<Vector2D> dijkstra;
 	SDL_Texture *start_texture;
 	int coin_w;
-	bool draw_lines, draw_frontier, draw_costs = false;
+	bool draw_lines, draw_frontier, draw_costs;
+	SDL_Texture *cost1_texture;
+	SDL_Texture *cost2_texture;
+	SDL_Texture *cost3_texture;
+	SDL_Texture *cost4_texture;
+	SDL_Texture *cost5_texture;
+	SDL_Texture *cost6_texture;
 };

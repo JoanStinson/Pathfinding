@@ -143,13 +143,13 @@ void SceneAStar::draw() {
 	}
 
 	// Draw costs
-	if (draw_costs) {
+	/*if (draw_costs) {
 		for (unsigned int i = 0; i < graph.allConnections.size(); i++) {
 			if (graph.allConnections[i].GetCost() == 1) draw_circle(TheApp::Instance()->getRenderer(), cell2pix(graph.allConnections[i].GetToNode().coord).x, cell2pix(graph.allConnections[i].GetToNode().coord).y, 6, 255, 140, 0, 255);
 			else if (graph.allConnections[i].GetCost() == 2) draw_circle(TheApp::Instance()->getRenderer(), cell2pix(graph.allConnections[i].GetToNode().coord).x, cell2pix(graph.allConnections[i].GetToNode().coord).y, 6, 0, 255, 0, 255);
 			else draw_circle(TheApp::Instance()->getRenderer(), cell2pix(graph.allConnections[i].GetToNode().coord).x, cell2pix(graph.allConnections[i].GetToNode().coord).y, 6, 0, 0, 255, 255);
 		}
-	}
+	}*/
 
 	drawCoinAndStart();
 	draw_circle(TheApp::Instance()->getRenderer(), (int)currentTarget.x, (int)currentTarget.y, 15, 255, 0, 0, 255);
@@ -283,56 +283,44 @@ void SceneAStar::initMaze() {
 
 			if (terrain[i][j] == 1) {
 
-				int r = (rand() % 3) + 1;
-
 				if (j < num_cell_y - 1 && terrain[i][j + 1] != 0) {
-					Connection c(Vector2D(i, j), Vector2D(i, j + 1), r);
-					graph.AddConnection(c);
+					graph.AddConnection(Vector2D(i, j), Vector2D(i, j + 1));
 				}
 
 				if (i < num_cell_x - 1 && terrain[i + 1][j] != 0) {
-					Connection c(Vector2D(i, j), Vector2D(i + 1, j), r);
-					graph.AddConnection(c);
+					graph.AddConnection(Vector2D(i, j), Vector2D(i + 1, j));
 				}
 
 				if (j > 0 && terrain[i][j - 1] != 0) {
-					Connection c(Vector2D(i, j), Vector2D(i, j - 1), r);
-					graph.AddConnection(c);
+					graph.AddConnection(Vector2D(i, j), Vector2D(i, j - 1));
 				}
 
 				if (i > 0 && terrain[i - 1][j] != 0) {
-					Connection c(Vector2D(i, j), Vector2D(i - 1, j), r);
-					graph.AddConnection(c);
+					graph.AddConnection(Vector2D(i, j), Vector2D(i - 1, j));
 				}
 
 				if (i == 10 && j == 0) {
-					Connection c(Vector2D(i, j), Vector2D(10, 39), r);
-					graph.AddConnection(c);
+					graph.AddConnection(Vector2D(i, j), Vector2D(10, 39));
 				}
 
 				if (i == 10 && j == 39) {
-					Connection c(Vector2D(i, j), Vector2D(10, 0), r);
-					graph.AddConnection(c);
+					graph.AddConnection(Vector2D(i, j), Vector2D(10, 0));
 				}
 
 				if (i == 11 && j == 0) {
-					Connection c(Vector2D(i, j), Vector2D(11, 39), r);
-					graph.AddConnection(c);
+					graph.AddConnection(Vector2D(i, j), Vector2D(11, 39));
 				}
 
 				if (i == 11 && j == 39) {
-					Connection c(Vector2D(i, j), Vector2D(11, 0), r);
-					graph.AddConnection(c);
+					graph.AddConnection(Vector2D(i, j), Vector2D(11, 0));
 				}
 
 				if (i == 12 && j == 0) {
-					Connection c(Vector2D(i, j), Vector2D(12, 39), r);
-					graph.AddConnection(c);
+					graph.AddConnection(Vector2D(i, j), Vector2D(12, 39));
 				}
 
 				if (i == 12 && j == 39) {
-					Connection c(Vector2D(i, j), Vector2D(12, 0), r);
-					graph.AddConnection(c);
+					graph.AddConnection(Vector2D(i, j), Vector2D(12, 0));
 				}
 			}
 		}

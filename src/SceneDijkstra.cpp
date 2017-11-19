@@ -6,7 +6,7 @@ SceneDijkstra::SceneDijkstra() {
 	num_cell_x = SRC_WIDTH / CELL_SIZE;
 	num_cell_y = SRC_HEIGHT / CELL_SIZE;
 	initMaze();
-	loadTextures("../res/maze.png", "../res/coins.png", "../res/start.png");
+	loadTextures("../res/maze.png", "../res/coins.png", "../res/start.png", "../res/cost1.png", "../res/cost2.png", "../res/cost3.png", "../res/cost4.png", "../res/cost5.png", "../res/cost6.png");
 
 	srand((unsigned int)time(NULL));
 
@@ -23,7 +23,7 @@ SceneDijkstra::SceneDijkstra() {
 
 	// Set the coin in a random cell (but at least 3 cells far from the agent)
 	coinPosition = Vector2D(-1, -1);
-	while ((!isValidCell(coinPosition)) || (Vector2D::Distance(coinPosition, rand_cell) < 3) && Vector2D::Distance(coinPosition, rand_cell) > 10)
+	while ((!isValidCell(coinPosition)) || (Vector2D::Distance(coinPosition, rand_cell) < 3))
 		coinPosition = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
 
 	// PathFollowing next Target
@@ -44,6 +44,18 @@ SceneDijkstra::~SceneDijkstra() {
 		SDL_DestroyTexture(coin_texture);
 	if (start_texture)
 		SDL_DestroyTexture(start_texture);
+	if (cost1_texture)
+		SDL_DestroyTexture(cost1_texture);
+	if (cost2_texture)
+		SDL_DestroyTexture(cost2_texture);
+	if (cost3_texture)
+		SDL_DestroyTexture(cost3_texture);
+	if (cost4_texture)
+		SDL_DestroyTexture(cost4_texture);
+	if (cost5_texture)
+		SDL_DestroyTexture(cost5_texture);
+	if (cost6_texture)
+		SDL_DestroyTexture(cost6_texture);
 
 	for (int i = 0; i < (int)agents.size(); i++) {
 		delete agents[i];
@@ -81,7 +93,7 @@ void SceneDijkstra::update(float dtime, SDL_Event *event) {
 
 						coinPosition = Vector2D(-1, -1);
 
-						while ((!isValidCell(coinPosition)) || (Vector2D::Distance(coinPosition, pix2cell(agents[0]->getPosition())) < 3) && Vector2D::Distance(coinPosition, pix2cell(agents[0]->getPosition())) > 10)
+						while ((!isValidCell(coinPosition)) || (Vector2D::Distance(coinPosition, pix2cell(agents[0]->getPosition())) < 3))
 							coinPosition = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
 						agents[0]->setPosition(path.points.back());
 						start = Node(agents[0]->getPosition());
@@ -126,6 +138,47 @@ void SceneDijkstra::draw() {
 		}
 	}
 
+
+	
+	// Draw costs
+	int radius = 3;
+	if (draw_costs) {
+		for (unsigned int i = 0; i < agents[0]->vector_costs.size(); i++) {
+			int offset = CELL_SIZE / 2;
+			SDL_Texture *terrain = NULL;
+
+			if (agents[0]->vector_costs[i].second > 5) terrain = cost6_texture;
+			else if (agents[0]->vector_costs[i].second > 4) terrain = cost5_texture;
+			else if (agents[0]->vector_costs[i].second > 3) terrain = cost4_texture;
+			else if (agents[0]->vector_costs[i].second > 2) terrain = cost3_texture;
+			else if (agents[0]->vector_costs[i].second > 1) terrain = cost2_texture;
+			else if (agents[0]->vector_costs[i].second > 0) terrain = cost1_texture;
+				
+				
+			SDL_Rect dstrect2 = { (int)cell2pix(agents[0]->vector_costs[i].first).x - offset, (int)cell2pix(agents[0]->vector_costs[i].first).y - offset, CELL_SIZE, CELL_SIZE };
+			SDL_RenderCopy(TheApp::Instance()->getRenderer(), terrain, NULL, &dstrect2);
+
+			/*if (agents[0]->vector_costs[i].second > 5) set_pixel(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, 255, 0, 0, 255);
+			else if (agents[0]->vector_costs[i].second > 4) set_pixel(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, 255, 102, 102, 255);
+			else if (agents[0]->vector_costs[i].second > 3) set_pixel(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, 255, 165, 0, 255);
+			else if (agents[0]->vector_costs[i].second > 2) set_pixel(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, 255, 201, 102, 255);
+			else if (agents[0]->vector_costs[i].second > 1) set_pixel(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, 50, 205, 50, 255);
+			else if (agents[0]->vector_costs[i].second > 0) set_pixel(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, 152, 251, 152, 255);*/
+
+			
+			
+
+
+			/*if (agents[0]->vector_costs[i].second > 5) draw_circle(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, radius, 255, 0, 0, 255);
+			else if (agents[0]->vector_costs[i].second > 4) draw_circle(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, radius, 255, 102, 102, 255);
+			else if (agents[0]->vector_costs[i].second > 3) draw_circle(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, radius, 255, 165, 0, 255);
+			else if (agents[0]->vector_costs[i].second > 2) draw_circle(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, radius, 255, 201, 102, 255);
+			else if (agents[0]->vector_costs[i].second > 1) draw_circle(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, radius, 50, 205, 50, 255);
+			else if (agents[0]->vector_costs[i].second > 0) draw_circle(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, radius, 152, 251, 152, 255);
+		*/
+		}
+	}
+
 	// Draw frontier
 	if (draw_frontier) {
 		for (unsigned int i = 0; i < agents[0]->frontierCount.size(); i++) {
@@ -135,19 +188,10 @@ void SceneDijkstra::draw() {
 
 	// Draw path
 	for (int i = 2; i < (int)path.points.size() - 1; i++) {
-		draw_circle(TheApp::Instance()->getRenderer(), (int)(path.points[i].x), (int)(path.points[i].y), 15, 255, 255, 0, 255);
+		draw_circle(TheApp::Instance()->getRenderer(), (int)(path.points[i].x), (int)(path.points[i].y), 15, 255, 20, 147, 255);
 		if (draw_lines) {
 			if (i > 2)
 				SDL_RenderDrawLine(TheApp::Instance()->getRenderer(), (int)(path.points[i - 1].x), (int)(path.points[i - 1].y), (int)(path.points[i].x), (int)(path.points[i].y));
-		}
-	}
-	
-	// Draw costs
-	if (draw_costs) {
-		for (unsigned int i = 0; i < graph.allConnections.size(); i++) {
-			if (graph.allConnections[i].GetCost() == 1) draw_circle(TheApp::Instance()->getRenderer(), cell2pix(graph.allConnections[i].GetToNode().coord).x, cell2pix(graph.allConnections[i].GetToNode().coord).y, 6, 255, 140, 0, 255);
-			else if (graph.allConnections[i].GetCost() == 2) draw_circle(TheApp::Instance()->getRenderer(), cell2pix(graph.allConnections[i].GetToNode().coord).x, cell2pix(graph.allConnections[i].GetToNode().coord).y, 6, 0, 255, 0, 255);
-			else draw_circle(TheApp::Instance()->getRenderer(), cell2pix(graph.allConnections[i].GetToNode().coord).x, cell2pix(graph.allConnections[i].GetToNode().coord).y, 6, 0, 0, 255, 255);
 		}
 	}
 
@@ -290,63 +334,51 @@ void SceneDijkstra::initMaze() {
 
 			if (terrain[i][j] == 1) {
 
-				int r = (rand() % 3) + 1;
-
 				if (j < num_cell_y - 1 && terrain[i][j + 1] != 0) {
-					Connection c(Vector2D(i, j), Vector2D(i, j + 1), r);
-					graph.AddConnection(c);
+					graph.AddConnection(Vector2D(i, j), Vector2D(i, j + 1));
 				}
 
 				if (i < num_cell_x - 1 && terrain[i + 1][j] != 0) {
-					Connection c(Vector2D(i, j), Vector2D(i + 1, j), r);
-					graph.AddConnection(c);
+					graph.AddConnection(Vector2D(i, j), Vector2D(i + 1, j));
 				}
 
 				if (j > 0 && terrain[i][j - 1] != 0) {
-					Connection c(Vector2D(i, j), Vector2D(i, j - 1), r);
-					graph.AddConnection(c);
+					graph.AddConnection(Vector2D(i, j), Vector2D(i, j - 1));
 				}
 
 				if (i > 0 && terrain[i - 1][j] != 0) {
-					Connection c(Vector2D(i, j), Vector2D(i - 1, j), r);
-					graph.AddConnection(c);
+					graph.AddConnection(Vector2D(i, j), Vector2D(i - 1, j));
 				}
 
 				if (i == 10 && j == 0) {
-					Connection c(Vector2D(i, j), Vector2D(10, 39), r);
-					graph.AddConnection(c);
+					graph.AddConnection(Vector2D(i, j), Vector2D(10, 39));
 				}
 
 				if (i == 10 && j == 39) {
-					Connection c(Vector2D(i, j), Vector2D(10, 0), r);
-					graph.AddConnection(c);
+					graph.AddConnection(Vector2D(i, j), Vector2D(10, 0));
 				}
 
 				if (i == 11 && j == 0) {
-					Connection c(Vector2D(i, j), Vector2D(11, 39), r);
-					graph.AddConnection(c);
+					graph.AddConnection(Vector2D(i, j), Vector2D(11, 39));
 				}
 
 				if (i == 11 && j == 39) {
-					Connection c(Vector2D(i, j), Vector2D(11, 0), r);
-					graph.AddConnection(c);
+					graph.AddConnection(Vector2D(i, j), Vector2D(11, 0));
 				}
 
 				if (i == 12 && j == 0) {
-					Connection c(Vector2D(i, j), Vector2D(12, 39), r);
-					graph.AddConnection(c);
+					graph.AddConnection(Vector2D(i, j), Vector2D(12, 39));
 				}
 
 				if (i == 12 && j == 39) {
-					Connection c(Vector2D(i, j), Vector2D(12, 0), r);
-					graph.AddConnection(c);
+					graph.AddConnection(Vector2D(i, j), Vector2D(12, 0));
 				}
 			}
 		}
 	}
 }
 
-bool SceneDijkstra::loadTextures(char* filename_bg, char* filename_coin, char* start) {
+bool SceneDijkstra::loadTextures(char* filename_bg, char* filename_coin, char* start, char* cost1,  char* cost2,  char* cost3,  char* cost4,  char* cost5,  char* cost6) {
 	// Bg
 	SDL_Surface *image = IMG_Load(filename_bg);
 	if (!image) {
@@ -377,6 +409,72 @@ bool SceneDijkstra::loadTextures(char* filename_bg, char* filename_coin, char* s
 		return false;
 	}
 	start_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+
+	if (image)
+		SDL_FreeSurface(image);
+
+	// Cost1
+	image = IMG_Load(cost1);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	cost1_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+
+	if (image)
+		SDL_FreeSurface(image);
+
+	// Cost2
+	image = IMG_Load(cost2);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	cost2_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+
+	if (image)
+		SDL_FreeSurface(image);
+
+	// Cost3
+	image = IMG_Load(cost3);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	cost3_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+
+	if (image)
+		SDL_FreeSurface(image);
+
+	// Cost4
+	image = IMG_Load(cost4);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	cost4_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+
+	if (image)
+		SDL_FreeSurface(image);
+
+	// Cost5
+	image = IMG_Load(cost5);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	cost5_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+
+	if (image)
+		SDL_FreeSurface(image);
+
+	// Cost6
+	image = IMG_Load(cost6);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	cost6_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
 
 	if (image)
 		SDL_FreeSurface(image);

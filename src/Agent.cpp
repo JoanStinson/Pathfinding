@@ -143,20 +143,20 @@ vector<Vector2D> Agent::BFS(Vector2D start, Vector2D goal, Graph graph) {
 
 vector<Vector2D> Agent::Dijkstra(Vector2D start, Vector2D goal, Graph graph) {
 	PriorityQueue<Vector2D, float> frontier;
-	frontier.put(start, 0.f);
+	frontier.put(start, 0);
 	frontierCount.clear();
 
 	unordered_map<Vector2D, Vector2D> came_from;
 	came_from[start] = NULL;
 
 	unordered_map<Vector2D, float> cost_so_far;
-	cost_so_far[start] = 0.f;
+	cost_so_far[start] = 0;
 
 	vector<Vector2D> path, neighbors;
 	Vector2D current, next;
 	bool visited;
 	float new_cost, priority;
-	int randCost;
+	float randCost;
 
 	while (!frontier.empty()) {
 
@@ -177,10 +177,14 @@ vector<Vector2D> Agent::Dijkstra(Vector2D start, Vector2D goal, Graph graph) {
 
 		neighbors = graph.GetConnections(current);
 
+		randCost = RandomFloat(0, 7);
+		//cout << randCost << endl;
 		for (unsigned int i = 0; i < neighbors.size(); i++) {
 			visited = false;
 			next = neighbors[i];
-			new_cost = cost_so_far[current] + graph.GetCost(next); //RandomFloat(2, 1);//(rand() % 2) + 1;//graph.GetCost(next);
+			
+			new_cost = cost_so_far[current] + randCost;//(rand() % 3) + 1;//graph.GetCost(next);
+			vector_costs.push_back(std::make_pair(next, randCost));
 
 			for (unsigned int j = 0; j < cost_so_far.size(); j++) {
 				// If next in cost_so_far 
@@ -302,7 +306,7 @@ vector<Vector2D> Agent::AStar(Vector2D start, Vector2D goal, Graph graph, bool s
 			visited = false;
 			next = neighbors[i];
 
-			new_cost = cost_so_far[current] + graph.GetCost(next);//(rand() % 3) + 1;//RandomFloat(1.0f, 3.0f); //TODO implement GetCost method to do + 'graph.GetCost(current, next)' instead of rand
+			new_cost = cost_so_far[current] + RandomFloat(1, 3); //TODO implement GetCost method to do + 'graph.GetCost(current, next)' instead of rand
 
 			for (unsigned int j = 0; j < cost_so_far.size(); j++) {
 				// If next in cost_so_far 
