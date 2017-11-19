@@ -23,11 +23,7 @@ vector<Vector2D> Graph::GetConnections(Vector2D a) {
 }
 
 int Graph::GetCost(Vector2D a) {
-	// find a in allConnections, guardar totes ses connexions de a i retornarles
 	for (unsigned int i = 0; i < allConnections.size(); i++) {
-		if (allConnections[i].GetFromNode().coord == a)
-			cost = allConnections[i].GetCost();
-		//cout << cost << endl;
+		if (allConnections[i].GetFromNode().coord == a) return cost = allConnections[i].GetCost();
 	}
-	return cost;
 }

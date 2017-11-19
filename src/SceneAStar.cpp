@@ -54,7 +54,9 @@ void SceneAStar::update(float dtime, SDL_Event *event) {
 	/* Keyboard & Mouse events */
 	switch (event->type) {
 	case SDL_KEYDOWN:
-		if (event->key.keysym.scancode == SDL_SCANCODE_F)
+		if (event->key.keysym.scancode == SDL_SCANCODE_C)
+			draw_costs = !draw_costs;
+		else if (event->key.keysym.scancode == SDL_SCANCODE_F)
 			draw_frontier = !draw_frontier;
 		else if (event->key.keysym.scancode == SDL_SCANCODE_L)
 			draw_lines = !draw_lines;
@@ -137,6 +139,15 @@ void SceneAStar::draw() {
 		if (draw_lines) {
 			if (i > 2)
 				SDL_RenderDrawLine(TheApp::Instance()->getRenderer(), (int)(path.points[i - 1].x), (int)(path.points[i - 1].y), (int)(path.points[i].x), (int)(path.points[i].y));
+		}
+	}
+
+	// Draw costs
+	if (draw_costs) {
+		for (unsigned int i = 0; i < graph.allConnections.size(); i++) {
+			if (graph.allConnections[i].GetCost() == 1) draw_circle(TheApp::Instance()->getRenderer(), cell2pix(graph.allConnections[i].GetToNode().coord).x, cell2pix(graph.allConnections[i].GetToNode().coord).y, 6, 255, 140, 0, 255);
+			else if (graph.allConnections[i].GetCost() == 2) draw_circle(TheApp::Instance()->getRenderer(), cell2pix(graph.allConnections[i].GetToNode().coord).x, cell2pix(graph.allConnections[i].GetToNode().coord).y, 6, 0, 255, 0, 255);
+			else draw_circle(TheApp::Instance()->getRenderer(), cell2pix(graph.allConnections[i].GetToNode().coord).x, cell2pix(graph.allConnections[i].GetToNode().coord).y, 6, 0, 0, 255, 255);
 		}
 	}
 
@@ -272,53 +283,55 @@ void SceneAStar::initMaze() {
 
 			if (terrain[i][j] == 1) {
 
+				int r = (rand() % 3) + 1;
+
 				if (j < num_cell_y - 1 && terrain[i][j + 1] != 0) {
-					Connection c(Vector2D(i, j), Vector2D(i, j + 1), (rand() % 2) + 1);
+					Connection c(Vector2D(i, j), Vector2D(i, j + 1), r);
 					graph.AddConnection(c);
 				}
 
 				if (i < num_cell_x - 1 && terrain[i + 1][j] != 0) {
-					Connection c(Vector2D(i, j), Vector2D(i + 1, j), (rand() % 2) + 1);
+					Connection c(Vector2D(i, j), Vector2D(i + 1, j), r);
 					graph.AddConnection(c);
 				}
 
 				if (j > 0 && terrain[i][j - 1] != 0) {
-					Connection c(Vector2D(i, j), Vector2D(i, j - 1), (rand() % 2) + 1);
+					Connection c(Vector2D(i, j), Vector2D(i, j - 1), r);
 					graph.AddConnection(c);
 				}
 
 				if (i > 0 && terrain[i - 1][j] != 0) {
-					Connection c(Vector2D(i, j), Vector2D(i - 1, j), (rand() % 2) + 1);
+					Connection c(Vector2D(i, j), Vector2D(i - 1, j), r);
 					graph.AddConnection(c);
 				}
 
 				if (i == 10 && j == 0) {
-					Connection c(Vector2D(i, j), Vector2D(10, 39), (rand() % 2) + 1);
+					Connection c(Vector2D(i, j), Vector2D(10, 39), r);
 					graph.AddConnection(c);
 				}
 
 				if (i == 10 && j == 39) {
-					Connection c(Vector2D(i, j), Vector2D(10, 0), (rand() % 2) + 1);
+					Connection c(Vector2D(i, j), Vector2D(10, 0), r);
 					graph.AddConnection(c);
 				}
 
 				if (i == 11 && j == 0) {
-					Connection c(Vector2D(i, j), Vector2D(11, 39), (rand() % 2) + 1);
+					Connection c(Vector2D(i, j), Vector2D(11, 39), r);
 					graph.AddConnection(c);
 				}
 
 				if (i == 11 && j == 39) {
-					Connection c(Vector2D(i, j), Vector2D(11, 0), (rand() % 2) + 1);
+					Connection c(Vector2D(i, j), Vector2D(11, 0), r);
 					graph.AddConnection(c);
 				}
 
 				if (i == 12 && j == 0) {
-					Connection c(Vector2D(i, j), Vector2D(12, 39), (rand() % 2) + 1);
+					Connection c(Vector2D(i, j), Vector2D(12, 39), r);
 					graph.AddConnection(c);
 				}
 
 				if (i == 12 && j == 39) {
-					Connection c(Vector2D(i, j), Vector2D(12, 0), (rand() % 2) + 1);
+					Connection c(Vector2D(i, j), Vector2D(12, 0), r);
 					graph.AddConnection(c);
 				}
 			}

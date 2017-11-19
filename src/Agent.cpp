@@ -180,7 +180,7 @@ vector<Vector2D> Agent::Dijkstra(Vector2D start, Vector2D goal, Graph graph) {
 		for (unsigned int i = 0; i < neighbors.size(); i++) {
 			visited = false;
 			next = neighbors[i];
-			new_cost = cost_so_far[current] + RandomFloat(2, 1);//(rand() % 2) + 1;//graph.GetCost(next);
+			new_cost = cost_so_far[current] + graph.GetCost(next); //RandomFloat(2, 1);//(rand() % 2) + 1;//graph.GetCost(next);
 
 			for (unsigned int j = 0; j < cost_so_far.size(); j++) {
 				// If next in cost_so_far 
@@ -301,7 +301,8 @@ vector<Vector2D> Agent::AStar(Vector2D start, Vector2D goal, Graph graph, bool s
 		for (unsigned int i = 0; i < neighbors.size(); i++) {
 			visited = false;
 			next = neighbors[i];
-			new_cost = cost_so_far[current] + (rand() % 3) + 1;//RandomFloat(1.0f, 3.0f); //TODO implement GetCost method to do + 'graph.GetCost(current, next)' instead of rand
+
+			new_cost = cost_so_far[current] + graph.GetCost(next);//(rand() % 3) + 1;//RandomFloat(1.0f, 3.0f); //TODO implement GetCost method to do + 'graph.GetCost(current, next)' instead of rand
 
 			for (unsigned int j = 0; j < cost_so_far.size(); j++) {
 				// If next in cost_so_far 

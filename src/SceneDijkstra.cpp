@@ -23,7 +23,7 @@ SceneDijkstra::SceneDijkstra() {
 
 	// Set the coin in a random cell (but at least 3 cells far from the agent)
 	coinPosition = Vector2D(-1, -1);
-	while ((!isValidCell(coinPosition)) || (Vector2D::Distance(coinPosition, rand_cell) < 3))
+	while ((!isValidCell(coinPosition)) || (Vector2D::Distance(coinPosition, rand_cell) < 3) && Vector2D::Distance(coinPosition, rand_cell) > 10)
 		coinPosition = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
 
 	// PathFollowing next Target
@@ -54,7 +54,9 @@ void SceneDijkstra::update(float dtime, SDL_Event *event) {
 	/* Keyboard & Mouse events */
 	switch (event->type) {
 	case SDL_KEYDOWN:
-		if (event->key.keysym.scancode == SDL_SCANCODE_F)
+		if (event->key.keysym.scancode == SDL_SCANCODE_C)
+			draw_costs = !draw_costs;
+		else if (event->key.keysym.scancode == SDL_SCANCODE_F)
 			draw_frontier = !draw_frontier;
 		else if (event->key.keysym.scancode == SDL_SCANCODE_L)
 			draw_lines = !draw_lines;
@@ -79,7 +81,7 @@ void SceneDijkstra::update(float dtime, SDL_Event *event) {
 
 						coinPosition = Vector2D(-1, -1);
 
-						while ((!isValidCell(coinPosition)) || (Vector2D::Distance(coinPosition, pix2cell(agents[0]->getPosition())) < 3))
+						while ((!isValidCell(coinPosition)) || (Vector2D::Distance(coinPosition, pix2cell(agents[0]->getPosition())) < 3) && Vector2D::Distance(coinPosition, pix2cell(agents[0]->getPosition())) > 10)
 							coinPosition = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
 						agents[0]->setPosition(path.points.back());
 						start = Node(agents[0]->getPosition());
@@ -141,14 +143,13 @@ void SceneDijkstra::draw() {
 	}
 	
 	// Draw costs
-	/*for (int i = 0; i < agents[0]->vector_costs.size(); i++) {
-		if (agents[0]->vector_costs[i].second == 1)
-			draw_circle(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, 6, 255, 0, 0, 255);
-		else if (agents[0]->vector_costs[i].second == 2)
-			draw_circle(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, 6, 0, 255, 0, 255);
-		else 
-			draw_circle(TheApp::Instance()->getRenderer(), cell2pix(agents[0]->vector_costs[i].first).x, cell2pix(agents[0]->vector_costs[i].first).y, 6, 0, 0, 255, 255);
-	}*/
+	if (draw_costs) {
+		for (unsigned int i = 0; i < graph.allConnections.size(); i++) {
+			if (graph.allConnections[i].GetCost() == 1) draw_circle(TheApp::Instance()->getRenderer(), cell2pix(graph.allConnections[i].GetToNode().coord).x, cell2pix(graph.allConnections[i].GetToNode().coord).y, 6, 255, 140, 0, 255);
+			else if (graph.allConnections[i].GetCost() == 2) draw_circle(TheApp::Instance()->getRenderer(), cell2pix(graph.allConnections[i].GetToNode().coord).x, cell2pix(graph.allConnections[i].GetToNode().coord).y, 6, 0, 255, 0, 255);
+			else draw_circle(TheApp::Instance()->getRenderer(), cell2pix(graph.allConnections[i].GetToNode().coord).x, cell2pix(graph.allConnections[i].GetToNode().coord).y, 6, 0, 0, 255, 255);
+		}
+	}
 
 	drawCoinAndStart();
 	draw_circle(TheApp::Instance()->getRenderer(), (int)currentTarget.x, (int)currentTarget.y, 15, 255, 0, 0, 255);
@@ -180,6 +181,13 @@ void SceneDijkstra::drawCoinAndStart() {
 
 	SDL_Rect dstrect2 = { (int)start.coord.x - offset, (int)start.coord.y - offset, CELL_SIZE, CELL_SIZE };
 	SDL_RenderCopy(TheApp::Instance()->getRenderer(), start_texture, NULL, &dstrect2);
+}
+
+float RandomFloat(float a, float b) {
+	float random = ((float)rand()) / (float)RAND_MAX;
+	float diff = b - a;
+	float r = random * diff;
+	return a + r;
 }
 
 void SceneDijkstra::initMaze() {
@@ -282,53 +290,55 @@ void SceneDijkstra::initMaze() {
 
 			if (terrain[i][j] == 1) {
 
+				int r = (rand() % 3) + 1;
+
 				if (j < num_cell_y - 1 && terrain[i][j + 1] != 0) {
-					Connection c(Vector2D(i, j), Vector2D(i, j + 1), (rand() % 2) + 1);
+					Connection c(Vector2D(i, j), Vector2D(i, j + 1), r);
 					graph.AddConnection(c);
 				}
 
 				if (i < num_cell_x - 1 && terrain[i + 1][j] != 0) {
-					Connection c(Vector2D(i, j), Vector2D(i + 1, j), (rand() % 2) + 1);
+					Connection c(Vector2D(i, j), Vector2D(i + 1, j), r);
 					graph.AddConnection(c);
 				}
 
 				if (j > 0 && terrain[i][j - 1] != 0) {
-					Connection c(Vector2D(i, j), Vector2D(i, j - 1), (rand() % 2) + 1);
+					Connection c(Vector2D(i, j), Vector2D(i, j - 1), r);
 					graph.AddConnection(c);
 				}
 
 				if (i > 0 && terrain[i - 1][j] != 0) {
-					Connection c(Vector2D(i, j), Vector2D(i - 1, j), (rand() % 2) + 1);
+					Connection c(Vector2D(i, j), Vector2D(i - 1, j), r);
 					graph.AddConnection(c);
 				}
 
 				if (i == 10 && j == 0) {
-					Connection c(Vector2D(i, j), Vector2D(10, 39), (rand() % 2) + 1);
+					Connection c(Vector2D(i, j), Vector2D(10, 39), r);
 					graph.AddConnection(c);
 				}
 
 				if (i == 10 && j == 39) {
-					Connection c(Vector2D(i, j), Vector2D(10, 0), (rand() % 2) + 1);
+					Connection c(Vector2D(i, j), Vector2D(10, 0), r);
 					graph.AddConnection(c);
 				}
 
 				if (i == 11 && j == 0) {
-					Connection c(Vector2D(i, j), Vector2D(11, 39), (rand() % 2) + 1);
+					Connection c(Vector2D(i, j), Vector2D(11, 39), r);
 					graph.AddConnection(c);
 				}
 
 				if (i == 11 && j == 39) {
-					Connection c(Vector2D(i, j), Vector2D(11, 0), (rand() % 2) + 1);
+					Connection c(Vector2D(i, j), Vector2D(11, 0), r);
 					graph.AddConnection(c);
 				}
 
 				if (i == 12 && j == 0) {
-					Connection c(Vector2D(i, j), Vector2D(12, 39), (rand() % 2) + 1);
+					Connection c(Vector2D(i, j), Vector2D(12, 39), r);
 					graph.AddConnection(c);
 				}
 
 				if (i == 12 && j == 39) {
-					Connection c(Vector2D(i, j), Vector2D(12, 0), (rand() % 2) + 1);
+					Connection c(Vector2D(i, j), Vector2D(12, 0), r);
 					graph.AddConnection(c);
 				}
 			}
