@@ -49,6 +49,7 @@ public:
 	vector<Vector2D> frontierCount;
 	vector<std::pair<Vector2D, int>> vector_costs;
 	float RandomFloat(float a, float b);
+	int RandomInt(int a, int b);
 	float Heuristic(Vector2D a, Vector2D b);
 	void PrintStatistics(int a);
 

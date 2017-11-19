@@ -31,6 +31,13 @@ float Agent::RandomFloat(float a, float b) {
 	return a + r;
 }
 
+int Agent::RandomInt(int a, int b) {
+	int random = ((int)rand()) / (int)RAND_MAX;
+	int diff = b - a;
+	int r = random * diff;
+	return a + r;
+}
+
 float Agent::Heuristic(Vector2D a, Vector2D b) {
 	return abs(a.x - b.x) + abs(a.y - b.y);
 }
@@ -173,11 +180,8 @@ vector<Vector2D> Agent::Dijkstra(Vector2D start, Vector2D goal, Graph graph) {
 		for (unsigned int i = 0; i < neighbors.size(); i++) {
 			visited = false;
 			next = neighbors[i];
-			new_cost = cost_so_far[current];
-			randCost = (rand() % 2) + 1; //RandomFloat(1.0f, 3.0f); //TODO implement GetCost method to do + 'graph.GetCost(current, next)' instead of rand
-			new_cost += randCost;
-			vector_costs.push_back(std::make_pair(current, randCost));
-			//cout << randCost << endl;
+			new_cost = cost_so_far[current] + RandomFloat(2, 1);//(rand() % 2) + 1;//graph.GetCost(next);
+
 			for (unsigned int j = 0; j < cost_so_far.size(); j++) {
 				// If next in cost_so_far 
 				if (cost_so_far.find(next) != cost_so_far.end()) { 

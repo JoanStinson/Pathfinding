@@ -273,52 +273,52 @@ void SceneBFS::initMaze() {
 			if (terrain[i][j] == 1) {
 
 				if (j < num_cell_y - 1 && terrain[i][j + 1] != 0) {
-					Connection c(Vector2D(i, j), Vector2D(i, j + 1));
+					Connection c(Vector2D(i, j), Vector2D(i, j + 1), (rand() % 2) + 1);
 					graph.AddConnection(c);
 				}
 
 				if (i < num_cell_x - 1 && terrain[i + 1][j] != 0) {
-					Connection c(Vector2D(i, j), Vector2D(i + 1, j));
+					Connection c(Vector2D(i, j), Vector2D(i + 1, j), (rand() % 2) + 1);
 					graph.AddConnection(c);
 				}
 
 				if (j > 0 && terrain[i][j - 1] != 0) {
-					Connection c(Vector2D(i, j), Vector2D(i, j - 1));
+					Connection c(Vector2D(i, j), Vector2D(i, j - 1), (rand() % 2) + 1);
 					graph.AddConnection(c);
 				}
 
 				if (i > 0 && terrain[i - 1][j] != 0) {
-					Connection c(Vector2D(i, j), Vector2D(i - 1, j));
+					Connection c(Vector2D(i, j), Vector2D(i - 1, j), (rand() % 2) + 1);
 					graph.AddConnection(c);
 				}
 
 				if (i == 10 && j == 0) {
-					Connection c(Vector2D(i, j), Vector2D(10, 39));
+					Connection c(Vector2D(i, j), Vector2D(10, 39), (rand() % 2) + 1);
 					graph.AddConnection(c);
 				}
 
 				if (i == 10 && j == 39) {
-					Connection c(Vector2D(i, j), Vector2D(10, 0));
+					Connection c(Vector2D(i, j), Vector2D(10, 0), (rand() % 2) + 1);
 					graph.AddConnection(c);
 				}
 
 				if (i == 11 && j == 0) {
-					Connection c(Vector2D(i, j), Vector2D(11, 39));
+					Connection c(Vector2D(i, j), Vector2D(11, 39), (rand() % 2) + 1);
 					graph.AddConnection(c);
 				}
 
 				if (i == 11 && j == 39) {
-					Connection c(Vector2D(i, j), Vector2D(11, 0));
+					Connection c(Vector2D(i, j), Vector2D(11, 0), (rand() % 2) + 1);
 					graph.AddConnection(c);
 				}
 
 				if (i == 12 && j == 0) {
-					Connection c(Vector2D(i, j), Vector2D(12, 39));
+					Connection c(Vector2D(i, j), Vector2D(12, 39), (rand() % 2) + 1);
 					graph.AddConnection(c);
 				}
 
 				if (i == 12 && j == 39) {
-					Connection c(Vector2D(i, j), Vector2D(12, 0));
+					Connection c(Vector2D(i, j), Vector2D(12, 0), (rand() % 2) + 1);
 					graph.AddConnection(c);
 				}
 			}

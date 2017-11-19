@@ -3,6 +3,7 @@
 #include "Connection.h"
 #include "Vector2D.h"
 #include <vector>
+#include <iostream>
 using namespace std;
 
 class Graph {
@@ -24,4 +25,5 @@ public:
 private:
 	// Number of connexions
 	int v;
+	int cost = 0;
 };
