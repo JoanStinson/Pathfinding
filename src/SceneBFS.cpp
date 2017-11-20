@@ -331,6 +331,7 @@ bool SceneBFS::loadTextures(char* filename_bg, char* filename_bg2, char* filenam
 		return false;
 	}
 	background_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+
 	// Bg 2
 	image = IMG_Load(filename_bg2);
 	if (!image) {

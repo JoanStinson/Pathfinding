@@ -17,7 +17,7 @@ SceneAStarEnemies::SceneAStarEnemies() {
 	num_cell_x = SRC_WIDTH / CELL_SIZE;
 	num_cell_y = SRC_HEIGHT / CELL_SIZE;
 	initMaze();
-	loadTextures("../res/maze.png", "../res/maze2.png", "../res/coins.png", "../res/coins2.png", "../res/start.png", "../res/cost1.png", "../res/cost2.png", "../res/cost3.png", "../res/cost4.png", "../res/cost5.png", "../res/cost6.png");
+	loadTextures("../res/maze.png", "../res/maze2.png", "../res/coins.png", "../res/zombie1.png", "../res/start.png", "../res/cost1.png", "../res/cost2.png", "../res/cost3.png", "../res/cost4.png", "../res/cost5.png", "../res/cost6.png");
 
 	srand((unsigned int)time(NULL));
 
@@ -85,7 +85,7 @@ SceneAStarEnemies::SceneAStarEnemies() {
 	agents[0]->vector_costs.clear();
 	agents[0]->frontierCount.clear();
 	//for (unsigned int i = 0; i <= randNum; i++) {
-		astar = agents[0]->AStar(pix2cell(start.coord), coinPosition, graph, true);
+		astar = agents[0]->AStar(pix2cell(start.coord), coinPosition, graph, false);
 		for (unsigned int i = 0; i < astar.size(); i++) {
 			path.points.push_back(cell2pix(astar[i]));
 		}
@@ -330,20 +330,16 @@ void SceneAStarEnemies::drawCoinAndStart() {
 
 void SceneAStarEnemies::drawNPositions() {
 	for (unsigned int i = 1; i <= randNum; i++) {
-		/*Vector2D coin_coords = cell2pix(rList[i]);
-		int offset = CELL_SIZE / 2;
-		SDL_Rect dstrect = { (int)coin_coords.x - offset, (int)coin_coords.y - offset, CELL_SIZE, CELL_SIZE };
-		SDL_RenderCopy(TheApp::Instance()->getRenderer(), coin_texture2, NULL, &dstrect);*/
 
 		Vector2D coin_coords = cell2pix(rList[i]);
 		int offset = CELL_SIZE / 2;
-		Uint32 sprite = (int)(SDL_GetTicks() / (150)) % 10;
-		int coin_w = 290 / 10;
-		int sprite_height = 30;
+		Uint32 sprite = (int)(SDL_GetTicks() / (150)) % 8;
+		int coin_w = 46;
+		int sprite_height = 46;
 		SDL_Rect srcrect = { (int)sprite * coin_w, 0, coin_w, sprite_height };
 		SDL_Rect dstrect = { (int)coin_coords.x - (coin_w / 2), (int)coin_coords.y - (sprite_height / 2), coin_w, sprite_height };
 		SDL_Point center = { coin_w / 2, sprite_height / 2 };
-		SDL_RenderCopyEx(TheApp::Instance()->getRenderer(), coin_texture2, &srcrect, &dstrect, 0, &center, SDL_FLIP_NONE);
+		SDL_RenderCopyEx(TheApp::Instance()->getRenderer(), coin_texture2, &srcrect, &dstrect, 180, &center, SDL_FLIP_NONE);
 	}
 }
 
