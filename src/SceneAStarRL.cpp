@@ -37,76 +37,52 @@ SceneAStarRL::SceneAStarRL() {
 	while ((!isValidCell(coinPosition)) || (Vector2D::Distance(coinPosition, rand_cell) < 3))
 		coinPosition = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
 
-	// Set random N locations
-	randNum = (rand() % 3) + 1;
-	for (unsigned int i = 1; i <= randNum; i++) {
-		rList[i] = Vector2D(-1, -1);
-		while ((!isValidCell(rList[i])) || (Vector2D::Distance(rList[i], rand_cell) < 3))
-			rList[i] = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
-	}
-
 	// PathFollowing next Target
 	currentTarget = Vector2D(0, 0);
 	currentTargetIndex = -1;
 
-	// A* Algorithm with random positions
-	agents[0]->vector_costs.clear();
-	agents[0]->frontierCount.clear();
-	pList[0] = pix2cell(start.coord);
 
-	if (randNum == 1) pList[1] = rList[1];
 
-	else if (randNum == 2) {
-		if (Heuristic(pList[0], rList[1]) > Heuristic(pList[0], rList[2])) {
-			pList[1] = rList[2];
-			pList[2] = rList[1];
-		}
-		else {
-			pList[1] = rList[1];
-			pList[2] = rList[2];
-		}
+	//////////////////// A* Algorithm with random positions
+
+	// Create random N locations
+	int randNum = (rand() % 10) + 1;
+	vector<Vector2D> randomLocations;
+	for (unsigned int i = 1; i <= randNum; i++) {
+		Vector2D pos1(-1, -1);
+		while ((!isValidCell(pos1)) || (Vector2D::Distance(pos1, rand_cell) < 3))
+			pos1 = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
+		randomLocations.push_back(pos1);
 	}
 
-	else if (randNum >= 3) {
-		int i = 1;
-		for (unsigned int j = 1; j <= randNum; j++) {
-
-			if (Heuristic(pList[i], rList[j]) > Heuristic(pList[i], rList[j + 1])) {
-				pList[i] = rList[j + 1];
-				pList[i + 1] = rList[j];
-			}
-			else {
-				pList[i] = rList[j];
-				pList[i + 1] = rList[j + 1];
-			}
-			i++;
-		}
+	// Get their heuristic and store them sorted
+	vector<std::pair<float, Vector2D>> heuristicValues;
+	for (unsigned int i = 0; i < randomLocations.size(); i++) {
+		heuristicValues.push_back(std::make_pair(Heuristic(pix2cell(start.coord), randomLocations[i]), randomLocations[i]));
 	}
+	std::sort(heuristicValues.begin(), heuristicValues.end());
 
-	pList[randNum+1] = coinPosition;
+	// Update goal list
+	goalist.push_back(pix2cell(start.coord));
+	for (unsigned int i = 0; i < heuristicValues.size(); i++) {
+		goalist.push_back(heuristicValues[i].second);
+	}
+	goalist.push_back(coinPosition);
 
-	for (unsigned int i = 0; i <= randNum; i++) {
-		astar = agents[0]->AStar(pList[i], pList[i + 1], graph, true);
+	// Run A* changing goals
+	for (unsigned int i = 0; i < goalist.size()-1; i++) {
+		astar = agents[0]->AStar(goalist[i], goalist[i + 1], graph, true);
 		for (unsigned int i = 0; i < astar.size(); i++) {
 			path.points.push_back(cell2pix(astar[i]));
 		}
 	}
 
-	/*agents[0]->vector_costs.clear();
-	agents[0]->frontierCount.clear();*/
-	/*
-	generateXRandomGreenPoints->store them to a list
-	while(!allGreenPointsVisited())
-	{
-		int i = WhichIsTheClosestGreenPoint();
-		actualGoal=GreenPoint[i];
-	}
-	GoToGoal()
-	*/
-
-	/*
-	Exercici num.3 N ubicacions aleatories i las has d'esquivar, com l'anterior pero son ubicacions per les quals no pots passar
-	*/
+	// Clear data
+	/*randomLocations.clear();
+	heuristicValues.clear();
+	goalist.clear();*/
+	agents[0]->vector_costs.clear();
+	agents[0]->frontierCount.clear();
 }
 
 SceneAStarRL::~SceneAStarRL() {
@@ -173,60 +149,53 @@ void SceneAStarRL::update(float dtime, SDL_Event *event) {
 						while ((!isValidCell(coinPosition)) || (Vector2D::Distance(coinPosition, pix2cell(agents[0]->getPosition())) < 3))
 							coinPosition = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
 
-						// Set random N locations
-						randNum = (rand() % 3) + 1;
-						for (unsigned int i = 1; i <= randNum; i++) {
-							rList[i] = Vector2D(-1, -1);
-							while ((!isValidCell(rList[i])) || (Vector2D::Distance(rList[i], pix2cell(agents[0]->getPosition())) < 3))
-								rList[i] = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
-						}
 
 						agents[0]->setPosition(path.points.back());
 						start = Node(agents[0]->getPosition());
 						path.points.clear();
 
-						// A* Algorithm with random positions
-						agents[0]->vector_costs.clear();
-						agents[0]->frontierCount.clear();
-						pList[0] = pix2cell(start.coord);
+						//////////////////// A* Algorithm with random positions
 
-						if (randNum == 1) pList[1] = rList[1];
-
-						else if (randNum == 2) {
-							if (Heuristic(pList[0], rList[1]) > Heuristic(pList[0], rList[2])) {
-								pList[1] = rList[2];
-								pList[2] = rList[1];
-							}
-							else {
-								pList[1] = rList[1];
-								pList[2] = rList[2];
-							}
+						// Create random N locations
+						goalist.clear();
+						int randNum = (rand() % 10) + 1;
+						vector<Vector2D> randomLocations;
+						for (unsigned int i = 1; i <= randNum; i++) {
+							Vector2D pos1(-1, -1);
+							while ((!isValidCell(pos1)) || (Vector2D::Distance(pos1, pix2cell(agents[0]->getPosition())) < 3))
+								pos1 = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
+							randomLocations.push_back(pos1);
 						}
 
-						else if (randNum >= 3) {
-							int i = 1;
-							for (unsigned int j = 1; j <= randNum; j++) {
-
-								if (Heuristic(pList[i], rList[j]) > Heuristic(pList[i], rList[j + 1])) {
-									pList[i] = rList[j + 1];
-									pList[i + 1] = rList[j];
-								}
-								else {
-									pList[i] = rList[j];
-									pList[i + 1] = rList[j + 1];
-								}
-								i++;
-							}
+						// Get their heuristic and store them sorted
+						vector<std::pair<float, Vector2D>> heuristicValues;
+						for (unsigned int i = 0; i < randomLocations.size(); i++) {
+							heuristicValues.push_back(std::make_pair(Heuristic(pix2cell(start.coord), randomLocations[i]), randomLocations[i]));
 						}
+						std::sort(heuristicValues.begin(), heuristicValues.end());
 
-						pList[randNum + 1] = coinPosition;
+						// Update goal list
+						goalist.push_back(pix2cell(start.coord));
+						for (unsigned int i = 0; i < heuristicValues.size(); i++) {
+							goalist.push_back(heuristicValues[i].second);
+						}
+						goalist.push_back(coinPosition);
 
-						for (unsigned int i = 0; i <= randNum; i++) {
-							astar = agents[0]->AStar(pList[i], pList[i + 1], graph, true);
+						// Run A* changing goals
+						for (unsigned int i = 0; i < goalist.size() - 1; i++) {
+							astar = agents[0]->AStar(goalist[i], goalist[i + 1], graph, true);
 							for (unsigned int i = 0; i < astar.size(); i++) {
 								path.points.push_back(cell2pix(astar[i]));
 							}
 						}
+
+						// Clear data
+						/*randomLocations.clear();
+						heuristicValues.clear();
+						goalist.clear();*/
+						agents[0]->vector_costs.clear();
+						agents[0]->frontierCount.clear();
+
 
 
 					}
@@ -240,6 +209,12 @@ void SceneAStarRL::update(float dtime, SDL_Event *event) {
 			currentTargetIndex++;
 		}
 
+		// Clear data
+		/*randomLocations.clear();
+		heuristicValues.clear();
+		goalist.clear();
+		agents[0]->vector_costs.clear();
+		agents[0]->frontierCount.clear();*/
 		currentTarget = path.points[currentTargetIndex];
 		Vector2D steering_force = agents[0]->Behavior()->Seek(agents[0], currentTarget, dtime);
 		agents[0]->update(steering_force, dtime, event);
@@ -247,8 +222,7 @@ void SceneAStarRL::update(float dtime, SDL_Event *event) {
 	else {
 		agents[0]->update(Vector2D(0, 0), dtime, event);
 	}
-	/*agents[0]->vector_costs.clear();
-	agents[0]->frontierCount.clear();*/
+
 }
 
 void SceneAStarRL::draw() {
@@ -299,8 +273,9 @@ void SceneAStarRL::draw() {
 		}
 	}
 
-	drawCoinAndStart();
+	
 	drawNPositions();
+	drawCoinAndStart();
 	draw_circle(TheApp::Instance()->getRenderer(), (int)currentTarget.x, (int)currentTarget.y, 15, 255, 0, 0, 255);
 	agents[0]->draw();
 }
@@ -337,13 +312,8 @@ void SceneAStarRL::drawCoinAndStart() {
 }
 
 void SceneAStarRL::drawNPositions() {
-	for (unsigned int i = 1; i <= randNum; i++) {
-		/*Vector2D coin_coords = cell2pix(rList[i]);
-		int offset = CELL_SIZE / 2;
-		SDL_Rect dstrect = { (int)coin_coords.x - offset, (int)coin_coords.y - offset, CELL_SIZE, CELL_SIZE };
-		SDL_RenderCopy(TheApp::Instance()->getRenderer(), coin_texture2, NULL, &dstrect);*/
-
-		Vector2D coin_coords = cell2pix(rList[i]);
+	for (unsigned int i = 1; i < goalist.size()-1; i++) {
+		Vector2D coin_coords = cell2pix(goalist[i]);
 		int offset = CELL_SIZE / 2;
 		Uint32 sprite = (int)(SDL_GetTicks() / (150)) % 10;
 		int coin_w = 290 / 10;

@@ -48,9 +48,13 @@ private:
 	SDL_Texture *coin_texture2;
 	SDL_Texture *start_texture;
 
-	int randNum;
-	Vector2D pList[12];
-	Vector2D rList[12];
+	vector<Vector2D> goalist;
+
+	
+
+	
+
+
 	Vector2D pointsList[3];
 	bool draw_lines, draw_frontier, draw_costs, draw_map;
 	SDL_Texture *cost1_texture;

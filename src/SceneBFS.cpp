@@ -15,9 +15,9 @@ SceneBFS::SceneBFS() {
 	agents.push_back(agent);
 
 	// Set agent position coords to the center of a random cell
-	Vector2D rand_cell(-1, -1);
-	while (!isValidCell(rand_cell))
-		rand_cell = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
+	Vector2D rand_cell(0, 10);
+	/*while (!isValidCell(rand_cell))
+		rand_cell = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));*/
 	agents[0]->setPosition(cell2pix(rand_cell));
 	start = Node(agents[0]->getPosition().x, agents[0]->getPosition().y);
 
@@ -277,7 +277,7 @@ void SceneBFS::initMaze() {
 	for (int i = 0; i < num_cell_x; i++) {
 		for (int j = 0; j < num_cell_y; j++) {
 
-			if (terrain[i][j] == 1) {
+			if (terrain[i][j] != 0) {
 
 				if (j < num_cell_y - 1 && terrain[i][j + 1] != 0) {
 					graph.AddConnection(Vector2D(i, j), Vector2D(i, j + 1));
