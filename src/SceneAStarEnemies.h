@@ -36,7 +36,7 @@ private:
 	SDL_Texture *background_texture;
 	SDL_Texture *coin_texture;
 	void initMaze();
-	bool loadTextures(char* filename_bg, char* filename_coin, char* filename_coin2, char* start);
+	bool loadTextures(char* filename_bg, char* filename_bg2, char* filename_coin, char* filename_coin2, char* start, char* cost1, char* cost2, char* cost3, char* cost4, char* cost5, char* cost6);
 	std::vector< std::vector<int> > terrain;
 	Vector2D cell2pix(Vector2D cell);
 	Vector2D pix2cell(Vector2D pix);
@@ -52,5 +52,12 @@ private:
 	Vector2D pList[12];
 	Vector2D rList[12];
 	Vector2D pointsList[3];
-	bool draw_lines, draw_frontier;
+	bool draw_lines, draw_frontier, draw_costs, draw_map;
+	SDL_Texture *cost1_texture;
+	SDL_Texture *cost2_texture;
+	SDL_Texture *cost3_texture;
+	SDL_Texture *cost4_texture;
+	SDL_Texture *cost5_texture;
+	SDL_Texture *cost6_texture;
+	SDL_Texture *background_texture2;
 };

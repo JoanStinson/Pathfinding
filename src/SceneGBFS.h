@@ -31,7 +31,7 @@ private:
 	SDL_Texture *background_texture;
 	SDL_Texture *coin_texture;
 	void initMaze();
-	bool loadTextures(char* filename_bg, char* filename_coin, char* start);
+	bool loadTextures(char* filename_bg, char* filename_bg2, char* filename_coin, char* start);
 	std::vector< std::vector<int> > terrain;
 	Vector2D cell2pix(Vector2D cell);
 	Vector2D pix2cell(Vector2D pix);
@@ -42,5 +42,6 @@ private:
 	vector<Vector2D> gbfs;
 	SDL_Texture *start_texture;
 	int coin_w;
-	bool draw_lines, draw_frontier;
+	bool draw_lines, draw_frontier, draw_map;
+	SDL_Texture *background_texture2;
 };

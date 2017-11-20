@@ -29,6 +29,8 @@ int main(int argc, char ** argv) {
 	cout << "  Key C - Draw Costs" << endl;
 	cout << "  Key F - Draw Frontier" << endl;
 	cout << "  Key L - Draw Lines" << endl;
+	cout << "  Key M - Draw Map" << endl;
+	cout << "  Key N - Draw Cost Numbers" << endl;
 	cout << "  Key Space - Draw Grid" << endl;
 	cout << "  Key Enter - Fullscreen" << endl;
 	cout << "  Key Q or ESC - Exit" << endl;

@@ -14,7 +14,9 @@ Agent::Agent() : sprite_texture(0),
 	             sprite_h(0),
 	             draw_sprite(false)
 {
-	steering_behavior = new SteeringBehavior;
+	steering_behavior = new SteeringBehavior; 
+	/*vector_costs.clear();
+	frontierCount.clear();*/
 }
 
 Agent::~Agent() {
@@ -145,6 +147,7 @@ vector<Vector2D> Agent::Dijkstra(Vector2D start, Vector2D goal, Graph graph) {
 	PriorityQueue<Vector2D, float> frontier;
 	frontier.put(start, 0.f);
 	frontierCount.clear();
+	vector_costs.clear();
 
 	unordered_map<Vector2D, Vector2D> came_from;
 	came_from[start] = NULL;
@@ -177,7 +180,7 @@ vector<Vector2D> Agent::Dijkstra(Vector2D start, Vector2D goal, Graph graph) {
 
 		neighbors = graph.GetConnections(current);
 		
-		randCost = (rand() % 4) + 1; //RandomFloat(0, 7);
+		randCost = (rand() % 6) + 1; //RandomFloat(0, 7);
 		
 		//cout << randCost << endl;
 		for (unsigned int i = 0; i < neighbors.size(); i++) {
@@ -270,7 +273,8 @@ vector<Vector2D> Agent::GBFS(Vector2D start, Vector2D goal, Graph graph) {
 vector<Vector2D> Agent::AStar(Vector2D start, Vector2D goal, Graph graph, bool show_nodes) {
 	PriorityQueue<Vector2D, float> frontier;
 	frontier.put(start, 0.f);
-	frontierCount.clear();
+
+	
 
 	unordered_map<Vector2D, Vector2D> came_from;
 	came_from[start] = NULL;
@@ -282,6 +286,7 @@ vector<Vector2D> Agent::AStar(Vector2D start, Vector2D goal, Graph graph, bool s
 	Vector2D current, next;
 	bool visited;
 	float new_cost, priority;
+	float randCost;
 
 	while (!frontier.empty()) {
 
@@ -305,12 +310,14 @@ vector<Vector2D> Agent::AStar(Vector2D start, Vector2D goal, Graph graph, bool s
 
 		neighbors = graph.GetConnections(current);
 
+		randCost = (rand() % 6) + 1; //RandomFloat(0, 7);
+
 		for (unsigned int i = 0; i < neighbors.size(); i++) {
 			visited = false;
 			next = neighbors[i];
 
-			new_cost = cost_so_far[current] + RandomFloat(1, 3); //TODO implement GetCost method to do + 'graph.GetCost(current, next)' instead of rand
-
+			new_cost = cost_so_far[current] + randCost; //TODO implement GetCost method to do + 'graph.GetCost(current, next)' instead of rand
+			vector_costs.push_back(std::make_pair(next, randCost));
 			for (unsigned int j = 0; j < cost_so_far.size(); j++) {
 				// If next in cost_so_far 
 				if (cost_so_far.find(next) != cost_so_far.end()) {

@@ -6,7 +6,7 @@ SceneBFS::SceneBFS() {
 	num_cell_x = SRC_WIDTH / CELL_SIZE;
 	num_cell_y = SRC_HEIGHT / CELL_SIZE;
 	initMaze();
-	loadTextures("../res/maze.png", "../res/coins.png", "../res/start.png");
+	loadTextures("../res/maze.png", "../res/maze2.png", "../res/coins.png", "../res/start.png");
 
 	srand((unsigned int)time(NULL));
 
@@ -40,6 +40,8 @@ SceneBFS::SceneBFS() {
 SceneBFS::~SceneBFS() {
 	if (background_texture)
 		SDL_DestroyTexture(background_texture);
+	if (background_texture2)
+		SDL_DestroyTexture(background_texture2);
 	if (coin_texture)
 		SDL_DestroyTexture(coin_texture);
 	if (start_texture)
@@ -58,6 +60,8 @@ void SceneBFS::update(float dtime, SDL_Event *event) {
 			draw_frontier = !draw_frontier;
 		else if (event->key.keysym.scancode == SDL_SCANCODE_L)
 			draw_lines = !draw_lines;
+		else if (event->key.keysym.scancode == SDL_SCANCODE_M)
+			draw_map = !draw_map;
 		else if (event->key.keysym.scancode == SDL_SCANCODE_SPACE)
 			draw_grid = !draw_grid;
 		break;
@@ -155,7 +159,10 @@ void SceneBFS::drawMaze() {
 		for (unsigned int i = 0; i < maze_rects.size(); i++)
 			SDL_RenderFillRect(TheApp::Instance()->getRenderer(), &maze_rects[i]);
 	}
-	else SDL_RenderCopy(TheApp::Instance()->getRenderer(), background_texture, NULL, NULL);
+	else {
+		if (draw_map) SDL_RenderCopy(TheApp::Instance()->getRenderer(), background_texture2, NULL, NULL);
+		else SDL_RenderCopy(TheApp::Instance()->getRenderer(), background_texture, NULL, NULL);
+	}
 }
 
 void SceneBFS::drawCoinAndStart() {
@@ -316,7 +323,7 @@ void SceneBFS::initMaze() {
 	}
 }
 
-bool SceneBFS::loadTextures(char* filename_bg, char* filename_coin, char* start) {
+bool SceneBFS::loadTextures(char* filename_bg, char* filename_bg2, char* filename_coin, char* start) {
 	// Bg
 	SDL_Surface *image = IMG_Load(filename_bg);
 	if (!image) {
@@ -324,7 +331,16 @@ bool SceneBFS::loadTextures(char* filename_bg, char* filename_coin, char* start)
 		return false;
 	}
 	background_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+	// Bg 2
+	image = IMG_Load(filename_bg2);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	background_texture2 = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
 
+	if (image)
+		SDL_FreeSurface(image);
 	// Coin
 	if (image)
 		SDL_FreeSurface(image);

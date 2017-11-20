@@ -17,7 +17,7 @@ SceneAStarEnemies::SceneAStarEnemies() {
 	num_cell_x = SRC_WIDTH / CELL_SIZE;
 	num_cell_y = SRC_HEIGHT / CELL_SIZE;
 	initMaze();
-	loadTextures("../res/maze.png", "../res/coins.png", "../res/coins2.png", "../res/start.png");
+	loadTextures("../res/maze.png", "../res/maze2.png", "../res/coins.png", "../res/coins2.png", "../res/start.png", "../res/cost1.png", "../res/cost2.png", "../res/cost3.png", "../res/cost4.png", "../res/cost5.png", "../res/cost6.png");
 
 	srand((unsigned int)time(NULL));
 
@@ -82,9 +82,10 @@ SceneAStarEnemies::SceneAStarEnemies() {
 	}
 
 	pList[randNum + 1] = coinPosition;*/
-
+	agents[0]->vector_costs.clear();
+	agents[0]->frontierCount.clear();
 	//for (unsigned int i = 0; i <= randNum; i++) {
-		astar = agents[0]->AStar(pix2cell(start.coord), coinPosition, graph, false);
+		astar = agents[0]->AStar(pix2cell(start.coord), coinPosition, graph, true);
 		for (unsigned int i = 0; i < astar.size(); i++) {
 			path.points.push_back(cell2pix(astar[i]));
 		}
@@ -108,12 +109,26 @@ SceneAStarEnemies::SceneAStarEnemies() {
 SceneAStarEnemies::~SceneAStarEnemies() {
 	if (background_texture)
 		SDL_DestroyTexture(background_texture);
+	if (background_texture2)
+		SDL_DestroyTexture(background_texture2);
 	if (coin_texture)
 		SDL_DestroyTexture(coin_texture);
 	if (coin_texture2)
 		SDL_DestroyTexture(coin_texture2);
 	if (start_texture)
 		SDL_DestroyTexture(start_texture);
+	if (cost1_texture)
+		SDL_DestroyTexture(cost1_texture);
+	if (cost2_texture)
+		SDL_DestroyTexture(cost2_texture);
+	if (cost3_texture)
+		SDL_DestroyTexture(cost3_texture);
+	if (cost4_texture)
+		SDL_DestroyTexture(cost4_texture);
+	if (cost5_texture)
+		SDL_DestroyTexture(cost5_texture);
+	if (cost6_texture)
+		SDL_DestroyTexture(cost6_texture);
 
 	for (int i = 0; i < (int)agents.size(); i++) {
 		delete agents[i];
@@ -124,10 +139,14 @@ void SceneAStarEnemies::update(float dtime, SDL_Event *event) {
 	/* Keyboard & Mouse events */
 	switch (event->type) {
 	case SDL_KEYDOWN:
-		if (event->key.keysym.scancode == SDL_SCANCODE_F)
+		if (event->key.keysym.scancode == SDL_SCANCODE_C)
+			draw_costs = !draw_costs;
+		else if (event->key.keysym.scancode == SDL_SCANCODE_F)
 			draw_frontier = !draw_frontier;
 		else if (event->key.keysym.scancode == SDL_SCANCODE_L)
 			draw_lines = !draw_lines;
+		else if (event->key.keysym.scancode == SDL_SCANCODE_M)
+			draw_map = !draw_map;
 		else if (event->key.keysym.scancode == SDL_SCANCODE_SPACE)
 			draw_grid = !draw_grid;
 		break;
@@ -196,9 +215,10 @@ void SceneAStarEnemies::update(float dtime, SDL_Event *event) {
 						}
 
 						pList[randNum + 1] = coinPosition;*/
-
+						agents[0]->vector_costs.clear();
+						agents[0]->frontierCount.clear();
 						//for (unsigned int i = 0; i <= randNum; i++) {
-							astar = agents[0]->AStar(pix2cell(start.coord), coinPosition, graph, false);
+							astar = agents[0]->AStar(pix2cell(start.coord), coinPosition, graph, true);
 							for (unsigned int i = 0; i < astar.size(); i++) {
 								path.points.push_back(cell2pix(astar[i]));
 							}
@@ -238,6 +258,23 @@ void SceneAStarEnemies::draw() {
 		}
 	}
 
+	// Draw costs
+	int offset = CELL_SIZE / 2;
+	SDL_Texture *terrain = NULL;
+	if (draw_costs) {
+		for (unsigned int i = 0; i < agents[0]->vector_costs.size(); i++) {
+			if (agents[0]->vector_costs[i].second > 5) terrain = cost6_texture;
+			else if (agents[0]->vector_costs[i].second > 4) terrain = cost5_texture;
+			else if (agents[0]->vector_costs[i].second > 3) terrain = cost4_texture;
+			else if (agents[0]->vector_costs[i].second > 2) terrain = cost3_texture;
+			else if (agents[0]->vector_costs[i].second > 1) terrain = cost2_texture;
+			else if (agents[0]->vector_costs[i].second > 0) terrain = cost1_texture;
+
+			SDL_Rect dstrect = { (int)cell2pix(agents[0]->vector_costs[i].first).x - offset, (int)cell2pix(agents[0]->vector_costs[i].first).y - offset, CELL_SIZE, CELL_SIZE };
+			SDL_RenderCopy(TheApp::Instance()->getRenderer(), terrain, NULL, &dstrect);
+		}
+	}
+
 	// Draw frontier
 	if (draw_frontier) {
 		for (unsigned int i = 0; i < agents[0]->frontierCount.size(); i++) {
@@ -270,7 +307,10 @@ void SceneAStarEnemies::drawMaze() {
 		for (unsigned int i = 0; i < maze_rects.size(); i++)
 			SDL_RenderFillRect(TheApp::Instance()->getRenderer(), &maze_rects[i]);
 	}
-	else SDL_RenderCopy(TheApp::Instance()->getRenderer(), background_texture, NULL, NULL);
+	else {
+		if (draw_map) SDL_RenderCopy(TheApp::Instance()->getRenderer(), background_texture2, NULL, NULL);
+		else SDL_RenderCopy(TheApp::Instance()->getRenderer(), background_texture, NULL, NULL);
+	}
 }
 
 void SceneAStarEnemies::drawCoinAndStart() {
@@ -451,7 +491,7 @@ void SceneAStarEnemies::initMaze() {
 	}
 }
 
-bool SceneAStarEnemies::loadTextures(char* filename_bg, char* filename_coin, char* filename_coin2, char* start) {
+bool SceneAStarEnemies::loadTextures(char* filename_bg, char* filename_bg2, char* filename_coin, char* filename_coin2, char* start, char* cost1, char* cost2, char* cost3, char* cost4, char* cost5, char* cost6) {
 	// Bg
 	SDL_Surface *image = IMG_Load(filename_bg);
 	if (!image) {
@@ -462,7 +502,16 @@ bool SceneAStarEnemies::loadTextures(char* filename_bg, char* filename_coin, cha
 
 	if (image)
 		SDL_FreeSurface(image);
+	// Bg 2
+	image = IMG_Load(filename_bg2);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	background_texture2 = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
 
+	if (image)
+		SDL_FreeSurface(image);
 	// Coin
 	image = IMG_Load(filename_coin);
 	if (!image) {
@@ -492,6 +541,72 @@ bool SceneAStarEnemies::loadTextures(char* filename_bg, char* filename_coin, cha
 		return false;
 	}
 	start_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+
+	if (image)
+		SDL_FreeSurface(image);
+
+	// Cost1
+	image = IMG_Load(cost1);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	cost1_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+
+	if (image)
+		SDL_FreeSurface(image);
+
+	// Cost2
+	image = IMG_Load(cost2);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	cost2_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+
+	if (image)
+		SDL_FreeSurface(image);
+
+	// Cost3
+	image = IMG_Load(cost3);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	cost3_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+
+	if (image)
+		SDL_FreeSurface(image);
+
+	// Cost4
+	image = IMG_Load(cost4);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	cost4_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+
+	if (image)
+		SDL_FreeSurface(image);
+
+	// Cost5
+	image = IMG_Load(cost5);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	cost5_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+
+	if (image)
+		SDL_FreeSurface(image);
+
+	// Cost6
+	image = IMG_Load(cost6);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	cost6_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
 
 	if (image)
 		SDL_FreeSurface(image);

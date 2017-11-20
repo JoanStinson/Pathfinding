@@ -6,7 +6,7 @@ SceneDijkstra::SceneDijkstra() {
 	num_cell_x = SRC_WIDTH / CELL_SIZE;
 	num_cell_y = SRC_HEIGHT / CELL_SIZE;
 	initMaze();
-	loadTextures("../res/maze.png", "../res/coins.png", "../res/start.png", "../res/cost1.png", "../res/cost2.png", "../res/cost3.png", "../res/cost4.png", "../res/cost5.png", "../res/cost6.png");
+	loadTextures("../res/maze.png", "../res/maze2.png", "../res/coins.png", "../res/start.png", "../res/cost1.png", "../res/cost2.png", "../res/cost3.png", "../res/cost4.png", "../res/cost5.png", "../res/cost6.png");
 
 	srand((unsigned int)time(NULL));
 
@@ -40,6 +40,8 @@ SceneDijkstra::SceneDijkstra() {
 SceneDijkstra::~SceneDijkstra() {
 	if (background_texture)
 		SDL_DestroyTexture(background_texture);
+	if (background_texture2)
+		SDL_DestroyTexture(background_texture2);
 	if (coin_texture)
 		SDL_DestroyTexture(coin_texture);
 	if (start_texture)
@@ -72,6 +74,8 @@ void SceneDijkstra::update(float dtime, SDL_Event *event) {
 			draw_frontier = !draw_frontier;
 		else if (event->key.keysym.scancode == SDL_SCANCODE_L)
 			draw_lines = !draw_lines;
+		else if (event->key.keysym.scancode == SDL_SCANCODE_M)
+			draw_map = !draw_map;
 		else if (event->key.keysym.scancode == SDL_SCANCODE_SPACE)
 			draw_grid = !draw_grid;
 		break;
@@ -186,7 +190,10 @@ void SceneDijkstra::drawMaze() {
 		for (unsigned int i = 0; i < maze_rects.size(); i++)
 			SDL_RenderFillRect(TheApp::Instance()->getRenderer(), &maze_rects[i]);
 	}
-	else SDL_RenderCopy(TheApp::Instance()->getRenderer(), background_texture, NULL, NULL);
+	else {
+		if (draw_map) SDL_RenderCopy(TheApp::Instance()->getRenderer(), background_texture2, NULL, NULL);
+		else SDL_RenderCopy(TheApp::Instance()->getRenderer(), background_texture, NULL, NULL);
+	}
 }
 
 void SceneDijkstra::drawCoinAndStart() {
@@ -354,7 +361,7 @@ void SceneDijkstra::initMaze() {
 	}
 }
 
-bool SceneDijkstra::loadTextures(char* filename_bg, char* filename_coin, char* start, char* cost1,  char* cost2,  char* cost3,  char* cost4,  char* cost5,  char* cost6) {
+bool SceneDijkstra::loadTextures(char* filename_bg, char* filename_bg2, char* filename_coin, char* start, char* cost1,  char* cost2,  char* cost3,  char* cost4,  char* cost5,  char* cost6) {
 	// Bg
 	SDL_Surface *image = IMG_Load(filename_bg);
 	if (!image) {
@@ -362,6 +369,17 @@ bool SceneDijkstra::loadTextures(char* filename_bg, char* filename_coin, char* s
 		return false;
 	}
 	background_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+
+	// Bg 2
+	image = IMG_Load(filename_bg2);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	background_texture2 = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+
+	if (image)
+		SDL_FreeSurface(image);
 
 	// Coin
 	if (image)
