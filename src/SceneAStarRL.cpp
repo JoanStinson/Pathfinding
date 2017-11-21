@@ -71,7 +71,7 @@ SceneAStarRL::SceneAStarRL() {
 
 	// Run A* changing goals
 	for (unsigned int i = 0; i < goalist.size()-1; i++) {
-		astar = agents[0]->AStar(goalist[i], goalist[i + 1], graph, true);
+		astar = agents[0]->AStar(goalist[i], goalist[i + 1], graph, false);
 		for (unsigned int i = 0; i < astar.size(); i++) {
 			path.points.push_back(cell2pix(astar[i]));
 		}
@@ -183,7 +183,7 @@ void SceneAStarRL::update(float dtime, SDL_Event *event) {
 
 						// Run A* changing goals
 						for (unsigned int i = 0; i < goalist.size() - 1; i++) {
-							astar = agents[0]->AStar(goalist[i], goalist[i + 1], graph, true);
+							astar = agents[0]->AStar(goalist[i], goalist[i + 1], graph, false);
 							for (unsigned int i = 0; i < astar.size(); i++) {
 								path.points.push_back(cell2pix(astar[i]));
 							}

@@ -6,7 +6,8 @@ SceneAStar::SceneAStar() {
 	num_cell_x = SRC_WIDTH / CELL_SIZE;
 	num_cell_y = SRC_HEIGHT / CELL_SIZE;
 	initMaze();
-	loadTextures("../res/maze.png", "../res/maze2.png", "../res/coins.png", "../res/start.png", "../res/cost1.png", "../res/cost2.png", "../res/cost3.png", "../res/cost4.png", "../res/cost5.png", "../res/cost6.png");
+	loadTextures("../res/maze.png", "../res/maze2.png", "../res/coins.png", "../res/start.png", "../res/cost1.png", "../res/cost2.png", "../res/cost3.png", "../res/cost4.png", "../res/cost5.png", "../res/cost6.png"
+		, "../res/number1.png", "../res/number2.png", "../res/number3.png", "../res/number4.png", "../res/number5.png", "../res/number6.png");
 
 	srand((unsigned int)time(NULL));
 
@@ -61,6 +62,19 @@ SceneAStar::~SceneAStar() {
 	if (cost6_texture)
 		SDL_DestroyTexture(cost6_texture);
 
+	if (num1_texture)
+		SDL_DestroyTexture(num1_texture);
+	if (num2_texture)
+		SDL_DestroyTexture(num2_texture);
+	if (num3_texture)
+		SDL_DestroyTexture(num3_texture);
+	if (num4_texture)
+		SDL_DestroyTexture(num4_texture);
+	if (num5_texture)
+		SDL_DestroyTexture(num5_texture);
+	if (num6_texture)
+		SDL_DestroyTexture(num6_texture);
+
 	for (int i = 0; i < (int)agents.size(); i++) {
 		delete agents[i];
 	}
@@ -78,6 +92,8 @@ void SceneAStar::update(float dtime, SDL_Event *event) {
 			draw_lines = !draw_lines;
 		else if (event->key.keysym.scancode == SDL_SCANCODE_M)
 			draw_map = !draw_map;
+		else if (event->key.keysym.scancode == SDL_SCANCODE_N)
+			draw_numbers = !draw_numbers;
 		else if (event->key.keysym.scancode == SDL_SCANCODE_SPACE)
 			draw_grid = !draw_grid;
 		break;
@@ -160,6 +176,23 @@ void SceneAStar::draw() {
 
 			SDL_Rect dstrect = { (int)cell2pix(agents[0]->vector_costs[i].first).x - offset, (int)cell2pix(agents[0]->vector_costs[i].first).y - offset, CELL_SIZE, CELL_SIZE };
 			SDL_RenderCopy(TheApp::Instance()->getRenderer(), terrain, NULL, &dstrect);
+		}
+	}
+
+	// Draw costs 2
+	//	int offset = CELL_SIZE / 2;
+	SDL_Texture *terrain2 = NULL;
+	if (draw_numbers) {
+		for (unsigned int i = 0; i < agents[0]->vector_costs.size(); i++) {
+			if (agents[0]->vector_costs[i].second > 5) terrain2 = num6_texture;
+			else if (agents[0]->vector_costs[i].second > 4) terrain2 = num5_texture;
+			else if (agents[0]->vector_costs[i].second > 3) terrain2 = num4_texture;
+			else if (agents[0]->vector_costs[i].second > 2) terrain2 = num3_texture;
+			else if (agents[0]->vector_costs[i].second > 1) terrain2 = num2_texture;
+			else if (agents[0]->vector_costs[i].second > 0) terrain2 = num1_texture;
+
+			SDL_Rect dstrect = { (int)cell2pix(agents[0]->vector_costs[i].first).x - offset, (int)cell2pix(agents[0]->vector_costs[i].first).y - offset, CELL_SIZE, CELL_SIZE };
+			SDL_RenderCopy(TheApp::Instance()->getRenderer(), terrain2, NULL, &dstrect);
 		}
 	}
 
@@ -358,7 +391,8 @@ void SceneAStar::initMaze() {
 	}
 }
 
-bool SceneAStar::loadTextures(char* filename_bg, char* filename_bg2, char* filename_coin, char* start, char* cost1, char* cost2, char* cost3, char* cost4, char* cost5, char* cost6) {
+bool SceneAStar::loadTextures(char* filename_bg, char* filename_bg2, char* filename_coin, char* start, char* cost1, char* cost2, char* cost3, char* cost4, char* cost5, char* cost6,
+	char* num1, char* num2, char* num3, char* num4, char* num5, char* num6) {
 	// Bg
 	SDL_Surface *image = IMG_Load(filename_bg);
 	if (!image) {
@@ -466,6 +500,72 @@ bool SceneAStar::loadTextures(char* filename_bg, char* filename_bg2, char* filen
 		return false;
 	}
 	cost6_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+
+	if (image)
+		SDL_FreeSurface(image);
+
+	// Num1
+	image = IMG_Load(num1);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	num1_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+
+	if (image)
+		SDL_FreeSurface(image);
+
+	// Num2
+	image = IMG_Load(num2);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	num2_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+
+	if (image)
+		SDL_FreeSurface(image);
+
+	// Num3
+	image = IMG_Load(num3);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	num3_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+
+	if (image)
+		SDL_FreeSurface(image);
+
+	// Num4
+	image = IMG_Load(num4);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	num4_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+
+	if (image)
+		SDL_FreeSurface(image);
+
+	// Num5
+	image = IMG_Load(num5);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	num5_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+
+	if (image)
+		SDL_FreeSurface(image);
+
+	// Num6
+	image = IMG_Load(num6);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	num6_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
 
 	if (image)
 		SDL_FreeSurface(image);

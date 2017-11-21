@@ -188,7 +188,7 @@ vector<Vector2D> Agent::Dijkstra(Vector2D start, Vector2D goal, Graph graph) {
 			next = neighbors[i];
 
 			new_cost = cost_so_far[current] + randCost;//(rand() % 3) + 1;//graph.GetCost(next);
-			vector_costs.push_back(std::make_pair(next, randCost));
+			
 
 			for (unsigned int j = 0; j < cost_so_far.size(); j++) {
 				// If next in cost_so_far 
@@ -211,6 +211,7 @@ vector<Vector2D> Agent::Dijkstra(Vector2D start, Vector2D goal, Graph graph) {
 				came_from[next] = current;
 				//Count :)
 				frontierCount.push_back(next);
+				vector_costs.push_back(std::make_pair(next, randCost));
 			}
 		}
 
@@ -317,7 +318,7 @@ vector<Vector2D> Agent::AStar(Vector2D start, Vector2D goal, Graph graph, bool s
 			next = neighbors[i];
 
 			new_cost = cost_so_far[current] + randCost; //TODO implement GetCost method to do + 'graph.GetCost(current, next)' instead of rand
-			vector_costs.push_back(std::make_pair(next, randCost));
+			
 			for (unsigned int j = 0; j < cost_so_far.size(); j++) {
 				// If next in cost_so_far 
 				if (cost_so_far.find(next) != cost_so_far.end()) {
@@ -339,6 +340,7 @@ vector<Vector2D> Agent::AStar(Vector2D start, Vector2D goal, Graph graph, bool s
 				came_from[next] = current;
 				//Count :)
 				frontierCount.push_back(next);
+				vector_costs.push_back(std::make_pair(next, randCost));
 			}
 		}
 	}
