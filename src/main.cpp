@@ -19,7 +19,7 @@ int main(int argc, char ** argv) {
 	cout << endl << "  Welcome to our SDL Pathfinding Algorithms Implementation!" << endl;
 	cout << endl;
 	cout << "  -Controls- " << endl;
-	cout << "  Key 0 - Default Scene" << endl;
+	cout << "  Key 0 - Main Menu" << endl;
 	cout << "  Key 1 - Breadth First Search" << endl;
 	cout << "  Key 2 - Dijkstra's Algorithm" << endl;
 	cout << "  Key 3 - Greedy Breadth First Search" << endl;

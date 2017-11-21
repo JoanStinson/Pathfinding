@@ -6,7 +6,7 @@ ScenePathFinding::ScenePathFinding() {
 	num_cell_x = SRC_WIDTH / CELL_SIZE;
 	num_cell_y = SRC_HEIGHT / CELL_SIZE;
 	initMaze();
-	loadTextures("../res/maze.png", "../res/coins.png", "../res/start.png");
+	loadTextures("../res/title.png");
 
 	srand((unsigned int)time(NULL));
 
@@ -50,7 +50,7 @@ void ScenePathFinding::update(float dtime, SDL_Event *event) {
 		break;
 	case SDL_MOUSEMOTION:
 	case SDL_MOUSEBUTTONDOWN:
-		if (event->button.button == SDL_BUTTON_LEFT) {
+		/*if (event->button.button == SDL_BUTTON_LEFT) {
 			Vector2D cell = pix2cell(Vector2D((float)(event->button.x), (float)(event->button.y)));
 			if (isValidCell(cell)) {
 				if (path.points.size() > 0)
@@ -59,7 +59,7 @@ void ScenePathFinding::update(float dtime, SDL_Event *event) {
 
 				path.points.push_back(cell2pix(cell));
 			}
-		}
+		}*/
 		break;
 	default:
 		break;
@@ -119,15 +119,14 @@ void ScenePathFinding::draw() {
 	}
 
 	// Draw path
-	for (int i = 0; i < (int)path.points.size(); i++) {
+	/*for (int i = 0; i < (int)path.points.size(); i++) {
 		draw_circle(TheApp::Instance()->getRenderer(), (int)(path.points[i].x), (int)(path.points[i].y), 15, 255, 255, 0, 255);
 		if (i > 0)
 			SDL_RenderDrawLine(TheApp::Instance()->getRenderer(), (int)(path.points[i - 1].x), (int)(path.points[i - 1].y), (int)(path.points[i].x), (int)(path.points[i].y));
 	}
 
-	drawCoinAndStart();
 	draw_circle(TheApp::Instance()->getRenderer(), (int)currentTarget.x, (int)currentTarget.y, 15, 255, 0, 0, 255);
-	agents[0]->draw();
+	agents[0]->draw();*/
 }
 
 const char* ScenePathFinding::getTitle() {
@@ -143,22 +142,6 @@ void ScenePathFinding::drawMaze() {
 	else SDL_RenderCopy(TheApp::Instance()->getRenderer(), background_texture, NULL, NULL);
 }
 
-void ScenePathFinding::drawCoinAndStart() {
-	Vector2D coin_coords = cell2pix(coinPosition);
-	int offset = CELL_SIZE / 2;
-	Uint32 sprite = (int)(SDL_GetTicks() / (150)) % 10;
-	int sprite_height = 30;
-	SDL_Rect srcrect = { (int)sprite * coin_w, 0, coin_w, sprite_height };
-	SDL_Rect dstrect = { (int)coin_coords.x - (coin_w / 2), (int)coin_coords.y - (sprite_height / 2), coin_w, sprite_height };
-	SDL_Point center = { coin_w / 2, sprite_height / 2 };
-	SDL_RenderCopyEx(TheApp::Instance()->getRenderer(), coin_texture, &srcrect, &dstrect, 0, &center, SDL_FLIP_NONE);
-
-	// Draw start
-	if (agents[0]->getPosition() != start.coord) {
-		SDL_Rect dstrect2 = { (int)start.coord.x - offset, (int)start.coord.y - offset, CELL_SIZE, CELL_SIZE };
-		SDL_RenderCopy(TheApp::Instance()->getRenderer(), start_texture, NULL, &dstrect2);
-	}
-}
 
 void ScenePathFinding::initMaze() {
 
@@ -255,7 +238,7 @@ void ScenePathFinding::initMaze() {
 	}
 }
 
-bool ScenePathFinding::loadTextures(char* filename_bg, char* filename_coin, char* start) {
+bool ScenePathFinding::loadTextures(char* filename_bg) {
 	// Bg
 	SDL_Surface *image = IMG_Load(filename_bg);
 	if (!image) {
@@ -267,28 +250,6 @@ bool ScenePathFinding::loadTextures(char* filename_bg, char* filename_coin, char
 	if (image)
 		SDL_FreeSurface(image);
 
-	// Coin
-	image = IMG_Load(filename_coin);
-	if (!image) {
-		cout << "IMG_Load: " << IMG_GetError() << endl;
-		return false;
-	}
-	coin_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
-	coin_w = image->w / 10;
-
-	if (image)
-		SDL_FreeSurface(image);
-
-	// Start
-	image = IMG_Load(start);
-	if (!image) {
-		cout << "IMG_Load: " << IMG_GetError() << endl;
-		return false;
-	}
-	start_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
-
-	if (image)
-		SDL_FreeSurface(image);
 
 	return true;
 }
