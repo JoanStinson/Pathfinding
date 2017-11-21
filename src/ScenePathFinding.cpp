@@ -130,7 +130,7 @@ void ScenePathFinding::draw() {
 }
 
 const char* ScenePathFinding::getTitle() {
-	return "SDL Pathfinding Algorithms :: Default Scene";
+	return "SDL Pathfinding Algorithms :: Main Menu";
 }
 
 void ScenePathFinding::drawMaze() {
