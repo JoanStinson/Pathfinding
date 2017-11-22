@@ -1,5 +1,4 @@
 #include "SDL_SimpleApp.h"
-
 using namespace std;
 
 SDL_SimpleApp * SDL_SimpleApp::s_pInstance = 0;

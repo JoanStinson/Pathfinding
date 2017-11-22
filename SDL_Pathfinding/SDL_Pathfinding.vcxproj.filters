@@ -33,9 +33,6 @@
     <ClCompile Include="..\src\ScenePathFinding.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Connection.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Graph.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -83,13 +80,7 @@
     <ClInclude Include="..\src\ScenePathFinding.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Connection.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\Graph.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\Node.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\SceneBFS.h">

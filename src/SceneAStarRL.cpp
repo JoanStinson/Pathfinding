@@ -30,7 +30,7 @@ SceneAStarRL::SceneAStarRL() {
 	while (!isValidCell(rand_cell))
 		rand_cell = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
 	agents[0]->setPosition(cell2pix(rand_cell));
-	start = Node(agents[0]->getPosition().x, agents[0]->getPosition().y);
+	start = agents[0]->getPosition();
 
 	// Set the coin in a random cell (but at least 3 cells far from the agent)
 	coinPosition = Vector2D(-1, -1);
@@ -58,12 +58,12 @@ SceneAStarRL::SceneAStarRL() {
 	// Get their heuristic and store them sorted
 	vector<std::pair<float, Vector2D>> heuristicValues;
 	for (unsigned int i = 0; i < randomLocations.size(); i++) {
-		heuristicValues.push_back(std::make_pair(Heuristic(pix2cell(start.coord), randomLocations[i]), randomLocations[i]));
+		heuristicValues.push_back(std::make_pair(Heuristic(pix2cell(start), randomLocations[i]), randomLocations[i]));
 	}
 	std::sort(heuristicValues.begin(), heuristicValues.end());
 
 	// Update goal list
-	goalist.push_back(pix2cell(start.coord));
+	goalist.push_back(pix2cell(start));
 	for (unsigned int i = 0; i < heuristicValues.size(); i++) {
 		goalist.push_back(heuristicValues[i].second);
 	}
@@ -151,7 +151,7 @@ void SceneAStarRL::update(float dtime, SDL_Event *event) {
 
 
 						agents[0]->setPosition(path.points.back());
-						start = Node(agents[0]->getPosition());
+						start = agents[0]->getPosition();
 						path.points.clear();
 
 						//////////////////// A* Algorithm with random positions
@@ -170,12 +170,12 @@ void SceneAStarRL::update(float dtime, SDL_Event *event) {
 						// Get their heuristic and store them sorted
 						vector<std::pair<float, Vector2D>> heuristicValues;
 						for (unsigned int i = 0; i < randomLocations.size(); i++) {
-							heuristicValues.push_back(std::make_pair(Heuristic(pix2cell(start.coord), randomLocations[i]), randomLocations[i]));
+							heuristicValues.push_back(std::make_pair(Heuristic(pix2cell(start), randomLocations[i]), randomLocations[i]));
 						}
 						std::sort(heuristicValues.begin(), heuristicValues.end());
 
 						// Update goal list
-						goalist.push_back(pix2cell(start.coord));
+						goalist.push_back(pix2cell(start));
 						for (unsigned int i = 0; i < heuristicValues.size(); i++) {
 							goalist.push_back(heuristicValues[i].second);
 						}
@@ -307,7 +307,7 @@ void SceneAStarRL::drawCoinAndStart() {
 	SDL_Point center = { coin_w / 2, sprite_height / 2 };
 	SDL_RenderCopyEx(TheApp::Instance()->getRenderer(), coin_texture, &srcrect, &dstrect, 0, &center, SDL_FLIP_NONE);
 
-	SDL_Rect dstrect2 = { (int)start.coord.x - offset, (int)start.coord.y - offset, CELL_SIZE, CELL_SIZE };
+	SDL_Rect dstrect2 = { (int)start.x - offset, (int)start.y - offset, CELL_SIZE, CELL_SIZE };
 	SDL_RenderCopy(TheApp::Instance()->getRenderer(), start_texture, NULL, &dstrect2);
 }
 

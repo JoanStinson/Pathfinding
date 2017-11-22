@@ -36,7 +36,7 @@ private:
 	Vector2D pix2cell(Vector2D pix);
 	bool isValidCell(Vector2D cell);
 
-	Node start;
+	//Node start;
 	SDL_Texture *start_texture;
 	int coin_w;
 };

@@ -39,7 +39,7 @@ private:
 	bool isValidCell(Vector2D cell);
 
 	Graph graph;
-	Node start, end;
+	Vector2D start;
 	vector<Vector2D> dijkstra;
 	SDL_Texture *start_texture;
 	int coin_w;

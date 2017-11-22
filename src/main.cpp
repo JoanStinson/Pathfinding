@@ -10,8 +10,8 @@
 #include "SceneAStar.h"
 #include "SceneAStarRL.h"
 #include "SceneAStarEnemies.h"
-
 using namespace std;
+
 #define FRAMES_PER_SEC 30
 
 int main(int argc, char ** argv) {
@@ -39,8 +39,7 @@ int main(int argc, char ** argv) {
 
 	bool quit = false;
 	SDL_Event event;
-	int this_tick = 0;
-	int next_tick = 1000/FRAMES_PER_SEC;
+	int this_tick = 0, next_tick = 1000/FRAMES_PER_SEC;
 
 	SDL_SimpleApp *app = SDL_SimpleApp::Instance();
 

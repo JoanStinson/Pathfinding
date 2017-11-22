@@ -1,5 +1,4 @@
 #pragma once
-
 #include <math.h>
 #include <tuple> 
 #include <functional>
@@ -17,8 +16,7 @@ public:
 	float x = 0.0f;
 	float y = 0.0f;
 
-	Vector2D(float valueX = 0.0f, float valueY = 0.0f): x{valueX}, y{valueY}
-	{}
+	Vector2D(float valueX = 0.0f, float valueY = 0.0f): x{valueX}, y{valueY} {}
 	
 	inline float Length() const {
 		return (float)sqrt(x * x + y * y);
@@ -32,13 +30,14 @@ public:
 	inline Vector2D operator()(const Vector2D& v) {
 		return v.x + v.y;
 	}
+
 	inline Vector2D operator+(const Vector2D& v){
 		return Vector2D(x + v.x, y + v.y);
 	}
 
-	inline void operator+=(const Vector2D& v2) {
-		x += v2.x;
-		y += v2.y;
+	inline void operator+=(const Vector2D& v) {
+		x += v.x;
+		y += v.y;
 	}
 	
 	inline Vector2D operator-(const Vector2D& v) {

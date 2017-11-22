@@ -15,8 +15,6 @@ Agent::Agent() : sprite_texture(0),
 	             draw_sprite(false)
 {
 	steering_behavior = new SteeringBehavior; 
-	/*vector_costs.clear();
-	frontierCount.clear();*/
 }
 
 Agent::~Agent() {
@@ -30,13 +28,6 @@ float Agent::RandomFloat(float a, float b) {
 	float random = ((float)rand()) / (float)RAND_MAX;
 	float diff = b - a;
 	float r = random * diff;
-	return a + r;
-}
-
-int Agent::RandomInt(int a, int b) {
-	int random = ((int)rand()) / (int)RAND_MAX;
-	int diff = b - a;
-	int r = random * diff;
 	return a + r;
 }
 

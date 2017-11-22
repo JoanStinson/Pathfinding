@@ -5,8 +5,7 @@
 
 class Agent;
 
-class SteeringBehavior
-{
+class SteeringBehavior {
 public:
 	SteeringBehavior();
 	~SteeringBehavior();

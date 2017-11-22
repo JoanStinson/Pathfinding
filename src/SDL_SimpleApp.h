@@ -9,20 +9,7 @@
 #define SRC_HEIGHT 768
 #define CELL_SIZE 32
 
-class SDL_SimpleApp
-{
-private:
-	SDL_Window * window;
-	SDL_Renderer * renderer;
-	static SDL_SimpleApp * s_pInstance;
-	
-	int win_width;
-	int win_height;
-	int grid_cell_size;
-	SDL_Color bg_color;
-	bool win_fullscreen;
-	float last_update;
-
+class SDL_SimpleApp {
 public:
 	SDL_SimpleApp();
 	~SDL_SimpleApp();
@@ -33,6 +20,18 @@ public:
 	Vector2D getGridCellSize();
 	void setWindowTitle(const char* title);
 	void setFullScreen();
+
+private:
+	SDL_Window * window;
+	SDL_Renderer * renderer;
+	static SDL_SimpleApp * s_pInstance;
+
+	int win_width;
+	int win_height;
+	int grid_cell_size;
+	SDL_Color bg_color;
+	bool win_fullscreen;
+	float last_update;
 };
 
 typedef SDL_SimpleApp TheApp;

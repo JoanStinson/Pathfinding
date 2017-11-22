@@ -1,5 +1,4 @@
 #include "SteeringBehavior.h"
-
 using namespace std;
 
 SteeringBehavior::SteeringBehavior() {

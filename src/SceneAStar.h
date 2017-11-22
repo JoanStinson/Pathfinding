@@ -25,7 +25,7 @@ private:
 	int num_cell_x;
 	int num_cell_y;
 	bool draw_grid;
-	std::vector<SDL_Rect> maze_rects;
+	vector<SDL_Rect> maze_rects;
 	void drawMaze();
 	void drawCoinAndStart();
 	SDL_Texture *background_texture;
@@ -39,7 +39,7 @@ private:
 	bool isValidCell(Vector2D cell);
 
 	Graph graph;
-	Node start, end;
+	Vector2D start;
 	vector<Vector2D> astar;
 	SDL_Texture *start_texture;
 	int coin_w;

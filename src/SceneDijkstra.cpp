@@ -20,7 +20,7 @@ SceneDijkstra::SceneDijkstra() {
 	while (!isValidCell(rand_cell))
 		rand_cell = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
 	agents[0]->setPosition(cell2pix(rand_cell));
-	start = Node(agents[0]->getPosition().x, agents[0]->getPosition().y);
+	start = agents[0]->getPosition();
 
 	// Set the coin in a random cell (but at least 3 cells far from the agent)
 	coinPosition = Vector2D(-1, -1);
@@ -32,7 +32,7 @@ SceneDijkstra::SceneDijkstra() {
 	currentTargetIndex = -1;
 
 	// Dijkstra
-	dijkstra = agents[0]->Dijkstra(pix2cell(start.coord), coinPosition, graph);
+	dijkstra = agents[0]->Dijkstra(pix2cell(start), coinPosition, graph);
 	for (unsigned int i = 0; i < dijkstra.size(); i++) {
 		path.points.push_back(cell2pix(dijkstra[i]));
 	}
@@ -116,11 +116,11 @@ void SceneDijkstra::update(float dtime, SDL_Event *event) {
 						while ((!isValidCell(coinPosition)) || (Vector2D::Distance(coinPosition, pix2cell(agents[0]->getPosition())) < 3))
 							coinPosition = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
 						agents[0]->setPosition(path.points.back());
-						start = Node(agents[0]->getPosition());
+						start = agents[0]->getPosition();
 						path.points.clear();
 
 						// Dijkstra
-						dijkstra = agents[0]->Dijkstra(pix2cell(start.coord), coinPosition, graph);
+						dijkstra = agents[0]->Dijkstra(pix2cell(start), coinPosition, graph);
 						for (unsigned int i = 0; i < dijkstra.size(); i++) {
 							path.points.push_back(cell2pix(dijkstra[i]));
 						}
@@ -239,7 +239,7 @@ void SceneDijkstra::drawCoinAndStart() {
 	SDL_Point center = { coin_w / 2, sprite_height / 2 };
 	SDL_RenderCopyEx(TheApp::Instance()->getRenderer(), coin_texture, &srcrect, &dstrect, 0, &center, SDL_FLIP_NONE);
 
-	SDL_Rect dstrect2 = { (int)start.coord.x - offset, (int)start.coord.y - offset, CELL_SIZE, CELL_SIZE };
+	SDL_Rect dstrect2 = { (int)start.x - offset, (int)start.y - offset, CELL_SIZE, CELL_SIZE };
 	SDL_RenderCopy(TheApp::Instance()->getRenderer(), start_texture, NULL, &dstrect2);
 }
 

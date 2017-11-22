@@ -18,7 +18,7 @@ ScenePathFinding::ScenePathFinding() {
 	Vector2D rand_cell(-1, -1);
 	while (!isValidCell(rand_cell))
 		rand_cell = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
-	start = Node(agents[0]->getPosition().x, agents[0]->getPosition().y);
+//	start = Node(agents[0]->getPosition().x, agents[0]->getPosition().y);
 
 	// Set the coin in a random cell (but at least 3 cells far from the agent)
 	coinPosition = Vector2D(-1, -1);
@@ -82,7 +82,7 @@ void ScenePathFinding::update(float dtime, SDL_Event *event) {
 						while ((!isValidCell(coinPosition)) || (Vector2D::Distance(coinPosition, pix2cell(agents[0]->getPosition())) < 3))
 							coinPosition = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
 						agents[0]->setPosition(path.points.back());
-						start = Node(agents[0]->getPosition());
+//						start = Node(agents[0]->getPosition());
 						path.points.clear();
 					}
 				}

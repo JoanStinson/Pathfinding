@@ -43,7 +43,7 @@ private:
 	bool isValidCell(Vector2D cell);
 
 	Graph graph;
-	Node start, end;
+	Vector2D start;
 	vector<Vector2D> astar;
 	SDL_Texture *coin_texture2;
 	SDL_Texture *start_texture;
