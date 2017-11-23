@@ -17,7 +17,8 @@ SceneAStarEnemies::SceneAStarEnemies() {
 	num_cell_x = SRC_WIDTH / CELL_SIZE;
 	num_cell_y = SRC_HEIGHT / CELL_SIZE;
 	initMaze();
-	loadTextures("../res/maze.png", "../res/maze2.png", "../res/coins.png", "../res/zombie1.png", "../res/start.png", "../res/cost1.png", "../res/cost2.png", "../res/cost3.png", "../res/cost4.png", "../res/cost5.png", "../res/cost6.png");
+	loadTextures("../res/maze.png", "../res/maze2.png", "../res/coins.png", "../res/zombie1.png", "../res/start.png", "../res/cost1.png", "../res/cost2.png", "../res/cost3.png", "../res/cost4.png", 
+		"../res/cost5.png", "../res/cost6.png", "../res/number1.png", "../res/number2.png", "../res/number3.png", "../res/number4.png", "../res/number5.png", "../res/number6.png", "../res/number9.png");
 
 	srand((unsigned int)time(NULL));
 
@@ -38,72 +39,28 @@ SceneAStarEnemies::SceneAStarEnemies() {
 		coinPosition = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
 
 	// Set random N locations
-	randNum = (rand() % 3) + 1;
-	for (unsigned int i = 1; i <= randNum; i++) {
-		rList[i] = Vector2D(-1, -1);
-		while ((!isValidCell(rList[i])) || (Vector2D::Distance(rList[i], rand_cell) < 3))
-			rList[i] = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
+	randomList.clear();
+	randNum = (rand() % 20) + 1;
+	for (unsigned int i = 0; i < randNum; i++) {
+		Vector2D a (-1, -1);
+		while ((!isValidCell(a)) || (Vector2D::Distance(a, rand_cell) < 3))
+			a = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
+		randomList.push_back(a);
 	}
 
 	// PathFollowing next Target
 	currentTarget = Vector2D(0, 0);
 	currentTargetIndex = -1;
 
-	// A* Algorithm with random positions
-	/*pList[0] = pix2cell(start.coord);
-
-	if (randNum == 1) pList[1] = rList[1];
-
-	else if (randNum == 2) {
-		if (Heuristic(pList[0], rList[1]) > Heuristic(pList[0], rList[2])) {
-			pList[1] = rList[2];
-			pList[2] = rList[1];
-		}
-		else {
-			pList[1] = rList[1];
-			pList[2] = rList[2];
-		}
-	}
-
-	else if (randNum >= 3) {
-		int i = 1;
-		for (unsigned int j = 1; j <= randNum; j++) {
-
-			if (Heuristic(pList[i], rList[j]) > Heuristic(pList[i], rList[j + 1])) {
-				pList[i] = rList[j + 1];
-				pList[i + 1] = rList[j];
-			}
-			else {
-				pList[i] = rList[j];
-				pList[i + 1] = rList[j + 1];
-			}
-			i++;
-		}
-	}
-
-	pList[randNum + 1] = coinPosition;*/
+	// A Star Enemies
 	agents[0]->vector_costs.clear();
 	agents[0]->frontierCount.clear();
-	//for (unsigned int i = 0; i <= randNum; i++) {
-		astar = agents[0]->AStar(pix2cell(start), coinPosition, graph, false);
-		for (unsigned int i = 0; i < astar.size(); i++) {
-			path.points.push_back(cell2pix(astar[i]));
-		}
-	//}
 
-	/*
-	generateXRandomGreenPoints->store them to a list
-	while(!allGreenPointsVisited())
-	{
-	int i = WhichIsTheClosestGreenPoint();
-	actualGoal=GreenPoint[i];
+	astar = agents[0]->AStar2(pix2cell(start), coinPosition, graph, false, randomList);
+	for (unsigned int i = 0; i < astar.size(); i++) {
+		path.points.push_back(cell2pix(astar[i]));
 	}
-	GoToGoal()
-	*/
 
-	/*
-	Exercici num.3 N ubicacions aleatories i las has d'esquivar, com l'anterior pero son ubicacions per les quals no pots passar
-	*/
 }
 
 SceneAStarEnemies::~SceneAStarEnemies() {
@@ -130,6 +87,20 @@ SceneAStarEnemies::~SceneAStarEnemies() {
 	if (cost6_texture)
 		SDL_DestroyTexture(cost6_texture);
 
+	if (num1_texture)
+		SDL_DestroyTexture(num1_texture);
+	if (num2_texture)
+		SDL_DestroyTexture(num2_texture);
+	if (num3_texture)
+		SDL_DestroyTexture(num3_texture);
+	if (num4_texture)
+		SDL_DestroyTexture(num4_texture);
+	if (num5_texture)
+		SDL_DestroyTexture(num5_texture);
+	if (num6_texture)
+		SDL_DestroyTexture(num6_texture);
+	if (num9_texture)
+		SDL_DestroyTexture(num9_texture);
 	for (int i = 0; i < (int)agents.size(); i++) {
 		delete agents[i];
 	}
@@ -147,6 +118,8 @@ void SceneAStarEnemies::update(float dtime, SDL_Event *event) {
 			draw_lines = !draw_lines;
 		else if (event->key.keysym.scancode == SDL_SCANCODE_M)
 			draw_map = !draw_map;
+		else if (event->key.keysym.scancode == SDL_SCANCODE_N)
+			draw_numbers = !draw_numbers;
 		else if (event->key.keysym.scancode == SDL_SCANCODE_SPACE)
 			draw_grid = !draw_grid;
 		break;
@@ -171,11 +144,13 @@ void SceneAStarEnemies::update(float dtime, SDL_Event *event) {
 							coinPosition = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
 
 						// Set random N locations
-						randNum = (rand() % 3) + 1;
-						for (unsigned int i = 1; i <= randNum; i++) {
-							rList[i] = Vector2D(-1, -1);
-							while ((!isValidCell(rList[i])) || (Vector2D::Distance(rList[i], pix2cell(agents[0]->getPosition())) < 3))
-								rList[i] = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
+						randomList.clear();
+						randNum = (rand() % 20) + 1;
+						for (unsigned int i = 0; i < randNum; i++) {
+							Vector2D a (-1, -1);
+							while ((!isValidCell(a)) || (Vector2D::Distance(a, pix2cell(agents[0]->getPosition())) < 3))
+								a = Vector2D((float)(rand() % num_cell_x), (float)(rand() % num_cell_y));
+							randomList.push_back(a);
 						}
 
 						agents[0]->setPosition(path.points.back());
@@ -183,46 +158,14 @@ void SceneAStarEnemies::update(float dtime, SDL_Event *event) {
 						path.points.clear();
 
 						// A* Algorithm with random positions
-						/*pList[0] = pix2cell(start.coord);
-
-						if (randNum == 1) pList[1] = rList[1];
-
-						else if (randNum == 2) {
-							if (Heuristic(pList[0], rList[1]) > Heuristic(pList[0], rList[2])) {
-								pList[1] = rList[2];
-								pList[2] = rList[1];
-							}
-							else {
-								pList[1] = rList[1];
-								pList[2] = rList[2];
-							}
-						}
-
-						else if (randNum >= 3) {
-							int i = 1;
-							for (unsigned int j = 1; j <= randNum; j++) {
-
-								if (Heuristic(pList[i], rList[j]) > Heuristic(pList[i], rList[j + 1])) {
-									pList[i] = rList[j + 1];
-									pList[i + 1] = rList[j];
-								}
-								else {
-									pList[i] = rList[j];
-									pList[i + 1] = rList[j + 1];
-								}
-								i++;
-							}
-						}
-
-						pList[randNum + 1] = coinPosition;*/
 						agents[0]->vector_costs.clear();
 						agents[0]->frontierCount.clear();
-						//for (unsigned int i = 0; i <= randNum; i++) {
-							astar = agents[0]->AStar(pix2cell(start), coinPosition, graph, true);
-							for (unsigned int i = 0; i < astar.size(); i++) {
-								path.points.push_back(cell2pix(astar[i]));
-							}
-						//}
+
+						astar = agents[0]->AStar2(pix2cell(start), coinPosition, graph, true, randomList);
+						for (unsigned int i = 0; i < astar.size(); i++) {
+							path.points.push_back(cell2pix(astar[i]));
+						}
+
 					}
 				}
 				else {
@@ -274,6 +217,8 @@ void SceneAStarEnemies::draw() {
 			SDL_RenderCopy(TheApp::Instance()->getRenderer(), terrain, NULL, &dstrect);
 		}
 	}
+	
+
 
 	// Draw frontier
 	if (draw_frontier) {
@@ -293,6 +238,29 @@ void SceneAStarEnemies::draw() {
 
 	drawCoinAndStart();
 	drawNPositions();
+	// Draw costs 2
+	//	int offset = CELL_SIZE / 2;
+	SDL_Texture *terrain2 = NULL;
+	if (draw_numbers) {
+		for (unsigned int i = 0; i < agents[0]->vector_costs.size(); i++) {
+			if (agents[0]->vector_costs[i].second == 99) {
+				draw_circle(TheApp::Instance()->getRenderer(), (int)cell2pix(agents[0]->vector_costs[i].first).x, (int)cell2pix(agents[0]->vector_costs[i].first).y, 10, 255, 0, 0, 255);
+			}
+			/*else {
+			if (agents[0]->vector_costs[i].second > 5) terrain2 = num6_texture;
+			else if (agents[0]->vector_costs[i].second > 4) terrain2 = num5_texture;
+			else if (agents[0]->vector_costs[i].second > 3) terrain2 = num4_texture;
+			else if (agents[0]->vector_costs[i].second > 2) terrain2 = num3_texture;
+			else if (agents[0]->vector_costs[i].second > 1) terrain2 = num2_texture;
+			else if (agents[0]->vector_costs[i].second > 0) terrain2 = num1_texture;
+
+			SDL_Rect dstrect = { (int)cell2pix(agents[0]->vector_costs[i].first).x - offset, (int)cell2pix(agents[0]->vector_costs[i].first).y - offset, CELL_SIZE, CELL_SIZE };
+			SDL_RenderCopy(TheApp::Instance()->getRenderer(), terrain2, NULL, &dstrect);
+			}*/
+
+		}
+	}
+
 	draw_circle(TheApp::Instance()->getRenderer(), (int)currentTarget.x, (int)currentTarget.y, 15, 255, 0, 0, 255);
 	agents[0]->draw();
 }
@@ -329,9 +297,8 @@ void SceneAStarEnemies::drawCoinAndStart() {
 }
 
 void SceneAStarEnemies::drawNPositions() {
-	for (unsigned int i = 1; i <= randNum; i++) {
-
-		Vector2D coin_coords = cell2pix(rList[i]);
+	for (unsigned int i = 0; i < randNum; i++) {
+		Vector2D coin_coords = cell2pix(randomList[i]);
 		int offset = CELL_SIZE / 2;
 		Uint32 sprite = (int)(SDL_GetTicks() / (150)) % 8;
 		int coin_w = 46;
@@ -487,7 +454,8 @@ void SceneAStarEnemies::initMaze() {
 	}
 }
 
-bool SceneAStarEnemies::loadTextures(char* filename_bg, char* filename_bg2, char* filename_coin, char* filename_coin2, char* start, char* cost1, char* cost2, char* cost3, char* cost4, char* cost5, char* cost6) {
+bool SceneAStarEnemies::loadTextures(char* filename_bg, char* filename_bg2, char* filename_coin, char* filename_coin2, char* start, char* cost1, char* cost2, char* cost3, char* cost4, char* cost5, char* cost6,
+	char* num1, char* num2, char* num3, char* num4, char* num5, char* num6, char* num9) {
 	// Bg
 	SDL_Surface *image = IMG_Load(filename_bg);
 	if (!image) {
@@ -606,7 +574,81 @@ bool SceneAStarEnemies::loadTextures(char* filename_bg, char* filename_bg2, char
 
 	if (image)
 		SDL_FreeSurface(image);
+	// Num1
+	image = IMG_Load(num1);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	num1_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
 
+	if (image)
+		SDL_FreeSurface(image);
+
+	// Num2
+	image = IMG_Load(num2);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	num2_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+
+	if (image)
+		SDL_FreeSurface(image);
+
+	// Num3
+	image = IMG_Load(num3);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	num3_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+
+	if (image)
+		SDL_FreeSurface(image);
+
+	// Num4
+	image = IMG_Load(num4);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	num4_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+
+	if (image)
+		SDL_FreeSurface(image);
+
+	// Num5
+	image = IMG_Load(num5);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	num5_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+
+	if (image)
+		SDL_FreeSurface(image);
+
+	// Num6
+	image = IMG_Load(num6);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	num6_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+
+	if (image)
+		SDL_FreeSurface(image);
+	// Num9
+	image = IMG_Load(num9);
+	if (!image) {
+		cout << "IMG_Load: " << IMG_GetError() << endl;
+		return false;
+	}
+	num9_texture = SDL_CreateTextureFromSurface(TheApp::Instance()->getRenderer(), image);
+
+	if (image)
+		SDL_FreeSurface(image);
 	return true;
 }
 
