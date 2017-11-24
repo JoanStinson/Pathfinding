@@ -56,7 +56,7 @@ private:
 
 
 	Vector2D pointsList[3];
-	bool draw_lines, draw_frontier, draw_costs, draw_map;
+	bool draw_lines, draw_frontier, draw_costs = true, draw_map;
 	SDL_Texture *cost1_texture;
 	SDL_Texture *cost2_texture;
 	SDL_Texture *cost3_texture;

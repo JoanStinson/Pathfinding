@@ -217,7 +217,7 @@ void SceneAStarEnemies::draw() {
 			SDL_RenderCopy(TheApp::Instance()->getRenderer(), terrain, NULL, &dstrect);
 		}
 	}
-	
+
 
 
 	// Draw frontier
@@ -227,40 +227,52 @@ void SceneAStarEnemies::draw() {
 		}
 	}
 
-	// Draw path
-	for (int i = 2; i < (int)path.points.size() - 1; i++) {
-		draw_circle(TheApp::Instance()->getRenderer(), (int)(path.points[i].x), (int)(path.points[i].y), 15, 255, 255, 0, 255);
-		if (draw_lines) {
-			if (i > 2)
-				SDL_RenderDrawLine(TheApp::Instance()->getRenderer(), (int)(path.points[i - 1].x), (int)(path.points[i - 1].y), (int)(path.points[i].x), (int)(path.points[i].y));
-		}
-	}
+
 
 	drawCoinAndStart();
-	drawNPositions();
+
 	// Draw costs 2
 	//	int offset = CELL_SIZE / 2;
-	SDL_Texture *terrain2 = NULL;
 	if (draw_numbers) {
+		SDL_Texture *terrain3 = NULL;
+		for (unsigned int i = 0; i < agents[0]->vector_costs.size(); i++) {
+			if (agents[0]->vector_costs[i].second == 99) {
+				//draw_circle(TheApp::Instance()->getRenderer(), (int)cell2pix(agents[0]->vector_costs[i].first).x, (int)cell2pix(agents[0]->vector_costs[i].first).y, 10, 255, 0, 0, 255);
+			}
+			else {
+
+				if (agents[0]->vector_costs[i].second > 5) terrain3 = num6_texture;
+				else if (agents[0]->vector_costs[i].second > 4) terrain3 = num5_texture;
+				else if (agents[0]->vector_costs[i].second > 3) terrain3 = num4_texture;
+				else if (agents[0]->vector_costs[i].second > 2) terrain3 = num3_texture;
+				else if (agents[0]->vector_costs[i].second > 1) terrain3 = num2_texture;
+				else if (agents[0]->vector_costs[i].second > 0) terrain3 = num1_texture;
+
+				SDL_Rect dstrect = { (int)cell2pix(agents[0]->vector_costs[i].first).x - offset, (int)cell2pix(agents[0]->vector_costs[i].first).y - offset, CELL_SIZE, CELL_SIZE };
+				SDL_RenderCopy(TheApp::Instance()->getRenderer(), terrain3, NULL, &dstrect);
+			}
+		}
+
+	}
+
+
+		drawNPositions();
+		SDL_Texture *terrain2 = NULL;
 		for (unsigned int i = 0; i < agents[0]->vector_costs.size(); i++) {
 			if (agents[0]->vector_costs[i].second == 99) {
 				draw_circle(TheApp::Instance()->getRenderer(), (int)cell2pix(agents[0]->vector_costs[i].first).x, (int)cell2pix(agents[0]->vector_costs[i].first).y, 10, 255, 0, 0, 255);
 			}
-			/*else {
-			if (agents[0]->vector_costs[i].second > 5) terrain2 = num6_texture;
-			else if (agents[0]->vector_costs[i].second > 4) terrain2 = num5_texture;
-			else if (agents[0]->vector_costs[i].second > 3) terrain2 = num4_texture;
-			else if (agents[0]->vector_costs[i].second > 2) terrain2 = num3_texture;
-			else if (agents[0]->vector_costs[i].second > 1) terrain2 = num2_texture;
-			else if (agents[0]->vector_costs[i].second > 0) terrain2 = num1_texture;
-
-			SDL_Rect dstrect = { (int)cell2pix(agents[0]->vector_costs[i].first).x - offset, (int)cell2pix(agents[0]->vector_costs[i].first).y - offset, CELL_SIZE, CELL_SIZE };
-			SDL_RenderCopy(TheApp::Instance()->getRenderer(), terrain2, NULL, &dstrect);
-			}*/
+			
 
 		}
-	}
-
+		// Draw path
+		for (int i = 2; i < (int)path.points.size() - 1; i++) {
+			draw_circle(TheApp::Instance()->getRenderer(), (int)(path.points[i].x), (int)(path.points[i].y), 15, 255, 255, 0, 255);
+			if (draw_lines) {
+				if (i > 2)
+					SDL_RenderDrawLine(TheApp::Instance()->getRenderer(), (int)(path.points[i - 1].x), (int)(path.points[i - 1].y), (int)(path.points[i].x), (int)(path.points[i].y));
+			}
+		}
 	draw_circle(TheApp::Instance()->getRenderer(), (int)currentTarget.x, (int)currentTarget.y, 15, 255, 0, 0, 255);
 	agents[0]->draw();
 }

@@ -43,7 +43,7 @@ private:
 	vector<Vector2D> astar;
 	SDL_Texture *start_texture;
 	int coin_w;
-	bool draw_lines, draw_frontier, draw_costs, draw_map, draw_numbers;
+	bool draw_lines, draw_frontier, draw_costs, draw_map, draw_numbers = true;
 	SDL_Texture *cost1_texture;
 	SDL_Texture *cost2_texture;
 	SDL_Texture *cost3_texture;

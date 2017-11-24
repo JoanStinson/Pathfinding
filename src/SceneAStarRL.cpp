@@ -81,8 +81,7 @@ SceneAStarRL::SceneAStarRL() {
 	/*randomLocations.clear();
 	heuristicValues.clear();
 	goalist.clear();*/
-	agents[0]->vector_costs.clear();
-	agents[0]->frontierCount.clear();
+	
 }
 
 SceneAStarRL::~SceneAStarRL() {
@@ -155,7 +154,8 @@ void SceneAStarRL::update(float dtime, SDL_Event *event) {
 						path.points.clear();
 
 						//////////////////// A* Algorithm with random positions
-
+						agents[0]->vector_costs.clear();
+						agents[0]->frontierCount.clear();
 						// Create random N locations
 						goalist.clear();
 						int randNum = (rand() % 10) + 1;
@@ -193,8 +193,7 @@ void SceneAStarRL::update(float dtime, SDL_Event *event) {
 						/*randomLocations.clear();
 						heuristicValues.clear();
 						goalist.clear();*/
-						agents[0]->vector_costs.clear();
-						agents[0]->frontierCount.clear();
+
 
 
 
@@ -264,6 +263,8 @@ void SceneAStarRL::draw() {
 		}
 	}
 
+	drawNPositions();
+
 	// Draw path
 	for (int i = 2; i < (int)path.points.size() - 1; i++) {
 		draw_circle(TheApp::Instance()->getRenderer(), (int)(path.points[i].x), (int)(path.points[i].y), 15, 255, 255, 0, 255);
@@ -274,7 +275,7 @@ void SceneAStarRL::draw() {
 	}
 
 	
-	drawNPositions();
+	
 	drawCoinAndStart();
 	draw_circle(TheApp::Instance()->getRenderer(), (int)currentTarget.x, (int)currentTarget.y, 15, 255, 0, 0, 255);
 	agents[0]->draw();
