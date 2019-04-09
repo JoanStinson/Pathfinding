@@ -1,5 +1,4 @@
-# Pathfinding
-C++ Artificial Intelligence Pathfinding
+# C++ Artificial Intelligence Pathfinding
 
 A C++ AI Pathfinding with different algorithms following the book "Artificial Intelligence for Games by Ian Millington and John Funge".
 
