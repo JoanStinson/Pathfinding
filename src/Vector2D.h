@@ -1,7 +1,13 @@
+/* ========================================================================
+   File: Vector2D.h
+   Revision: 0.1
+   Creator: David Collado Ochoa
+   Notice: (C) Copyright 2016 by David Collado Ochoa. All Rights Reserved.
+   ======================================================================== */
+
 #pragma once
+
 #include <math.h>
-#include <tuple> 
-#include <functional>
 
 #ifndef M_PI	
 #define M_PI	3.14159265358979323846   // pi
@@ -10,89 +16,74 @@
 #define RAD2DEG (180.0f / (float)M_PI)
 #define DEG2RAD ((float)M_PI / 180.0f)
 
-class Vector2D
+struct Vector2D
 {
-public:
 	float x = 0.0f;
 	float y = 0.0f;
-
-	Vector2D(float valueX = 0.0f, float valueY = 0.0f): x{valueX}, y{valueY} {}
 	
-	inline float Length() const {
+	Vector2D(float valueX = 0.0f, float valueY = 0.0f): x{valueX}, y{valueY}
+	{}
+	
+	inline float Length() const
+	{
 		return (float)sqrt(x * x + y * y);
 	}
 
-	inline float LengthSquared() const {
+	inline float LengthSquared() const
+	{
 		return x * x + y * y;
 	}
-
-	// Operators Overloaded
-	inline Vector2D operator()(const Vector2D& v) {
-		return v.x + v.y;
-	}
-
-	inline Vector2D operator+(const Vector2D& v){
+	
+	inline Vector2D operator+(const Vector2D& v)
+	{
 		return Vector2D(x + v.x, y + v.y);
 	}
-
-	inline void operator+=(const Vector2D& v) {
-		x += v.x;
-		y += v.y;
+	inline void operator+=(const Vector2D& v2)
+	{
+		x += v2.x;
+		y += v2.y;
 	}
 	
-	inline Vector2D operator-(const Vector2D& v) {
+	inline Vector2D operator-(const Vector2D& v)
+	{
 		return Vector2D(x - v.x, y - v.y);
 	}
-
-	inline void operator-=(const Vector2D& v) {
+	inline void operator-=(const Vector2D& v)
+	{
 		x -= v.x;
 		y -= v.y;
 	}
 	
-	inline Vector2D operator*(float scalar) {
+	inline Vector2D operator*(float scalar)
+	{
 		return Vector2D(x * scalar, y * scalar);
 	}
-
-	inline void operator*=(float scalar) {
+	inline void operator*=(float scalar)
+	{
 		x *= scalar;
 		y *= scalar;
 	}
 	
-	inline Vector2D operator/(float scalar) {
+	inline Vector2D operator/(float scalar)
+	{
 		return Vector2D(x / scalar, y / scalar);
 	}
-
-	inline void operator/=(float scalar) {
+	inline void operator/=(float scalar)
+	{
 		x /= scalar;
 		y /= scalar;
 	}
 
-	inline bool operator==(const Vector2D& rhs) const {
+	inline bool operator==(const Vector2D& rhs) const
+	{
 		return (x == rhs.x)
 			&& (y == rhs.y);
 	}
-
-	inline bool operator!=(const Vector2D& rhs) const {
+	inline bool operator!=(const Vector2D& rhs) const
+	{
 		return !operator==(rhs);
 	}
-
-	// Needed operators to deal with maps :)
-	inline bool operator<(const Vector2D& rhs) const {
-		return std::tie(x, y) < std::tie(rhs.x, rhs.y);
-	}
-
-	inline bool operator<=(const Vector2D& rhs) const {
-		return !(std::tie(x, y) <  std::tie(rhs.x, rhs.y));
-	}
-
-	inline bool operator>(const Vector2D& rhs) const {
-		return std::tie(x, y) <  std::tie(rhs.x, rhs.y);
-	}
-
-	inline bool operator>=(const Vector2D& rhs) const {
-		return !(std::tie(x, y) <  std::tie(rhs.x, rhs.y));
-	}
-
+	
 	inline Vector2D Normalize()
 	{
 		float l = Length();
@@ -102,7 +93,6 @@ public:
 		}
 		return (*this);
 	}
-
 	static inline Vector2D Normalize(const Vector2D& v)
 	{
 		float l = v.Length();
@@ -151,7 +141,6 @@ public:
 		Vector2D v = start - end;
 		return v.LengthSquared();
 	}
-
 };
 
 namespace Vector2DUtils
@@ -294,21 +283,5 @@ namespace Vector2DUtils
 		Vector2D P12 = p2 - p1;
 		return (float)atan2(P12.y, P12.x) * RAD2DEG;
 	}
-
-	static bool IsInsideRect(Vector2D point, float x, float y, float w, float h)
-	{
-		if ((point.x >= x) && (point.x <= x + w) && (point.y >= y) && (point.y <= y + h))
-			return true;
-		return false;
-	}
-}
-
-// Necessary to use unordered_maps
-namespace std {
-	template<>
-	struct hash<Vector2D> {
-		size_t operator()(const Vector2D& v) const {
-			return std::hash<float>()(v.Length());
-		}
-	};
+	
 }
