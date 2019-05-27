@@ -5,6 +5,7 @@ C++ AI Steering Pathfinding algorithm's implementation following the book "Artif
 Press the following numeric keys to open the following scenes:
 
 - ## Key 0: Main Menu
+![](mainmenu.PNG)
 
 - ## Key 1: Breadth First Search
 ![](https://github.com/JoanStinson/Pathfinding/blob/master/Pathfinding%20GIFs/bfs.gif)
