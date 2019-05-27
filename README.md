@@ -1,8 +1,8 @@
 # C++ SDL Artificial Intelligence Pathfinding
 
-C++ AI Steering Pathfinding algorithm's implementation following the book "Artificial Intelligence for Games by Ian Millington and John Funge".
+C++ artificial intelligence pathfinding algorithm's implementation following the book "Artificial Intelligence for Games" by Ian Millington and John Funge.
 
-Press the following numeric keys to open the following scenes:
+The following keys open the following scenes:
 
 - ## Key 0: Main Menu
 ![](mainmenu.PNG)
