@@ -2,8 +2,7 @@
 #include <iostream>
 #include <SDL.h>
 
-class Scene
-{
+class Scene {
 public:
 	Scene() {};
 	virtual ~Scene() {};
