@@ -116,11 +116,11 @@ vector<Vector2D> Agent::BFS(Vector2D start, Vector2D goal, Graph graph) {
 			next = neighbors[i];
 
 			// Per cadascun determinem si l'hem visitat o no
-			for (unsigned int j = 0; j < came_from.size(); j++) {
+			//for (unsigned int j = 0; j < came_from.size(); j++) {
 				if (came_from.find(next) != came_from.end()) { // 'if (came_from.count(next))' és el mateix per mirar si existeix la key next, però al ser unordered es + lent
 					visited = true;
 				}
-			}
+			//}
 			// Si no l'hem visitat l'afegim a la frontier
 			// i agafem el node current per traçar el camí 
 			// (ja que no podem traçar un camí a base de veïns)
@@ -181,7 +181,7 @@ vector<Vector2D> Agent::Dijkstra(Vector2D start, Vector2D goal, Graph graph) {
 			new_cost = cost_so_far[current] + randCost;//(rand() % 3) + 1;//graph.GetCost(next);
 			
 
-			for (unsigned int j = 0; j < cost_so_far.size(); j++) {
+			//for (unsigned int j = 0; j < cost_so_far.size(); j++) {
 				// If next in cost_so_far 
 				if (cost_so_far.find(next) != cost_so_far.end()) { 
 					if (new_cost > cost_so_far[next]) { // if 'new_cost < cost_so_far[next]' visited = false perque el volem afegir, if 'new_cost > cost_so_far[next]' nol volem per tant visited = false
@@ -193,7 +193,7 @@ vector<Vector2D> Agent::Dijkstra(Vector2D start, Vector2D goal, Graph graph) {
 					visited = false;
 				}
 
-			}
+			//}
 
 			if (!visited) {
 				cost_so_far[next] = new_cost;
@@ -245,11 +245,11 @@ vector<Vector2D> Agent::GBFS(Vector2D start, Vector2D goal, Graph graph) {
 			visited = false;
 			next = neighbors[i];
 
-			for (unsigned int j = 0; j < came_from.size(); j++) {
+			//for (unsigned int j = 0; j < came_from.size(); j++) {
 				if (came_from.find(next) != came_from.end()) { 
 					visited = true;
 				}
-			}
+			//}
 
 			if (!visited) {
 				priority = Heuristic(goal, next);
@@ -264,7 +264,9 @@ vector<Vector2D> Agent::GBFS(Vector2D start, Vector2D goal, Graph graph) {
 
 vector<Vector2D> Agent::AStar(Vector2D start, Vector2D goal, Graph graph, bool show_nodes) {
 	PriorityQueue<Vector2D, float> frontier;
-	frontier.put(start, 0.f);	
+	frontier.put(start, 0.f);
+
+	
 
 	unordered_map<Vector2D, Vector2D> came_from;
 	came_from[start] = NULL;
@@ -340,6 +342,7 @@ vector<Vector2D> Agent::AStar2(Vector2D start, Vector2D goal, Graph graph, bool 
 	frontier.put(start, 0.f);
 	frontierCount.clear();
 	vector_costs.clear();
+
 
 	unordered_map<Vector2D, Vector2D> came_from;
 	came_from[start] = NULL;
