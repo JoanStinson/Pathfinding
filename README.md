@@ -10,7 +10,7 @@ C++ artificial intelligence pathfinding algorithm's implementation following the
     <img alt="License" src="https://img.shields.io/github/license/JoanStinson/Pathfinding?&logo=github">
   </a>
   <a>
-    <img alt="Last Commit" src="https://img.shields.io/github/last-commit/JoanStinson/Pathfinding?logo=Mapbox">
+    <img alt="Last Commit" src="https://img.shields.io/github/last-commit/JoanStinson/Pathfinding?logo=Mapbox&color=orange">
   </a>
   <a>
     <img alt="Repo Size" src="https://img.shields.io/github/repo-size/JoanStinson/Pathfinding?logo=VirtualBox">
