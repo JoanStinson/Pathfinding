@@ -1,4 +1,4 @@
-# C++ SDL Artificial Intelligence Pathfinding
+# Pathfinding
 
 C++ artificial intelligence pathfinding algorithm's implementation following the book "Artificial Intelligence for Games" by Ian Millington and John Funge.
 
